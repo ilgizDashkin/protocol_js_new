@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>создатель протоколов</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="index_docx.js"></script>
+    <script src="FileSaver.js"></script>
+    <!-- это картинка в басе64 формате -->
+    <script src="pic2.js"></script>
+    <script src="poverka.js"></script>
+</head>
+<body class="bg-success" onload="getDateNow('date')">
+    <div class="container text-center text-white p-3">
+        <input type="button" class="btn btn-danger btn-lg btn-block" value='назад'
+            onclick="javascript:window.location ='index.html'" />
+        <h2>протокол на ТТ</h2>
+        <p class='bg-dark'>наименование</p>
+        <input id="name" class='form-control' type="search" onchange="mesto_isp();"
+            value="ПС «Булгаково» ОРУ-110кВ ТТ-1Т-110"><br>
+        <div class="row">
+            <div class="col-md-4">
+                <p class='bg-dark'>номер протокола</p>
+                <input id="num" class='form-control' type="search" value="107-ПС"><br>
+                <p class='bg-dark'>дата</p>
+                <input id="date" class='form-control' type="date"><br>
+                <p class='bg-dark'>вид испытания</p>
+                <select id="vid" class="form-control bg-warning">
+                    <option VALUE="эксплуатационные">эксплуатационные</option>
+                    <option VALUE="периодические">периодические</option>
+                    <option VALUE="приемосдаточные">приемосдаточные</option>
+                </select><br>
+            </div>
+            <div id="proizv_weather" class="col-md-4">
+                <!-- здесь будет производитель и погода               -->
+            </div>
+        </div>
+    </div>
+    <div class='container p-2'>
+        <div id='tab_cont'>
+            <!-- место для таблицы -->
+        </div>
+        <button class="btn btn-info btn-lg btn-block"
+            onclick="copy_from_one(['type_tt', 'nomer_tt', 'u_tt', 'i_tt', 'year_tt'],[2, 3])">копировать с фазы
+            А</button><br>
+        <div id='tab_result'>
+            <!-- место для таблицы -->
+        </div>
+        <button class="btn btn-info btn-lg btn-block" onclick="auto_input()">автозаполнение</button><br>
+        <button class="btn btn-info btn-lg btn-block" onclick="generate()">создать протокол</button>
+    </div>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script>
+        //    создаем разметку из poverka.js
+        gen_proizv_weather()
+        gen_tab(row_name = ["A", "B", "C"], col_massiv = ['type_tt', 'nomer_tt', 'u_tt', 'i_tt', 'year_tt'], col_name = ['фаза', 'тип', 'заводской номер', 'напряжение, кВ', 'ток, А', 'дата выпуска'])
+        gen_tab(row_name = ["A ВН-НН1+НН2", "A НН1-ВН+НН2", "A НН2-НН1+ВН", "B ВН-НН1+НН2", "B НН1-ВН+НН2", "B НН2-НН1+ВН", "C ВН-НН1+НН2", "C НН1-ВН+НН2", "C НН2-НН1+ВН",], col_massiv = ['R', 'U', 'Cx', 'Tg', 'zak'], col_name = ['фаза и схема испытания', 'R, МОм', 'Uисп, кВ', 'Cx, pF', 'Тангенс δ, %', 'Заключение'], where = 'tab_result')
+
+        function mesto_isp() {
+            // вывод места испытания из наименования элек.уст           
+            let text_in = document.getElementById('name').value
+            if (text_in.length > 5) {
+                elem_from_massiv([u_from_name(), u_from_name(), u_from_name()], 'u_tt')
+                let text_out = text_in.split(' ')
+                return text_out[0] + ' ' + text_out[1] + ' ' + text_out[2]
+            } else {
+                return text_in
+            }
+        }
+
+        function massiv_from_elem(id_name, num) {
+            let i = 1
+            massiv = []
+            while (i <= num) {
+                let el_val = document.getElementById(id_name + i).value
+                massiv.push(el_val)
+                i++
+            }
+            return massiv
+        }
+
+        function elem_from_massiv(massiv, id_name) {
+            let i = 1
+            for (el of massiv) {
+                document.getElementById(id_name + i).value = el
+                i++
+            }
+        }
+
+        function input_to_elem(id_el, val, count = 3) {
+            let i = 1
+            while (i <= count) {
+                document.getElementById(id_el + i).value = val
+                i++
+            }
+        }
+        function input_to_elem_1of3(id_el, val, count = 3) {
+            let i = 1
+            while (i <= count) {
+                document.getElementById(id_el + i).value = val
+                i = i + 3
+            }
+        }
+        function random_input_elem(id_el, num_el, from = 10000, to = 250000, div = 1, num_comma = 0) {
+            let i = 1
+            while (i <= num_el) {
+                document.getElementById(id_el + i).value = (randomInteger(from, to) / div).toFixed(num_comma)
+                i++
+            }
+        }
+
+        function random_input_elem_1of3(id_el, num_el, from = 10000, to = 250000, div = 1, num_comma = 0) {
+            let i = 1
+            while (i <= num_el) {
+                document.getElementById(id_el + i).value = (randomInteger(from, to) / div).toFixed(num_comma)
+                i = i + 3
+            }
+        }
+        function auto_input() {
+            input_to_elem('zak', 'соответствует', 9)
+            input_to_elem('U', '---', 9)
+            input_to_elem_1of3('U', '10', 9)
+            random_input_elem('R', 9, 300, 1000)
+            random_input_elem_1of3('R', 9, 1000, 5000)
+            input_to_elem('Cx', '---', 9)
+            input_to_elem('Tg', '---', 9)
+            random_input_elem_1of3('Cx', 9, 90, 110)
+            random_input_elem_1of3('Tg', 9, 1000, 3000, 1000, 3)
+        }
+
+        function copy_from_one(id_name = [], num_to_copy = [2, 3]) {
+            for (id of id_name) {
+                for (num of num_to_copy) {
+                    document.getElementById(id + num).value = document.getElementById(id + 1).value
+                }
+            }
+        }
+        function u_from_name() {
+            let name = document.getElementById('name').value
+            let u = name.split('-').pop().replace(/[^0-9]/g, '') || '---'
+            return u
+        }
+        elem_from_massiv(['ТФЗМ-110Б', 'ТФЗМ-110Б', 'ТФЗМ-110Б'], 'type_tt')
+        elem_from_massiv(['---', '---', '---'], 'nomer_tt')
+        elem_from_massiv(['600/5', '600/5', '600/5'], 'i_tt')
+        elem_from_massiv(['---', '---', '---'], 'year_tt')
+        elem_from_massiv([u_from_name(), u_from_name(), u_from_name()], 'u_tt')
+        
+        function generate() {
+            // получить элемент
+            let num = document.getElementById('num').value
+            let date = document.getElementById('date').value.split("-").reverse().join(".")
+            let matrix_opn = matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_tt', 'nomer_tt', 'u_tt', 'i_tt', 'year_tt'], col_name = ['фаза', 'тип', 'заводской номер', 'напряжение, кВ', 'ток, А', 'дата выпуска'])
+            //    console.log(matrix_opn) 
+            function sel_vid() {
+                let selind = document.getElementById('vid').options.selectedIndex;
+                let vid = document.getElementById('vid').options[selind].value;
+                return vid
+            }
+            let vid = sel_vid()
+
+            function sel_proizv() {
+                let selind = document.getElementById('proizv').options.selectedIndex;
+                let proizv = document.getElementById('proizv').options[selind].value;
+                return proizv
+            }
+            let proizv = sel_proizv()
+
+            let name = document.getElementById('name').value
+            let district = 'ОПС'
+            let mesto = mesto_isp()
+            let temp = document.getElementById('temp').value
+            let pres = document.getElementById('pres').value
+            let vlag = document.getElementById('vlag').value
+
+
+            const doc = new Document();
+            const paragraph0 = new Paragraph();
+            doc_head(doc, paragraph0, num)
+            const paragraph2 = new Paragraph();
+            const institutionText2 = new TextRun("                                                  ")
+            const institutionText21 = new TextRun("испытание трансформатора тока").bold().size(28).underline();
+            paragraph2.addRun(institutionText2);
+            paragraph2.addRun(institutionText21);
+            doc.addParagraph(paragraph2);
+            doc.addParagraph(paragraph0);
+
+            // функция из poverka.js
+            create_pargf(doc, 55, text = '', text_underline = `от ${date}.`)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "1. Электроустановка: ", text_underline = `${name}`, space_after = 27)
+
+            create_pargf(doc, 55, text = "", text_underline = `(Наименование и адрес)`, space_after = 0, size_text = 18)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "2. Заказчик: ", text_underline = `${district}`, space_after = 120)
+
+            create_pargf(doc, 60, text = "", text_underline = `(Организация)`, space_after = 0, size_text = 18)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "3. Вид и цель проведения испытания: ", text_underline = `${vid}`, space_after = 0)
+
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "4. Место проведения испытания: ", text_underline = `${mesto}`, space_after = 0)
+
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "5. Климатические условия проведения испытаний: ", text_underline = ``, space_after = 0)
+            create_pargf(doc, 0, text = `    Температура: ${temp}${'\u2103'} Давление: ${pres} мм рт. ст., влажность ${vlag} %`, text_underline = ``, space_after = 0)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "6. Паспортные данные:", text_underline = ``, space_after = 0)
+            // doc.addParagraph(paragraph0);
+            table_from_matrix(doc, matrix_opn)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "7. Нормативная документация (НД) и допуски показателей по НД: ", text_underline = ``, space_after = 0)
+            // doc.addParagraph(paragraph0);
+
+            let tex_doc = [
+                ['Измеряемый параметр', 'Нормативная документация', 'Значение показателей', 'НД на метод испытания', 'Допуск показателя по НД'],
+                ['Измерение сопротивления изоляции', 'Заводские или каталожные данные, ПУЭ 1.8.17. п.1', 'Согласно данным завода-изготовителя', 'МВИ-2', 'ПУЭ таблица 1.8.13'],
+                ['Измерение коэффициента трансформации', 'Заводские или каталожные данные, ПУЭ 1.8.17. п.5', 'Согласно данным завода-изготовителя', 'МВИ-12', 'Отклонение измеренного коэффициента от указанного в паспорте или от измеренного на исправном трансформаторе тока, однотипном с проверяемым, не должно превышать 2%'],
+                ['Измерение тангенса угла диэлектрических потерь и емкости изоляции', 'Заводские или каталожные данные, ПУЭ 1.8.17. п.2', 'Согласно данным завода-изготовителя', 'МВИ-22', 'ПУЭ таблица 1.8.14'],
+                ['Испытание повышенным напряжением промышленной частоты', 'Заводские или каталожные данные, ПУЭ 1.8.17. п.3', 'Согласно данным завода-изготовителя', 'МВИ-11', 'ПУЭ таблица 1.8.16']
+            ]
+            table_from_matrix(doc, tex_doc)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "8. Испытания проведены согласно требованиям ПУЭ и «Объёмов и норм испытаний», РД 34.45-51.300-97 в соответствии с ПВИ-17.", text_underline = ``, space_after = 0)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "9. Результаты испытаний:", text_underline = ``, space_after = 0)
+            create_pargf(doc, 0, text = `9.1. Замеры изоляции, тангенса угла диэлектрических потерь и емкости при Т=${temp}${'\u2103'}`, text_underline = ``, space_after = 0)
+            // doc.addParagraph(paragraph0);
+
+            let tab_isp = matrix_from_table(row_name = ["A ВН-НН1+НН2", "A НН1-ВН+НН2", "A НН2-НН1+ВН", "B ВН-НН1+НН2", "B НН1-ВН+НН2", "B НН2-НН1+ВН", "C ВН-НН1+НН2", "C НН1-ВН+НН2", "C НН2-НН1+ВН",],
+                col_massiv = ['R', 'U', 'Cx', 'Tg', 'zak'], col_name = ['фаза и схема испытания', 'R, МОм', 'Uисп, кВ', 'Cx, pF', 'Тангенс δ, %', 'Заключение'])
+            table_from_matrix(doc, tab_isp)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "10. Перечень применяемого испытательного оборудования (ИО) и средств измерений (СИ)", text_underline = ``, space_after = 0)
+            // doc.addParagraph(paragraph0);
+
+            let table_measurement = [
+                ['Наименование ИО и СИ',
+                    'Тип ИО и СИ',
+                    'Заводской номер',
+                    'Диапазон измерений',
+                    'Погрешность СИ',
+                    '№ аттестата или свидетельства о поверке',
+                    'Дата очередной поверки'],
+                ['Передвижная высоковольтная лаборатория',
+                    'ЛК-10 СПЭ',
+                    '213',
+                    '− 0 - 70 кВ,~ 0 - 100 кВ',
+                    '± 0,5%,±1,0%',
+                    nomer_svid_lab,
+                    data_svid_lab ],
+                ['Мегаомметр',
+                    'ЭСО 210/3-Г',
+                    '18596',
+                    '0 – 10000 Мом',
+                    '± 5%',
+                    nomer_svid_meg,
+                    data_svid_meg ],
+                ['Психрометр',
+                    'ВИТ-2',
+                    '23',
+                    `15-40 ${'\u2103'}`,
+                    '',
+                    nomer_svid_psih,
+                    data_svid_psih ],
+                ['Барометр-анероид',
+                    'БАММ-1',
+                    '5809',
+                    '80 до 106 кПА,ц.д.0,1 кПа',
+                    '',
+                    nomer_svid_bar,
+                    data_svid_bar ],
+                ['Термометр',
+                    'КШ14/23',
+                    '309',
+                    `-30+40${'\u2103'}`,
+                    '',
+                    nomer_svid_term,
+                    data_svid_term ],
+                ['Измеритель параметров изоляции',
+                    'Тангенс 2000',
+                    '08.10.507',
+                    `0.00001 – 100% Tg; 10-340000 pF`,
+                    '± 5%',
+                    nomer_svid_tg,
+                    data_svid_tg ]
+            ]
+            table_from_matrix(doc, table_measurement)
+            doc.addParagraph(paragraph0);
+            create_pargf(doc, 0, text = "11. Замечание: нет.", text_underline = ``, space_after = 0)
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "12. Заключение: трансформаторы тока соответствуют требованиям РД 34.45-51.300-97 п.7.1, 7.2, 7.3, 7.5 ПУЭ 1.8.17 п.1,2,3,5 и пригодны к эксплуатации.", text_underline = ``, space_after = 0)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = `    Испытание произвёл: ________________________/${proizv}/`, text_underline = ``, space_after = 0)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            create_pargf(doc, 0, text = "    Начальник ОИЗП: ___________________________/Смирнов П. В./", text_underline = ``, space_after = 0)
+
+            doc_footer(doc, num, all_page = '2')
+
+            const packer = new Packer();
+            packer.toBlob(doc).then(blob => {
+                console.log(blob);
+                saveAs(blob, `${num} ${name}.docx`);
+                console.log("Document created successfully");
+            });
+        }
+    </script>
+</body>
+
+</html>

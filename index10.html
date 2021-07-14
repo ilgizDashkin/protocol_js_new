@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>создатель протоколов</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="index_docx.js"></script>
+    <script src="FileSaver.js"></script>
+    <!-- это картинка в басе64 формате -->
+    <script src="pic2.js"></script>
+    <script src="poverka.js"></script>
+    <script>
+        //температурные коэфициенты
+        const k1 = {
+            0: 1,
+            1: 1.03,
+            2: 1.06,
+            3: 1.09,
+            4: 1.12,
+            5: 1.15,
+            6: 1.18,
+            7: 1.21,
+            8: 1.21 * 1.03,
+            9: 1.21 * 1.09,
+            10: 1.31,
+            11: 1.31 * 1.03,
+            12: 1.31 * 1.06,
+            13: 1.31 * 1.09,
+            14: 1.31 * 1.12,
+            15: 1.51,
+            16: 1.51 * 1.03,
+            17: 1.51 * 1.06,
+            18: 1.51 * 1.09,
+            19: 1.51 * 1.12,
+            20: 1.75,
+            21: 1.75 * 1.03,
+            22: 1.75 * 1.06,
+            23: 1.75 * 1.09,
+            24: 1.75 * 1.12,
+            25: 2,
+            26: 2 * 1.03,
+            27: 2 * 1.06,
+            28: 2 * 1.09,
+            29: 2 * 1.12,
+            30: 2.3
+        }
+        // console.log(k1)
+        const k2 = {
+            0: 1,
+            1: 1.04,
+            2: 1.08,
+            3: 1.13,
+            4: 1.17,
+            5: 1.22,
+            6: 1.28,
+            7: 1.34,
+            8: 1.34 * 1.04,
+            9: 1.34 * 1.08,
+            10: 1.5,
+            11: 1.5 * 1.04,
+            12: 1.5 * 1.08,
+            13: 1.5 * 1.13,
+            14: 1.5 * 1.17,
+            15: 1.84,
+            16: 1.84 * 1.04,
+            17: 1.84 * 1.08,
+            18: 1.84 * 1.13,
+            19: 1.84 * 1.17,
+            20: 2.25,
+            21: 2.25 * 1.04,
+            22: 2.25 * 1.08,
+            23: 2.25 * 1.13,
+            24: 2.25 * 1.17,
+            25: 2.75,
+            26: 2.75 * 1.04,
+            27: 2.75 * 1.08,
+            28: 2.75 * 1.13,
+            29: 2.75 * 1.17,
+            30: 3.4
+        }
+        console.log(k2)
+    </script>
+</head>
+
+<body class="bg-success" onload="getDateNow('date')">
+    <div class="container text-center text-white p-3">
+        <input type="button" class="btn btn-danger btn-lg btn-block" value='назад'
+            onclick="javascript:window.location ='index.html'" />
+        <h2>испытание трансформатора напряжения</h2>
+        <p class='bg-dark'>наименование</p>
+        <input id="name" class='form-control' type="search" value='ПС «Зеленая» ТН-12-6'><br>
+        <div class="row">
+            <div class="col-md-4">
+                <p class='bg-dark'>номер протокола</p>
+                <input id="num" class='form-control' type="search" value="123-ПС"><br>
+                <p class='bg-dark'>дата</p>
+                <input id="date" class='form-control' type="date"><br>
+                <p class='bg-dark'>Заказчик</p>
+                <select id="district" class="form-control bg-warning">
+                    <option VALUE="ОПС">ОПС</option>
+                    <option VALUE="ЗГП">ЗГП</option>
+                    <option VALUE="СГП">СГП</option>
+                    <option VALUE="ДГП">ДГП</option>
+                    <option VALUE="ЮГП">ЮГП</option>
+                </select><br>
+            </div>
+            <div class="col-md-4">
+                <p class='bg-dark'>число фаз</p>
+                <select id="num_faz" onchange="sel_type()" class="form-control bg-warning">
+                    <option VALUE="1">3 однофазных</option>
+                    <option VALUE="2">2 на фазе А и С</option>
+                    <option VALUE="3">1 трехфазный</option>
+                    <!-- <option VALUE="4">3 одноф-х +сверху</option> -->
+                </select><br>
+                <p class='bg-dark'>вид испытания</p>
+                <select id="vid" onchange="sel_vid()" class="form-control bg-warning">
+                    <option VALUE="периодические">периодические</option>
+                    <option VALUE="приемосдаточные">приемосдаточные</option>
+                    <option VALUE="эксплуатационные">эксплуатационные</option>
+                </select><br>
+                <p class='bg-dark'>место испытания</p>
+                <select id="mesto" class="form-control bg-warning">
+                    <option VALUE="ЗРУ-6кВ">ЗРУ-6кВ</option>
+                    <option VALUE="ЗРУ-10кВ">ЗРУ-10кВ</option>
+                    <option VALUE="КРУН-6кВ">КРУН-6кВ</option>
+                    <option VALUE="КРУН-10кВ">КРУН-10кВ</option>
+                </select><br>
+                <p class='bg-dark'>кто произвёл</p>
+                <select id="proizv" class="form-control bg-warning">
+                    <option VALUE="Дашкин И.А.">Дашкин И.А.</option>
+                    <option VALUE="Габбасов А.Р.">Габбасов А.Р.</option>
+                    <option VALUE="Гафуров З.С.">Гафуров З.С.</option>
+                    <option VALUE="Михайлов Д.Е.">Михайлов Д.Е.</option>
+                    <option VALUE="Абдуллин Р.Р.">Абдуллин Р.Р.</option>
+                    <option VALUE="Перов В.М.">Перов В.М.</option>
+                    <option VALUE="Вачаев В.В.">Вачаев В.В.</option>
+                    <option VALUE="Зайнутдинов Р.Р.">Зайнутдинов Р.Р.</option>
+                    <option VALUE="Баландин С.М.">Баландин С.М.</option>
+                    <option VALUE="Карпов В.Г.">Карпов В.Г.</option>
+                    <option VALUE="Исянбаев Ф.Ф.">Исянбаев Ф.Ф.</option>
+                    <option VALUE="Фадеев И.Н.">Фадеев И.Н.</option>
+                </select><br>
+            </div>
+            <div class="col-md-4">
+                <p class='bg-dark'>температура</p>
+                <input id="temp" class='form-control' type="search" value="+15"><br>
+                <p class='bg-dark'>давление</p>
+                <input id="pres" class='form-control' type="search" value="750"><br>
+                <p class='bg-dark'>влажность</p>
+                <input id="vlag" class='form-control' type="search" value="70"><br>
+            </div>
+        </div>
+    </div>
+    <div class='container p-2'>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: rgb(0, 153, 255)">
+            </colgroup>
+            <tr>
+                <th id="fase">фаза</th">
+                <th>тип</th>
+                <th>зав. номер</th>
+                <th>дата изг.</th>
+            </tr>
+            <tr>
+                <td id="fase1">А</td>
+                <td> <input id="type_A" class='form-control' type="search" value="ЗНОЛ-СЭЩ-6-0,5/3-50/100 У2"></td>
+                <td> <input id="nomer_A" class='form-control' type="search" value="1111"></td>
+                <td> <input id="year_A" class='form-control' type="date" value="2013-06-01"></td>
+            </tr>
+            <tr id='B'>
+                <td>Б</td>
+                <td> <input id="type_B" class='form-control' type="search" value="ЗНОЛ-СЭЩ-6-0,5/3-50/100 У2"></td>
+                <td> <input id="nomer_B" class='form-control' type="search" value="1112"></td>
+                <td> <input id="year_B" class='form-control' type="date" value="2013-06-01"></td>
+            </tr>
+            <tr id='C'>
+                <td>C</td>
+                <td> <input id="type_C" class='form-control' type="search" value="ЗНОЛ-СЭЩ-6-0,5/3-50/100 У2"></td>
+                <td> <input id="nomer_C" class='form-control' type="search" value="1113"></td>
+                <td> <input id="year_C" class='form-control' type="date" value="2013-06-01"></td>
+            </tr>
+        </table><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: rgb(0, 153, 255)">
+            </colgroup>
+            <tr>
+                <th id="fase_R">фаза</th>
+                <th>ВН (Мом)</th>
+                <th>НН (Мом)</th>
+                <th>ННд (Мом)</th>
+            </tr>
+            <tr>
+                <td id="fase_R1">A</td>
+                <td> <input id="R_BH_A" class='form-control' type="number" value="7000"></td>
+                <td> <input id="R_HH_A" class='form-control' type="number" value="7000"></td>
+                <td> <input id="R_HHd_A" class='form-control' type="number" value="6000"></td>
+            </tr>
+            <tr id="R_B">
+                <td>B</td>
+                <td> <input id="R_BH_B" class='form-control' type="number" value="7000"></td>
+                <td> <input id="R_HH_B" class='form-control' type="number" value="7000"></td>
+                <td> <input id="R_HHd_B" class='form-control' type="number" value="6000"></td>
+            </tr>
+            <tr id="R_C">
+                <td>C</td>
+                <td> <input id="R_BH_C" class='form-control' type="number" value="7000"></td>
+                <td> <input id="R_HH_C" class='form-control' type="number" value="7000"></td>
+                <td> <input id="R_HHd_C" class='form-control' type="number" value="6000"></td>
+            </tr>
+        </table><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(153, 0, 255)">
+            </colgroup>
+            <tr>
+                <th>температура измеренная</th>
+                <th>температура приведенния</th>
+                <th>разность</th>
+            </tr>
+            <tr>
+                <td> <input id="Tizm" class='form-control' type="number" onchange="temp_dif()" value="15"></td>
+                <td> <input id="Tzav" class='form-control' type="number" onchange="temp_dif()" value="20"></td>
+                <td> <input id="Traz" class='form-control' type="number" value="-5"></td>
+            </tr>
+        </table><br>
+        <button class="btn btn-info  btn-block" onclick="priv_R()">привести к заводской температуре</button><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: rgb(0, 153, 255)">
+            </colgroup>
+            <tr>
+                <th id="fase_pr">фаза</th>
+                <th>ВН прив (Мом)</th>
+                <th>НН прив (Мом)</th>
+                <th>ННд прив (Мом)</th>
+            </tr>
+            <tr>
+                <td id="fase_pr1">A</td>
+                <td> <input id="R_BH_A_pr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R_HH_A_pr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R_HHd_A_pr" class='form-control' type="number" value="0"></td>
+            </tr>
+            <tr id="R_B_pr">
+                <td>B</td>
+                <td> <input id="R_BH_B_pr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R_HH_B_pr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R_HHd_B_pr" class='form-control' type="number" value="0"></td>
+            </tr>
+            <tr id="R_C_pr">
+                <td>C</td>
+                <td> <input id="R_BH_C_pr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R_HH_C_pr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R_HHd_C_pr" class='form-control' type="number" value="0"></td>
+            </tr>
+        </table><br>
+
+        <button class="btn btn-info btn-lg btn-block" onclick="generate()">создать протокол</button>
+    </div>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script>
+        function sel_vid() {
+            // профилакт, вновь ввод,
+            let selind = document.getElementById('vid').options.selectedIndex;
+            let vid = document.getElementById('vid').options[selind].value;
+            return vid
+        }
+
+        function getDateNow(id_elemement) {
+            let elem_out = document.getElementById(id_elemement)
+            let todayDate = new Date();
+            let currYear = todayDate.getFullYear();
+            let currMonth = todayDate.getMonth() + 1;
+            let currDay = todayDate.getDate();
+            // document.write("Сегодняшняя дата: ");
+            // console.log( typeof currDay)
+            if (currMonth < 10) {
+                currMonth = "0" + currMonth
+            }
+            if (currDay < 10) {
+                currDay = "0" + currDay
+            }
+            elem_out.value = (currYear + "-" + currMonth + "-" + currDay)
+        }
+
+
+        function percent(a, b, c) {
+            a = parseFloat(a.replace(',', '.'))
+            b = parseFloat(b.replace(',', '.'))
+            c = parseFloat(c.replace(',', '.'))
+            max_num = Math.max(a, b, c)
+            min_num = Math.min(a, b, c)
+            if (max_num && min_num) {
+                let percent_num = (max_num / min_num) * 100 - 100
+                return percent_num.toFixed(2)
+            } else {
+                return '0'
+            }
+        }
+        // console.log(percent('0.100','-','0,098'))
+
+        function view_percent(id1, id2, id3, id4) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let c = document.getElementById(id3).value
+            let d = document.getElementById(id4)
+            if (a && b && c) {
+                return d.value = percent(a, b, c)
+            }
+            else {
+                d.value = '0'
+            }
+        }
+
+        function mesto_val() {
+            // получаем индекс выбранного элемента ОРУ, Камера1Т
+            let selind = document.getElementById('mesto').options.selectedIndex;
+            let mesto = document.getElementById('mesto').options[selind].value;
+            console.log(mesto)
+            return mesto
+        }
+
+        function temp_dif() {
+            // raznost temperature
+            let Tizm = document.getElementById('Tizm').value
+            let Tzav = document.getElementById('Tzav').value
+            let Traz = document.getElementById('Traz')
+            let raz = Tizm - Tzav
+            Traz.value = raz
+            if ((raz > 30) || (raz < -30)) {
+                Traz.style.backgroundColor = 'red'
+            } else {
+                Traz.style.backgroundColor = 'white'
+            }
+            return raz
+        }
+
+        function privTempR(Rinput, Rview) {
+            // приводим к температуре R
+            let raz = temp_dif()
+            Rinput = Number(document.getElementById(Rinput).value)
+            let Rout = 0
+            if ((raz >= -30) && (raz <= 30)) {
+                let index = Math.abs(raz)
+                if (raz >= 0) {
+                    Rout = Math.trunc(Rinput * k2[index])
+                } else {
+                    Rout = Math.trunc(Rinput / k2[index])
+                }
+            }
+            document.getElementById(Rview).value = Rout
+        }
+
+        function priv_R() {
+            privTempR('R_BH_A', 'R_BH_A_pr')
+            privTempR('R_HH_A', 'R_HH_A_pr')
+            privTempR('R_HHd_A', 'R_HHd_A_pr')
+
+            privTempR('R_BH_B', 'R_BH_B_pr')
+            privTempR('R_HH_B', 'R_HH_B_pr')
+            privTempR('R_HHd_B', 'R_HHd_B_pr')
+
+            privTempR('R_BH_C', 'R_BH_C_pr')
+            privTempR('R_HH_C', 'R_HH_C_pr')
+            privTempR('R_HHd_C', 'R_HHd_C_pr')
+        }
+
+        function sel_num_faz() {
+            let selind = document.getElementById('num_faz').options.selectedIndex;
+            let vid = document.getElementById('num_faz').options[selind].value;
+            return vid
+        }
+
+        function hide_elem() {
+            for (let i = 0; i < arguments.length; i++) {
+                // alert( "Привет, " + arguments[i] );
+                document.getElementById(arguments[i]).hidden = true;
+            }
+        }
+
+        function show_elem() {
+            for (let i = 0; i < arguments.length; i++) {
+                // alert( "Привет, " + arguments[i] );
+                document.getElementById(arguments[i]).hidden = false;
+            }
+        }
+
+        function sel_type() {
+            let sel = sel_num_faz()
+            if (sel == '2') {
+                show_elem('fase', 'fase1', 'fase_R', 'fase_R1', 'fase_pr', 'fase_pr1', 'B', 'R_B', 'R_B_pr', 'C', 'R_C', 'R_C_pr')
+                hide_elem('B', 'R_B', 'R_B_pr')
+            } else if (sel == '3') {
+                show_elem('fase', 'fase1', 'fase_R', 'fase_R1', 'fase_pr', 'fase_pr1', 'B', 'R_B', 'R_B_pr', 'C', 'R_C', 'R_C_pr')
+                hide_elem('fase', 'fase1', 'fase_R', 'fase_R1', 'fase_pr', 'fase_pr1', 'B', 'R_B', 'R_B_pr', 'C', 'R_C', 'R_C_pr')
+            } else {
+                show_elem('fase', 'fase1', 'fase_R', 'fase_R1', 'fase_pr', 'fase_pr1', 'B', 'R_B', 'R_B_pr', 'C', 'R_C', 'R_C_pr')
+            }
+
+        }
+
+        function generate() {
+            // generate protocol
+            // получить элемент
+            let num = document.getElementById('num').value
+            let date = document.getElementById('date').value.split("-").reverse().join(".")
+
+            let vid = sel_vid()
+            let sel = sel_num_faz()
+
+            function sel_proizv() {
+                let selind = document.getElementById('proizv').options.selectedIndex;
+                let proizv = document.getElementById('proizv').options[selind].value;
+                return proizv
+            }
+            let proizv = sel_proizv()
+
+            function sel_district() {
+                let selind = document.getElementById('district').options.selectedIndex;
+                let district = document.getElementById('district').options[selind].value;
+                return district
+            }
+            let district = sel_district()
+
+            let name = document.getElementById('name').value
+            let mesto = mesto_val()
+
+            let temp = document.getElementById('temp').value
+            let pres = document.getElementById('pres').value
+            let vlag = document.getElementById('vlag').value
+
+            let type_A = document.getElementById('type_A').value
+            let nomer_A = document.getElementById('nomer_A').value
+            let year_A = document.getElementById('year_A').value.split("-").reverse().join(".")
+
+            let type_B = document.getElementById('type_B').value
+            let nomer_B = document.getElementById('nomer_B').value
+            let year_B = document.getElementById('year_B').value.split("-").reverse().join(".")
+
+            let type_C = document.getElementById('type_C').value
+            let nomer_C = document.getElementById('nomer_C').value
+            let year_C = document.getElementById('year_C').value.split("-").reverse().join(".")
+
+            let R_BH_A = document.getElementById('R_BH_A').value
+            let R_HH_A = document.getElementById('R_HH_A').value
+            let R_HHd_A = document.getElementById('R_HHd_A').value
+
+            let R_BH_B = document.getElementById('R_BH_B').value
+            let R_HH_B = document.getElementById('R_HH_B').value
+            let R_HHd_B = document.getElementById('R_HHd_B').value
+
+            let R_BH_C = document.getElementById('R_BH_C').value
+            let R_HH_C = document.getElementById('R_HH_C').value
+            let R_HHd_C = document.getElementById('R_HHd_C').value
+
+            let Tizm = document.getElementById('Tizm').value
+            let Tzav = document.getElementById('Tzav').value
+
+            let R_BH_A_pr = document.getElementById('R_BH_A_pr').value
+            let R_HH_A_pr = document.getElementById('R_HH_A_pr').value
+            let R_HHd_A_pr = document.getElementById('R_HHd_A_pr').value
+
+            let R_BH_B_pr = document.getElementById('R_BH_B_pr').value
+            let R_HH_B_pr = document.getElementById('R_HH_B_pr').value
+            let R_HHd_B_pr = document.getElementById('R_HHd_B_pr').value
+
+            let R_BH_C_pr = document.getElementById('R_BH_C_pr').value
+            let R_HH_C_pr = document.getElementById('R_HH_C_pr').value
+            let R_HHd_C_pr = document.getElementById('R_HHd_C_pr').value
+
+            const doc = new Document();
+            const paragraph0 = new Paragraph();
+            // чтоб вставить картинку ее надо перевести в басе64 формат +размер 620х140
+            doc.createImage(pic, 600, 140)
+
+            const table4 = doc.createTable(1, 2);
+            table4.getCell(0, 0).addContent(new Paragraph('Свидетельство о регистрации электролаборатории №045-2018 от «22» июня 2018года.'))
+            table4.getCell(0, 0).addContent(new Paragraph("Срок действия Свидетельства установлен"))
+            table4.getCell(0, 0).addContent(new Paragraph("до «22» июня 2021 года."))
+            table4.getCell(0, 1).addContent(new Paragraph('1.Перепечатка, размножение протокола без разрешения ЭЛ (или Заказчика) запрещена.'))
+            table4.getCell(0, 1).addContent(new Paragraph('2.Протокол испытаний распространяется только на данную электроустановку.'))
+            table4.getCell(0, 1).addContent(new Paragraph('3.Исправления, дополнения в протоколе не допускаются.'))
+            table4.getCell(0, 1).addContent(new Paragraph('4.Копии протоколов хранятся в ЭЛ.'))
+
+            doc.addParagraph(paragraph0);
+            const paragraph = new Paragraph();
+            const institutionText = new TextRun(`                                 ПРОТОКОЛ № ${num}`).bold().size(35);
+            paragraph.addRun(institutionText);
+            doc.addParagraph(paragraph);
+            doc.addParagraph(paragraph0);
+
+            const paragraph2 = new Paragraph();
+            // const paragraph2_1 = new Paragraph();
+            const institutionText2 = new TextRun("                                                     ")
+            const institutionText21 = new TextRun("испытание трансформатора напряжения").bold().size(22).underline();
+            // const institutionText23 = new TextRun("                ")
+            // const institutionText24 = new TextRun("напряжением переменного тока промышленной частоты").bold().size(28).underline();
+            paragraph2.addRun(institutionText2);
+            paragraph2.addRun(institutionText21);
+            // paragraph2_1.addRun(institutionText23);
+            // paragraph2_1.addRun(institutionText24);
+            doc.addParagraph(paragraph2);
+            // doc.addParagraph(paragraph2_1);
+            doc.addParagraph(paragraph0);
+
+            const paragraph3 = new Paragraph();
+            const institutionText3 = new TextRun("                                                                              ")
+            const institutionText31 = new TextRun(`от ${date}.`).size(22).underline();
+            paragraph3.addRun(institutionText3);
+            paragraph3.addRun(institutionText31);
+            doc.addParagraph(paragraph3);
+            doc.addParagraph(paragraph0);
+
+            const paragraph4 = new Paragraph();
+            const institutionText4 = new TextRun("1. Электроустановка: ").size(22)
+            const institutionText41 = new TextRun(`${name}                                           .`).size(22).underline();
+            paragraph4.addRun(institutionText4);
+            paragraph4.addRun(institutionText41);
+            doc.addParagraph(paragraph4);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph5 = new Paragraph();
+            const institutionText5 = new TextRun("                                                     ")
+            const institutionText51 = new TextRun(`(Наименование и адрес)`).size(18).underline();
+            paragraph5.addRun(institutionText5);
+            paragraph5.addRun(institutionText51);
+            doc.addParagraph(paragraph5);
+            doc.addParagraph(paragraph0);
+
+            const paragraph6 = new Paragraph();
+            const institutionText6 = new TextRun("2. Заказчик:").size(22)
+            const institutionText61 = new TextRun(` ${district}                                                                                                                         .`).size(22).underline();
+            paragraph6.addRun(institutionText6);
+            paragraph6.addRun(institutionText61);
+            doc.addParagraph(paragraph6);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph7 = new Paragraph();
+            const institutionText7 = new TextRun("                                                     ")
+            const institutionText71 = new TextRun(`(Организация)`).size(18).underline();
+            paragraph7.addRun(institutionText7);
+            paragraph7.addRun(institutionText71);
+            doc.addParagraph(paragraph7);
+            doc.addParagraph(paragraph0);
+
+            const paragraph8 = new Paragraph();
+            const institutionText8 = new TextRun("3. Вид и цель проведения испытания: ").size(22)
+            const institutionText81 = new TextRun(`${vid}`).size(22).underline();
+            paragraph8.addRun(institutionText8);
+            paragraph8.addRun(institutionText81);
+            doc.addParagraph(paragraph8);
+            doc.addParagraph(paragraph0);
+
+            const paragraph9 = new Paragraph();
+            const institutionText9 = new TextRun("4. Место проведения испытания: ").size(22)
+            const institutionText91 = new TextRun(`${mesto}`).size(22).underline();
+            paragraph9.addRun(institutionText9);
+            paragraph9.addRun(institutionText91);
+            doc.addParagraph(paragraph9);
+            doc.addParagraph(paragraph0);
+
+            const paragraph10 = new Paragraph();
+            const paragraph101 = new Paragraph();
+            const institutionText10 = new TextRun(`5. Климатические условия проведения испытаний: `).size(22)
+            const institutionText101 = new TextRun(`    Температура: ${temp}${'\u2103'} Давление: ${pres} мм рт. ст., влажность ${vlag} %`).size(22);
+            paragraph10.addRun(institutionText10);
+            paragraph101.addRun(institutionText101);
+            doc.addParagraph(paragraph10);
+            doc.addParagraph(paragraph101);
+            doc.addParagraph(paragraph0);
+
+            const paragraph11 = new Paragraph();
+            const institutionText11 = new TextRun("6. Паспортные данные: ").size(22)
+            paragraph11.addRun(institutionText11);
+            doc.addParagraph(paragraph11)
+            doc.addParagraph(paragraph0);
+
+            if (sel == '2') {
+                const tablePasport = doc.createTable(3, 4);
+                tablePasport.getCell(0, 0).addContent(new Paragraph(` Фаза  `));
+                tablePasport.getCell(0, 1).addContent(new Paragraph(` Тип  `));
+                tablePasport.getCell(0, 2).addContent(new Paragraph(` Заводской номер `));
+                tablePasport.getCell(0, 3).addContent(new Paragraph(` Дата изготовления `));
+
+                tablePasport.getCell(1, 0).addContent(new Paragraph(` А  `));
+                tablePasport.getCell(1, 1).addContent(new Paragraph(`${type_A}  `));
+                tablePasport.getCell(1, 2).addContent(new Paragraph(` ${nomer_A} `));
+                tablePasport.getCell(1, 3).addContent(new Paragraph(` ${year_A} `));
+
+                tablePasport.getCell(2, 0).addContent(new Paragraph(` C  `));
+                tablePasport.getCell(2, 1).addContent(new Paragraph(`${type_C}  `));
+                tablePasport.getCell(2, 2).addContent(new Paragraph(` ${nomer_C} `));
+                tablePasport.getCell(2, 3).addContent(new Paragraph(` ${year_C} `));
+
+                doc.addParagraph(paragraph0)
+            } else if (sel == '3') {
+                const tablePasport = doc.createTable(2, 4);
+                tablePasport.getCell(0, 0).addContent(new Paragraph(` Фаза  `));
+                tablePasport.getCell(0, 1).addContent(new Paragraph(` Тип  `));
+                tablePasport.getCell(0, 2).addContent(new Paragraph(` Заводской номер `));
+                tablePasport.getCell(0, 3).addContent(new Paragraph(` Дата изготовления `));
+
+                tablePasport.getCell(1, 0).addContent(new Paragraph(` трехфазный  `));
+                tablePasport.getCell(1, 1).addContent(new Paragraph(`${type_A}  `));
+                tablePasport.getCell(1, 2).addContent(new Paragraph(` ${nomer_A} `));
+                tablePasport.getCell(1, 3).addContent(new Paragraph(` ${year_A} `));
+
+                doc.addParagraph(paragraph0)
+            } else {
+                const tablePasport = doc.createTable(4, 4);
+                tablePasport.getCell(0, 0).addContent(new Paragraph(` Фаза  `));
+                tablePasport.getCell(0, 1).addContent(new Paragraph(` Тип  `));
+                tablePasport.getCell(0, 2).addContent(new Paragraph(` Заводской номер `));
+                tablePasport.getCell(0, 3).addContent(new Paragraph(` Дата изготовления `));
+
+                tablePasport.getCell(1, 0).addContent(new Paragraph(` А  `));
+                tablePasport.getCell(1, 1).addContent(new Paragraph(`${type_A}  `));
+                tablePasport.getCell(1, 2).addContent(new Paragraph(` ${nomer_A} `));
+                tablePasport.getCell(1, 3).addContent(new Paragraph(` ${year_A} `));
+
+                tablePasport.getCell(2, 0).addContent(new Paragraph(` B  `));
+                tablePasport.getCell(2, 1).addContent(new Paragraph(`${type_B}  `));
+                tablePasport.getCell(2, 2).addContent(new Paragraph(` ${nomer_B} `));
+                tablePasport.getCell(2, 3).addContent(new Paragraph(` ${year_B} `));
+
+                tablePasport.getCell(3, 0).addContent(new Paragraph(` C  `));
+                tablePasport.getCell(3, 1).addContent(new Paragraph(`${type_C}  `));
+                tablePasport.getCell(3, 2).addContent(new Paragraph(` ${nomer_C} `));
+                tablePasport.getCell(3, 3).addContent(new Paragraph(` ${year_C} `));
+
+                doc.addParagraph(paragraph0)
+            }
+
+
+
+            const paragraph12 = new Paragraph();
+            const institutionText12 = new TextRun("7. Нормативная документация (НД) и допуски показателей по НД: ").size(22)
+            paragraph12.addRun(institutionText12);
+            doc.addParagraph(paragraph12)
+            // doc.addParagraph(paragraph0);
+
+            const table = doc.createTable(5, 5);
+            table.getCell(0, 0).addContent(new Paragraph('Измеряемый параметр'));
+            table.getCell(0, 1).addContent(new Paragraph('Нормативная документация'));
+            table.getCell(0, 2).addContent(new Paragraph('Значение показателей'));
+            table.getCell(0, 3).addContent(new Paragraph('НД на метод испытания'));
+            table.getCell(0, 4).addContent(new Paragraph('Допуск показателя по НД'));
+
+            table.getCell(1, 0).addContent(new Paragraph('Измерение характеристик изоляции'));
+            table.getCell(1, 1).addContent(new Paragraph('Заводские или каталожные данные,ПУЭ 1.8.16. п.2'))
+            table.getCell(1, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(1, 3).addContent(new Paragraph('МВИ-2'));
+            table.getCell(1, 4).addContent(new Paragraph('Допустимые сопротивления изоляции, МОм, основная изоляция не менее 100, вторичные обмотки 50'));
+
+            table.getCell(2, 0).addContent(new Paragraph('Измерение сопротивления обмоток постоянному току'));
+            table.getCell(2, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п. 4'));
+            table.getCell(2, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(2, 3).addContent(new Paragraph('МВИ-18'));
+            table.getCell(2, 4).addContent(new Paragraph('Расхождение не более 2 % между разными фазами на одинаковых ответвлениях'));
+
+            table.getCell(3, 0).addContent(new Paragraph('Измерение коэффициента трансформации'));
+            table.getCell(3, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п.5'));
+            table.getCell(3, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(3, 3).addContent(new Paragraph('МВИ-12'));
+            table.getCell(3, 4).addContent(new Paragraph('Расхождение не более 2 % между разными фазами на одинаковых ответвлениях и от исходных данных'));
+
+            table.getCell(4, 0).addContent(new Paragraph('Измерение потерь холостого хода'));
+            table.getCell(4, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п.7'));
+            table.getCell(4, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(4, 3).addContent(new Paragraph('МВИ-13'));
+            table.getCell(4, 4).addContent(new Paragraph('В соответствии с паспортом'));
+            // doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            const paragraph13 = new Paragraph();
+            const institutionText13 = new TextRun("8. Испытания проведены согласно требованиям ПУЭ и «Объёмов и норм испытаний», РД 34.45-51.300-97 в соответствии с ПВИ-16").size(22)
+            paragraph13.addRun(institutionText13);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph13)
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph14 = new Paragraph();
+            const institutionText14 = new TextRun("9. Результаты испытаний:").size(22)
+            paragraph14.addRun(institutionText14);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph14)
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+
+
+            const paragraphR = new Paragraph();
+            const institutionTextR = new TextRun(`9.1.Характеристика изоляции обмоток при температуре ${Tizm}${'\u2103'}`).size(22)
+            paragraphR.addRun(institutionTextR);
+            doc.addParagraph(paragraphR)
+            // doc.addParagraph(paragraph0);
+
+            if (sel == '2') {
+                const table1 = doc.createTable(3, 4);
+
+                table1.getCell(0, 0).addContent(new Paragraph(' Фаза '));
+                table1.getCell(0, 1).addContent(new Paragraph(' R (ВН-НН+ННд+к) '));
+                table1.getCell(0, 2).addContent(new Paragraph('R (НН-ВН+ННд+к) '));
+                table1.getCell(0, 3).addContent(new Paragraph('R (ННд-ВН+НН+к)'));
+
+                table1.getCell(1, 0).addContent(new Paragraph(` A `));
+                table1.getCell(1, 1).addContent(new Paragraph(` ${R_BH_A} `));
+                table1.getCell(1, 2).addContent(new Paragraph(` ${R_HH_A} `));
+                table1.getCell(1, 3).addContent(new Paragraph(` ${R_HHd_A} `));
+
+                table1.getCell(2, 0).addContent(new Paragraph(` C `));
+                table1.getCell(2, 1).addContent(new Paragraph(` ${R_BH_C} `));
+                table1.getCell(2, 2).addContent(new Paragraph(` ${R_HH_C} `));
+                table1.getCell(2, 3).addContent(new Paragraph(` ${R_HHd_C} `));
+                doc.addParagraph(paragraph0);
+            } else if (sel == '3') {
+                const table1 = doc.createTable(2, 4);
+
+                table1.getCell(0, 0).addContent(new Paragraph(' Фаза '));
+                table1.getCell(0, 1).addContent(new Paragraph(' R (ВН-НН+ННд+к) '));
+                table1.getCell(0, 2).addContent(new Paragraph('R (НН-ВН+ННд+к) '));
+                table1.getCell(0, 3).addContent(new Paragraph('R (ННд-ВН+НН+к)'));
+
+                table1.getCell(1, 0).addContent(new Paragraph(` трехфазный `));
+                table1.getCell(1, 1).addContent(new Paragraph(` ${R_BH_A} `));
+                table1.getCell(1, 2).addContent(new Paragraph(` ${R_HH_A} `));
+                table1.getCell(1, 3).addContent(new Paragraph(` ${R_HHd_A} `));
+                doc.addParagraph(paragraph0);
+            } else {
+                const table1 = doc.createTable(4, 4);
+
+                table1.getCell(0, 0).addContent(new Paragraph(' Фаза '));
+                table1.getCell(0, 1).addContent(new Paragraph(' R (ВН-НН+ННд+к) '));
+                table1.getCell(0, 2).addContent(new Paragraph('R (НН-ВН+ННд+к) '));
+                table1.getCell(0, 3).addContent(new Paragraph('R (ННд-ВН+НН+к)'));
+
+                table1.getCell(1, 0).addContent(new Paragraph(` A `));
+                table1.getCell(1, 1).addContent(new Paragraph(` ${R_BH_A} `));
+                table1.getCell(1, 2).addContent(new Paragraph(` ${R_HH_A} `));
+                table1.getCell(1, 3).addContent(new Paragraph(` ${R_HHd_A} `));
+
+                table1.getCell(2, 0).addContent(new Paragraph(` B `));
+                table1.getCell(2, 1).addContent(new Paragraph(` ${R_BH_B} `));
+                table1.getCell(2, 2).addContent(new Paragraph(` ${R_HH_B} `));
+                table1.getCell(2, 3).addContent(new Paragraph(` ${R_HHd_B} `));
+
+                table1.getCell(3, 0).addContent(new Paragraph(` C `));
+                table1.getCell(3, 1).addContent(new Paragraph(` ${R_BH_C} `));
+                table1.getCell(3, 2).addContent(new Paragraph(` ${R_HH_C} `));
+                table1.getCell(3, 3).addContent(new Paragraph(` ${R_HHd_C} `));
+                doc.addParagraph(paragraph0);
+            }
+
+
+            const paragraphRpr = new Paragraph();
+            const institutionTextRpr = new TextRun(`9.2. Характеристика изоляции обмоток приведенная к температуре ${Tzav}${'\u2103'}`).size(22)
+            paragraphRpr.addRun(institutionTextRpr);
+            doc.addParagraph(paragraphRpr)
+            // doc.addParagraph(paragraph0);
+            if (sel == '2') {
+                const tableRpr = doc.createTable(3, 4);
+
+                tableRpr.getCell(0, 0).addContent(new Paragraph(' Фаза '));
+                tableRpr.getCell(0, 1).addContent(new Paragraph(' R (ВН-НН+ННд+к) '));
+                tableRpr.getCell(0, 2).addContent(new Paragraph('R (НН-ВН+ННд+к) '));
+                tableRpr.getCell(0, 3).addContent(new Paragraph('R (ННд-ВН+НН+к)'));
+
+                tableRpr.getCell(1, 0).addContent(new Paragraph(` A `));
+                tableRpr.getCell(1, 1).addContent(new Paragraph(` ${R_BH_A_pr} `));
+                tableRpr.getCell(1, 2).addContent(new Paragraph(` ${R_HH_A_pr} `));
+                tableRpr.getCell(1, 3).addContent(new Paragraph(` ${R_HHd_A_pr} `));
+
+                tableRpr.getCell(2, 0).addContent(new Paragraph(` C `));
+                tableRpr.getCell(2, 1).addContent(new Paragraph(` ${R_BH_C_pr} `));
+                tableRpr.getCell(2, 2).addContent(new Paragraph(` ${R_HH_C_pr} `));
+                tableRpr.getCell(2, 3).addContent(new Paragraph(` ${R_HHd_C_pr} `));
+                doc.addParagraph(paragraph0);
+            } else if (sel == '3') {
+                const tableRpr = doc.createTable(2, 4);
+
+                tableRpr.getCell(0, 0).addContent(new Paragraph(' Фаза '));
+                tableRpr.getCell(0, 1).addContent(new Paragraph(' R (ВН-НН+ННд+к) '));
+                tableRpr.getCell(0, 2).addContent(new Paragraph('R (НН-ВН+ННд+к) '));
+                tableRpr.getCell(0, 3).addContent(new Paragraph('R (ННд-ВН+НН+к)'));
+
+                tableRpr.getCell(1, 0).addContent(new Paragraph(` трехфазный `));
+                tableRpr.getCell(1, 1).addContent(new Paragraph(` ${R_BH_A_pr} `));
+                tableRpr.getCell(1, 2).addContent(new Paragraph(` ${R_HH_A_pr} `));
+                tableRpr.getCell(1, 3).addContent(new Paragraph(` ${R_HHd_A_pr} `));
+                doc.addParagraph(paragraph0);
+            } else {
+                const tableRpr = doc.createTable(4, 4);
+
+                tableRpr.getCell(0, 0).addContent(new Paragraph(' Фаза '));
+                tableRpr.getCell(0, 1).addContent(new Paragraph(' R (ВН-НН+ННд+к) '));
+                tableRpr.getCell(0, 2).addContent(new Paragraph('R (НН-ВН+ННд+к) '));
+                tableRpr.getCell(0, 3).addContent(new Paragraph('R (ННд-ВН+НН+к)'));
+
+                tableRpr.getCell(1, 0).addContent(new Paragraph(` A `));
+                tableRpr.getCell(1, 1).addContent(new Paragraph(` ${R_BH_A_pr} `));
+                tableRpr.getCell(1, 2).addContent(new Paragraph(` ${R_HH_A_pr} `));
+                tableRpr.getCell(1, 3).addContent(new Paragraph(` ${R_HHd_A_pr} `));
+
+                tableRpr.getCell(2, 0).addContent(new Paragraph(` B `));
+                tableRpr.getCell(2, 1).addContent(new Paragraph(` ${R_BH_B_pr} `));
+                tableRpr.getCell(2, 2).addContent(new Paragraph(` ${R_HH_B_pr} `));
+                tableRpr.getCell(2, 3).addContent(new Paragraph(` ${R_HHd_B_pr} `));
+
+                tableRpr.getCell(3, 0).addContent(new Paragraph(` C `));
+                tableRpr.getCell(3, 1).addContent(new Paragraph(` ${R_BH_C_pr} `));
+                tableRpr.getCell(3, 2).addContent(new Paragraph(` ${R_HH_C_pr} `));
+                tableRpr.getCell(3, 3).addContent(new Paragraph(` ${R_HHd_C_pr} `));
+                doc.addParagraph(paragraph0);
+            }
+
+            const paragraph17 = new Paragraph();
+            const institutionText17 = new TextRun("10. Перечень применяемого испытательного оборудования (ИО) и средств измерений (СИ)").size(22)
+            paragraph17.addRun(institutionText17);
+            doc.addParagraph(paragraph17)
+            // doc.addParagraph(paragraph0);
+
+            const table2 = doc.createTable(7, 7);
+            table2.getCell(0, 0).addContent(new Paragraph());
+            table2.getCell(0, 1).addContent(new Paragraph('Тип ИО и СИ'));
+            table2.getCell(0, 2).addContent(new Paragraph('Заводской номер'));
+            table2.getCell(0, 3).addContent(new Paragraph('Диапазон измерений'));
+            table2.getCell(0, 4).addContent(new Paragraph('Погрешность СИ'));
+            table2.getCell(0, 5).addContent(new Paragraph('№ аттестата или свидетельства о поверке'));
+            table2.getCell(0, 6).addContent(new Paragraph('Дата очередной поверки'));
+
+            table2.getCell(1, 0).addContent(new Paragraph('Измеритель сопротивлений'));
+            table2.getCell(1, 1).addContent(new Paragraph('ПФИ-24-10Р'));
+            table2.getCell(1, 2).addContent(new Paragraph('1111'));
+            table2.getCell(1, 3).addContent(new Paragraph('0,1-2000 Ом'));
+            table2.getCell(1, 4).addContent(new Paragraph('± 0,5%'));
+            table2.getCell(1, 5).addContent(new Paragraph(nomer_svid_pfi));
+            table2.getCell(1, 6).addContent(new Paragraph(data_svid_pfi));
+
+            table2.getCell(2, 0).addContent(new Paragraph('Измеритель коэффициента трансформации '));
+            table2.getCell(2, 1).addContent(new Paragraph('КОЭФФИЦИЕНТ-3'));
+            table2.getCell(2, 2).addContent(new Paragraph('6'));
+            table2.getCell(2, 3).addContent(new Paragraph('Кт 1-10, 10-100, 100-1000, 1000-10000'));
+            table2.getCell(2, 4).addContent(new Paragraph('± 0,5%'));
+            table2.getCell(2, 5).addContent(new Paragraph(nomer_svid_ktr));
+            table2.getCell(2, 6).addContent(new Paragraph(data_svid_ktr));
+
+            table2.getCell(3, 0).addContent(new Paragraph('Психрометр'));
+            table2.getCell(3, 1).addContent(new Paragraph('ВИТ-2'));
+            table2.getCell(3, 2).addContent(new Paragraph('23'));
+            table2.getCell(3, 3).addContent(new Paragraph(`15-40${'\u2103'}`));
+            table2.getCell(3, 4).addContent(new Paragraph(''));
+            table2.getCell(3, 5).addContent(new Paragraph(nomer_svid_psih));
+            table2.getCell(3, 6).addContent(new Paragraph(data_svid_psih));
+
+            table2.getCell(4, 0).addContent(new Paragraph('Барометр-анероид'));
+            table2.getCell(4, 1).addContent(new Paragraph('БАММ-1'));
+            table2.getCell(4, 2).addContent(new Paragraph('5809'));
+            table2.getCell(4, 3).addContent(new Paragraph('80 до 106 кПА,ц.д.0,1 кПа'));
+            table2.getCell(4, 4).addContent(new Paragraph(''));
+            table2.getCell(4, 5).addContent(new Paragraph(nomer_svid_bar));
+            table2.getCell(4, 6).addContent(new Paragraph(data_svid_bar));
+
+            table2.getCell(5, 0).addContent(new Paragraph('Термометр'));
+            table2.getCell(5, 1).addContent(new Paragraph('КШ14/23'));
+            table2.getCell(5, 2).addContent(new Paragraph('309'));
+            table2.getCell(5, 3).addContent(new Paragraph(`-30+40${'\u2103'}`));
+            table2.getCell(5, 4).addContent(new Paragraph(''));
+            table2.getCell(5, 5).addContent(new Paragraph(nomer_svid_term));
+            table2.getCell(5, 6).addContent(new Paragraph(data_svid_term));
+
+            table2.getCell(6, 0).addContent(new Paragraph('Мегаомметр'));
+            table2.getCell(6, 1).addContent(new Paragraph('ЭСО 210/3-Г'));
+            table2.getCell(6, 2).addContent(new Paragraph('18596'));
+            table2.getCell(6, 3).addContent(new Paragraph('0 – 10000 Мом'));
+            table2.getCell(6, 4).addContent(new Paragraph('± 5%'));
+            table2.getCell(6, 5).addContent(new Paragraph(nomer_svid_meg));
+            table2.getCell(6, 6).addContent(new Paragraph(data_svid_meg));
+
+
+            doc.addParagraph(paragraph0);
+
+            const paragraph18 = new Paragraph();
+            const institutionText18 = new TextRun("Замечание: Нет.").size(22)
+            paragraph18.addRun(institutionText18);
+            doc.addParagraph(paragraph18)
+            doc.addParagraph(paragraph0);
+
+            const paragraph19 = new Paragraph();
+            const institutionText19 = new TextRun("Заключение: электрооборудование соответствует требованиям РД 34.45-51.300-97 п.8.1.1 и пригодно к эксплуатации.").size(22)
+            paragraph19.addRun(institutionText19);
+            doc.addParagraph(paragraph19)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph20 = new Paragraph();
+            const institutionText20 = new TextRun(`    Испытание произвёл: ________________________/${proizv}/`).size(22)
+            paragraph20.addRun(institutionText20);
+            doc.addParagraph(paragraph20)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            const paragraph21 = new Paragraph();
+            const institutionText2_1 = new TextRun("    Начальник ОИЗП: ___________________________/Смирнов П. В./").size(22)
+            paragraph21.addRun(institutionText2_1);
+            doc.addParagraph(paragraph21)
+            // doc.addParagraph(paragraph0);
+
+
+            let page_of_doc = new TextRun("                     2")
+
+            const doc1 = new Document();
+            const table3 = doc1.createTable(2, 4);
+            table3.getCell(0, 0).addContent(new Paragraph(' Свидетельство о регистрации .'))
+            table3.getCell(0, 1).addContent(new Paragraph('  Номер протокола .'))
+            table3.getCell(0, 2).addContent(new Paragraph('   Страница протокола .'))
+            table3.getCell(0, 3).addContent(new Paragraph(' Всего страниц в протоколе .'))
+
+            table3.getCell(1, 0).addContent(new Paragraph('         ЭЛ №045-2018  '))
+            table3.getCell(1, 1).addContent(new Paragraph(`         ${num}     `))
+            table3.getCell(1, 2).addContent(new Paragraph(new TextRun("                 ").pageNumber()))
+            table3.getCell(1, 3).addContent(new Paragraph(page_of_doc))
+
+
+
+            doc.Footer.createParagraph(table3)
+
+            const packer = new Packer();
+            packer.toBlob(doc).then(blob => {
+                console.log(blob);
+                saveAs(blob, `${num} ${name}.docx`);
+                console.log("Document created successfully");
+            });
+        }
+    </script>
+</body>
+
+</html>

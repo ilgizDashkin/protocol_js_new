@@ -1,0 +1,13 @@
+чтоб создать проект прочти как создовать приложения электрон
+https://electronjs.org/docs/tutorial/first-app
+
+чтоб скомпилировать exe сначала установи 
+# For use from the CLI 
+npm install electron-packager -g
+
+потом набери команду (если надо обновить добавь  --overwrite)
+electron-packager .
+
+electron-packager . --overwrite
+
+electron-packager . --all будут собраны приложения для линукс и винды

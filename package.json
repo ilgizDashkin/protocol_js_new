@@ -1,0 +1,15 @@
+{
+  "name": "protocol_net",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "dashkinia",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^7.1.3",
+    "electron-packager": "^14.1.1"
+  }
+}

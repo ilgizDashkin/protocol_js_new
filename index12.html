@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>создатель протоколов</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="index_docx.js"></script>
+    <script src="FileSaver.js"></script>
+    <!-- это картинка в басе64 формате -->
+    <script src="pic2.js"></script>
+    <script src="poverka.js"></script>
+    <script>
+        //температурные коэфициенты
+        const k1 = {
+            0: 1,
+            1: 1.03,
+            2: 1.06,
+            3: 1.09,
+            4: 1.12,
+            5: 1.15,
+            6: 1.18,
+            7: 1.21,
+            8: 1.21 * 1.03,
+            9: 1.21 * 1.09,
+            10: 1.31,
+            11: 1.31 * 1.03,
+            12: 1.31 * 1.06,
+            13: 1.31 * 1.09,
+            14: 1.31 * 1.12,
+            15: 1.51,
+            16: 1.51 * 1.03,
+            17: 1.51 * 1.06,
+            18: 1.51 * 1.09,
+            19: 1.51 * 1.12,
+            20: 1.75,
+            21: 1.75 * 1.03,
+            22: 1.75 * 1.06,
+            23: 1.75 * 1.09,
+            24: 1.75 * 1.12,
+            25: 2,
+            26: 2 * 1.03,
+            27: 2 * 1.06,
+            28: 2 * 1.09,
+            29: 2 * 1.12,
+            30: 2.3
+        }
+        // console.log(k1)
+        const k2 = {
+            0: 1,
+            1: 1.04,
+            2: 1.08,
+            3: 1.13,
+            4: 1.17,
+            5: 1.22,
+            6: 1.28,
+            7: 1.34,
+            8: 1.34 * 1.04,
+            9: 1.34 * 1.08,
+            10: 1.5,
+            11: 1.5 * 1.04,
+            12: 1.5 * 1.08,
+            13: 1.5 * 1.13,
+            14: 1.5 * 1.17,
+            15: 1.84,
+            16: 1.84 * 1.04,
+            17: 1.84 * 1.08,
+            18: 1.84 * 1.13,
+            19: 1.84 * 1.17,
+            20: 2.25,
+            21: 2.25 * 1.04,
+            22: 2.25 * 1.08,
+            23: 2.25 * 1.13,
+            24: 2.25 * 1.17,
+            25: 2.75,
+            26: 2.75 * 1.04,
+            27: 2.75 * 1.08,
+            28: 2.75 * 1.13,
+            29: 2.75 * 1.17,
+            30: 3.4
+        }
+        console.log(k2)
+    </script>
+</head>
+
+<body class="bg-success" onload="getDateNow('date')">
+    <div class="container text-center text-white p-3">
+        <input type="button" class="btn btn-danger btn-lg btn-block" value='назад'
+            onclick="javascript:window.location ='index.html'" />
+        <h2>протокол на трансформатор 110/10кВ или 110/6кВ</h2>
+        <p class='bg-dark'>наименование</p>
+        <input id="name" class='form-control' type="search" value='ПС «Булгаково» 1Т'><br>
+        <div class="row">
+            <div class="col-md-4">
+                <p class='bg-dark'>номер протокола</p>
+                <input id="num" class='form-control' type="search" value="123-ПС"><br>
+                <p class='bg-dark'>дата</p>
+                <input id="date" class='form-control' type="date"><br>
+                <p class='bg-dark'>Заказчик</p>
+                <select id="district" class="form-control bg-warning">
+                    <option VALUE="ОПС">ОПС</option>
+                    <option VALUE="ЗГП">ЗГП</option>
+                    <option VALUE="СГП">СГП</option>
+                    <option VALUE="ДГП">ДГП</option>
+                    <option VALUE="ЮГП">ЮГП</option>
+                </select><br>
+                <p class='bg-dark'>напряжение обмоток HH</p>
+                <select id="u_kl" onchange="transformatorU()" class="form-control bg-warning">
+                    <option VALUE="10.5">10.5кВ</option>
+                    <option VALUE="11">11кВ</option>
+                    <option VALUE="6.3">6.3кВ</option>
+                    <option VALUE="6.6">6.6кВ</option>
+                </select>
+                <p id='u_select' class='bg-dark'></p>
+            </div>
+            <div class="col-md-4">
+                <p class='bg-dark'>вид испытания</p>
+                <select id="vid" onchange="sel_vid()" class="form-control bg-warning">
+                    <option VALUE="периодические">периодические</option>
+                    <option VALUE="приемосдаточные">приемосдаточные</option>
+                    <option VALUE="эксплуатационные">эксплуатационные</option>
+                </select><br>
+                <p class='bg-dark'>место испытания</p>
+                <select id="mesto" class="form-control bg-warning">
+                    <option VALUE="ОРУ-110кВ">ОРУ-110кВ</option>
+                    <option VALUE="Камера 1Т">Камера 1Т</option>
+                    <option VALUE="Камера 2Т">Камера 2Т</option>
+                </select><br>
+                <p class='bg-dark'>зав номер</p>
+                <input id="mark" class='form-control' type="search" value="8323"><br>
+                <p class='bg-dark'>тип</p>
+                <input id="type_tm" class='form-control' type="search" value="ТДТН-16000/110-76У1"><br>
+            </div>
+            <div class="col-md-4">
+                <p class='bg-dark'>кто произвёл</p>
+                <select id="proizv" class="form-control bg-warning">
+                    <option VALUE="Дашкин И.А.">Дашкин И.А.</option>
+                    <option VALUE="Габбасов А.Р.">Габбасов А.Р.</option>
+                    <option VALUE="Гафуров З.С.">Гафуров З.С.</option>
+                    <option VALUE="Михайлов Д.Е.">Михайлов Д.Е.</option>
+                    <option VALUE="Абдуллин Р.Р.">Абдуллин Р.Р.</option>
+                    <option VALUE="Перов В.М.">Перов В.М.</option>
+                    <option VALUE="Вачаев В.В.">Вачаев В.В.</option>
+                    <option VALUE="Зайнутдинов Р.Р.">Зайнутдинов Р.Р.</option>
+                    <option VALUE="Баландин С.М.">Баландин С.М.</option>
+                    <option VALUE="Карпов В.Г.">Карпов В.Г.</option>
+                    <option VALUE="Исянбаев Ф.Ф.">Исянбаев Ф.Ф.</option>
+                    <option VALUE="Фадеев И.Н.">Фадеев И.Н.</option>
+                </select><br>
+                <p class='bg-dark'>температура</p>
+                <input id="temp" class='form-control' type="search" value="+1"><br>
+                <p class='bg-dark'>давление</p>
+                <input id="pres" class='form-control' type="search" value="750"><br>
+                <p class='bg-dark'>влажность</p>
+                <input id="vlag" class='form-control' type="search" value="70"><br>
+            </div>
+        </div>
+    </div>
+    <div class='container p-2'>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+            </colgroup>
+            <tr>
+                <th>схема и группа соединения </th>
+                <th>год выпуска</th>
+                <th>Uk</th>
+            </tr>
+            <tr>
+                <td> <input id="schema" class='form-control' type="search" value="Ун/Д-11"></td>
+                <td> <input id="year" class='form-control' type="date" value="1977-06-01"></td>
+                <td> <input id="U_K" class='form-control' type="search" value="10.67"></td>
+            </tr>
+        </table><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(0, 153, 255)">
+                <col style="background-color: rgb(153, 0, 255)">
+            </colgroup>
+            <tr>
+                <th>Схема</th>
+                <th>R15 (МОм)</th>
+                <th>R60 (МОм)</th>
+                <th>К абс</th>
+                <th>Cx (pF)</th>
+                <th>Tg (%)</th>
+            </tr>
+            <tr>
+                <td>ВН</td>
+                <td> <input id="R15BH" class='form-control' type="number"
+                        onchange='view_k_abs("R15BH","R60BH","KabcBH")' value="5000"></td>
+                <td> <input id="R60BH" class='form-control' type="search"
+                        onchange='view_k_abs("R15BH","R60BH","KabcBH")' value="8000"></td>
+                <td> <input id="KabcBH" class='form-control' type="number" value="1.6"></td>
+                <td> <input id="CxBH" class='form-control' type="number" value="9590"></td>
+                <td> <input id="TgBH" class='form-control' type="number" value="0.233"></td>
+            </tr>
+            <tr>
+                <td>HН</td>
+                <td> <input id="R15HH" class='form-control' type="number"
+                        onchange='view_k_abs("R15HH","R60HH","KabcHH")' value="7200"></td>
+                <td> <input id="R60HH" class='form-control' type="number"
+                        onchange='view_k_abs("R15HH","R60HH","KabcHH")' value="10000"></td>
+                <td> <input id="KabcHH" class='form-control' type="number" value="1.4"></td>
+                <td> <input id="CxHH" class='form-control' type="number" value="14504"></td>
+                <td> <input id="TgHH" class='form-control' type="number" value="0.266"></td>
+            </tr>
+            <tr>
+                <td>BH+HН</td>
+                <td> <input id="R15HH_BH" class='form-control' type="number"
+                        onchange='view_k_abs("R15HH_BH","R60HH_BH","KabcHH_BH")' value="4000"></td>
+                <td> <input id="R60HH_BH" class='form-control' type="number" onchange='view_k_abs("R15HH_BH","R60HH_BH","KabcHH_BH")' value="6000"></td>
+                <td> <input id="KabcHH_BH" class='form-control' type="number" value="1.5"></td>
+                <td> <input id="CxHH_BH" class='form-control' type="number" value="12578"></td>
+                <td> <input id="TgHH_BH" class='form-control' type="number" value="0.260"></td>
+            </tr>
+        </table><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+            </colgroup>
+            <tr>
+                <th>температура обмоток измеренная</th>
+                <th>температура обмоток заводская</th>
+                <th>разность</th>
+            </tr>
+            <tr>
+                <td> <input id="Tizm" class='form-control' type="number" onchange="temp_dif()" value="25"></td>
+                <td> <input id="Tzav" class='form-control' type="number" onchange="temp_dif()" value="20"></td>
+                <td> <input id="Traz" class='form-control' type="number" value="5"></td>
+            </tr>
+        </table><br>
+        <button class="btn btn-info  btn-block" onclick="priv_R_Tg()">привести к заводской температуре</button><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: rgb(153, 0, 255)">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: rgb(153, 0, 255)">
+                <col style="background-color: rgb(0, 153, 255)">
+            </colgroup>
+            <tr>
+                <th>Схема</th>
+                <th>R15 (МОм) прив</th>
+                <th>R60 (МОм) прив</th>
+                <th>Tg (%) прив</th>
+                <th>R15 (МОм) зав</th>
+                <th>R60 (МОм) зав</th>
+                <th>Tg (%) зав</th>
+                <th>Cx (pF) зав</th>
+            </tr>
+            <tr>
+                <td>ВН</td>
+                <td> <input id="R15BHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R60BHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="TgBHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R15BHzav" class='form-control' type="number" value="3920"></td>
+                <td> <input id="R60BHzav" class='form-control' type="number" value="6100"></td>
+                <td> <input id="TgBHzav" class='form-control' type="number" value="0.235"></td>
+                <td> <input id="CxBHzav" class='form-control' type="number" value="8795"></td>
+            </tr>
+            <tr>
+                <td>HН</td>
+                <td> <input id="R15HHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R60HHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="TgHHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R15HHzav" class='form-control' type="number" value="4990"></td>
+                <td> <input id="R60HHzav" class='form-control' type="number" value="10300"></td>
+                <td> <input id="TgHHzav" class='form-control' type="number" value="0.287"></td>
+                <td> <input id="CxHHzav" class='form-control' type="number" value="8268"></td>
+            </tr>
+            <tr>
+                <td>BH+HН</td>
+                <td> <input id="R15HH_BHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R60HH_BHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="TgHH_BHpr" class='form-control' type="number" value="0"></td>
+                <td> <input id="R15HH_BHzav" class='form-control' type="number" value="3500"></td>
+                <td> <input id="R60HH_BHzav" class='form-control' type="number" value="5250"></td>
+                <td> <input id="TgHH_BHzav" class='form-control' type="number" value="0.5"></td>
+                <td> <input id="CxHH_BHzav" class='form-control' type="number" value="12500"></td>
+            </tr>
+        </table><br>
+        <table>
+            <colgroup>
+                <col style="background-color: yellow">
+                <col style="background-color: rgb(187, 255, 0)">
+                <col style="background-color: rgb(255, 94, 0)">
+                <col style="background-color: rgb(153, 0, 255)">
+                <col style="background-color: rgb(0, 153, 255)">
+            </colgroup>
+            <tr>
+                <th>Схема</th>
+                <th>R15 (%) изменение</th>
+                <th>R60 (%) изменение</th>
+                <th>Tg (%) изменение</th>
+                <th>Cx (%) изменение</th>
+            </tr>
+            <tr>
+                <td>ВН</td>
+                <td> <input id="R15BHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="R60BHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="TgBHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="CxBHproc" class='form-control' type="number" value="0"></td>
+            </tr>
+            <tr>
+                <td>HН1</td>
+                <td> <input id="R15HHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="R60HHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="TgHHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="CxHHproc" class='form-control' type="number" value="0"></td>
+            </tr>           
+            <tr>
+                <td>BH+HН</td>
+                <td> <input id="R15HH_BHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="R60HH_BHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="TgHH_BHproc" class='form-control' type="number" value="0"></td>
+                <td> <input id="CxHH_BHproc" class='form-control' type="number" value="0"></td>
+            </tr>
+        </table><br>
+        <div id='full_isp' hidden>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(0, 255, 136)">
+                </colgroup>
+                <tr>
+                    <th>BH</th>
+                    <th>R АB, Ом</th>
+                    <th>R BC, Ом</th>
+                    <th>R АC, Ом</th>
+                    <th>%</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td> <input id="R_AB1" class='form-control' type="number"
+                            onchange='view_percent("R_AB1","R_BC1","R_AC1","R_PR1")' value="0.802"></td>
+                    <td> <input id="R_BC1" class='form-control' type="number"
+                            onchange='view_percent("R_AB1","R_BC1","R_AC1","R_PR1")' value="0.801"></td>
+                    <td> <input id="R_AC1" class='form-control' type="number"
+                            onchange='view_percent("R_AB1","R_BC1","R_AC1","R_PR1")' value="0.801"></td>
+                    <td> <input id="R_PR1" class='form-control' type="number" value="0.12"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td> <input id="R_AB2" class='form-control' type="number"
+                            onchange='view_percent("R_AB2","R_BC2","R_AC2","R_PR2")' value="0.764"></td>
+                    <td> <input id="R_BC2" class='form-control' type="number"
+                            onchange='view_percent("R_AB2","R_BC2","R_AC2","R_PR2")' value="0.763"></td>
+                    <td> <input id="R_AC2" class='form-control' type="number"
+                            onchange='view_percent("R_AB2","R_BC2","R_AC2","R_PR2")' value="0.763"></td>
+                    <td> <input id="R_PR2" class='form-control' type="number" value="0.13"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td> <input id="R_AB3" class='form-control' type="number"
+                            onchange='view_percent("R_AB3","R_BC3","R_AC3","R_PR3")' value="0.743"></td>
+                    <td> <input id="R_BC3" class='form-control' type="number"
+                            onchange='view_percent("R_AB3","R_BC3","R_AC3","R_PR3")' value="0.742"></td>
+                    <td> <input id="R_AC3" class='form-control' type="number"
+                            onchange='view_percent("R_AB3","R_BC3","R_AC3","R_PR3")' value="0.742"></td>
+                    <td> <input id="R_PR3" class='form-control' type="number" value="0.13"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td> <input id="R_AB4" class='form-control' type="number"
+                            onchange='view_percent("R_AB4","R_BC4","R_AC4","R_PR4")' value="0.723"></td>
+                    <td> <input id="R_BC4" class='form-control' type="number"
+                            onchange='view_percent("R_AB4","R_BC4","R_AC4","R_PR4")' value="0.722"></td>
+                    <td> <input id="R_AC4" class='form-control' type="number"
+                            onchange='view_percent("R_AB4","R_BC4","R_AC4","R_PR4")' value="0.722"></td>
+                    <td> <input id="R_PR4" class='form-control' type="number" value="0.13"></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td> <input id="R_AB5" class='form-control' type="number"
+                            onchange='view_percent("R_AB5","R_BC5","R_AC5","R_PR5")' value="0.704"></td>
+                    <td> <input id="R_BC5" class='form-control' type="number"
+                            onchange='view_percent("R_AB5","R_BC5","R_AC5","R_PR5")' value="0.703"></td>
+                    <td> <input id="R_AC5" class='form-control' type="number"
+                            onchange='view_percent("R_AB5","R_BC5","R_AC5","R_PR5")' value="0.703"></td>
+                    <td> <input id="R_PR5" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td> <input id="R_AB6" class='form-control' type="number"
+                            onchange='view_percent("R_AB6","R_BC6","R_AC6","R_PR6")' value="0.694"></td>
+                    <td> <input id="R_BC6" class='form-control' type="number"
+                            onchange='view_percent("R_AB6","R_BC6","R_AC6","R_PR6")' value="0.693"></td>
+                    <td> <input id="R_AC6" class='form-control' type="number"
+                            onchange='view_percent("R_AB6","R_BC6","R_AC6","R_PR6")' value="0.693"></td>
+                    <td> <input id="R_PR6" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td> <input id="R_AB7" class='form-control' type="number"
+                            onchange='view_percent("R_AB7","R_BC7","R_AC7","R_PR7")' value="0.676"></td>
+                    <td> <input id="R_BC7" class='form-control' type="number"
+                            onchange='view_percent("R_AB7","R_BC7","R_AC7","R_PR7")' value="0.675"></td>
+                    <td> <input id="R_AC7" class='form-control' type="number"
+                            onchange='view_percent("R_AB7","R_BC7","R_AC7","R_PR7")' value="0.675"></td>
+                    <td> <input id="R_PR7" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td> <input id="R_AB8" class='form-control' type="number"
+                            onchange='view_percent("R_AB8","R_BC8","R_AC8","R_PR8")' value="0.658"></td>
+                    <td> <input id="R_BC8" class='form-control' type="number"
+                            onchange='view_percent("R_AB8","R_BC8","R_AC8","R_PR8")' value="0.657"></td>
+                    <td> <input id="R_AC8" class='form-control' type="number"
+                            onchange='view_percent("R_AB8","R_BC8","R_AC8","R_PR8")' value="0.657"></td>
+                    <td> <input id="R_PR8" class='form-control' type="number" value="0.15"></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td> <input id="R_AB9" class='form-control' type="number"
+                            onchange='view_percent("R_AB9","R_BC9","R_AC9","R_PR9")' value="0.644"></td>
+                    <td> <input id="R_BC9" class='form-control' type="number"
+                            onchange='view_percent("R_AB9","R_BC9","R_AC9","R_PR9")' value="0.643"></td>
+                    <td> <input id="R_AC9" class='form-control' type="number"
+                            onchange='view_percent("R_AB9","R_BC9","R_AC9","R_PR9")' value="0.643"></td>
+                    <td> <input id="R_PR9" class='form-control' type="number" value="0.15"></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td> <input id="R_AB10" class='form-control' type="number"
+                            onchange='view_percent("R_AB10","R_BC10","R_AC10","R_PR10")' value="0.628"></td>
+                    <td> <input id="R_BC10" class='form-control' type="number"
+                            onchange='view_percent("R_AB10","R_BC10","R_AC10","R_PR10")' value="0.627"></td>
+                    <td> <input id="R_AC10" class='form-control' type="number"
+                            onchange='view_percent("R_AB10","R_BC10","R_AC10","R_PR10")' value="0.627"></td>
+                    <td> <input id="R_PR10" class='form-control' type="number" value="0.15"></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td> <input id="R_AB11" class='form-control' type="number"
+                            onchange='view_percent("R_AB11","R_BC11","R_AC11","R_PR11")' value="0.644"></td>
+                    <td> <input id="R_BC11" class='form-control' type="number"
+                            onchange='view_percent("R_AB11","R_BC11","R_AC11","R_PR11")' value="0.643"></td>
+                    <td> <input id="R_AC11" class='form-control' type="number"
+                            onchange='view_percent("R_AB11","R_BC11","R_AC11","R_PR11")' value="0.643"></td>
+                    <td> <input id="R_PR11" class='form-control' type="number" value="0.15"></td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td> <input id="R_AB12" class='form-control' type="number"
+                            onchange='view_percent("R_AB12","R_BC12","R_AC12","R_PR12")' value="0.658"></td>
+                    <td> <input id="R_BC12" class='form-control' type="number"
+                            onchange='view_percent("R_AB12","R_BC12","R_AC12","R_PR12")' value="0.658"></td>
+                    <td> <input id="R_AC12" class='form-control' type="number"
+                            onchange='view_percent("R_AB12","R_BC12","R_AC12","R_PR12")' value="0.658"></td>
+                    <td> <input id="R_PR12" class='form-control' type="number" value="0.15"></td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td> <input id="R_AB13" class='form-control' type="number"
+                            onchange='view_percent("R_AB13","R_BC13","R_AC13","R_PR13")' value="0.676"></td>
+                    <td> <input id="R_BC13" class='form-control' type="number"
+                            onchange='view_percent("R_AB13","R_BC13","R_AC13","R_PR13")' value="0.675"></td>
+                    <td> <input id="R_AC13" class='form-control' type="number"
+                            onchange='view_percent("R_AB13","R_BC13","R_AC13","R_PR13")' value="0.675"></td>
+                    <td> <input id="R_PR13" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td> <input id="R_AB14" class='form-control' type="number"
+                            onchange='view_percent("R_AB14","R_BC14","R_AC14","R_PR14")' value="0.694"></td>
+                    <td> <input id="R_BC14" class='form-control' type="number"
+                            onchange='view_percent("R_AB14","R_BC14","R_AC14","R_PR14")' value="0.693"></td>
+                    <td> <input id="R_AC14" class='form-control' type="number"
+                            onchange='view_percent("R_AB14","R_BC14","R_AC14","R_PR14")' value="0.693"></td>
+                    <td> <input id="R_PR14" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td> <input id="R_AB15" class='form-control' type="number"
+                            onchange='view_percent("R_AB15","R_BC15","R_AC15","R_PR15")' value="0.704"></td>
+                    <td> <input id="R_BC15" class='form-control' type="number"
+                            onchange='view_percent("R_AB15","R_BC15","R_AC15","R_PR15")' value="0.703"></td>
+                    <td> <input id="R_AC15" class='form-control' type="number"
+                            onchange='view_percent("R_AB15","R_BC15","R_AC15","R_PR15")' value="0.703"></td>
+                    <td> <input id="R_PR15" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td> <input id="R_AB16" class='form-control' type="number"
+                            onchange='view_percent("R_AB16","R_BC16","R_AC16","R_PR16")' value="0.723"></td>
+                    <td> <input id="R_BC16" class='form-control' type="number"
+                            onchange='view_percent("R_AB16","R_BC16","R_AC16","R_PR16")' value="0.722"></td>
+                    <td> <input id="R_AC16" class='form-control' type="number"
+                            onchange='view_percent("R_AB16","R_BC16","R_AC16","R_PR16")' value="0.722"></td>
+                    <td> <input id="R_PR16" class='form-control' type="number" value="0.13"></td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td> <input id="R_AB17" class='form-control' type="number"
+                            onchange='view_percent("R_AB17","R_BC17","R_AC17","R_PR17")' value="0.743"></td>
+                    <td> <input id="R_BC17" class='form-control' type="number"
+                            onchange='view_percent("R_AB17","R_BC17","R_AC17","R_PR17")' value="0.742"></td>
+                    <td> <input id="R_AC17" class='form-control' type="number"
+                            onchange='view_percent("R_AB17","R_BC17","R_AC17","R_PR17")' value="0.742"></td>
+                    <td> <input id="R_PR17" class='form-control' type="number" value="0.13"></td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td> <input id="R_AB18" class='form-control' type="number"
+                            onchange='view_percent("R_AB18","R_BC18","R_AC18","R_PR18")' value="0.764"></td>
+                    <td> <input id="R_BC18" class='form-control' type="number"
+                            onchange='view_percent("R_AB18","R_BC18","R_AC18","R_PR18")' value="0.763"></td>
+                    <td> <input id="R_AC18" class='form-control' type="number"
+                            onchange='view_percent("R_AB18","R_BC18","R_AC18","R_PR18")' value="0.763"></td>
+                    <td> <input id="R_PR18" class='form-control' type="number" value="0.13"></td>
+                </tr>
+                <tr>
+                    <td>19</td>
+                    <td> <input id="R_AB19" class='form-control' type="number"
+                            onchange='view_percent("R_AB19","R_BC19","R_AC19","R_PR19")' value="0.802"></td>
+                    <td> <input id="R_BC19" class='form-control' type="number"
+                            onchange='view_percent("R_AB19","R_BC19","R_AC19","R_PR19")' value="0.801"></td>
+                    <td> <input id="R_AC19" class='form-control' type="number"
+                            onchange='view_percent("R_AB19","R_BC19","R_AC19","R_PR19")' value="0.801"></td>
+                    <td> <input id="R_PR19" class='form-control' type="number" value="0.12"></td>
+                </tr>
+            </table><br>
+            <button class="btn btn-info  btn-block" onclick="mirror_view()">отзеркалить относительно 10
+                положения</button><br>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(0, 255, 136)">
+                </colgroup>
+                <tr>
+                    <th>HH</th>
+                    <th>R ab, Ом</th>
+                    <th>R bc, Ом</th>
+                    <th>R ac, Ом</th>
+                    <th>%</th>
+                </tr>
+                <tr>
+                    <td>-</td>
+                    <td> <input id="R_a01" class='form-control' type="number"
+                            onchange='view_percent("R_a01","R_b01","R_c01","R_PR_HH")' value="0.001661"></td>
+                    <td> <input id="R_b01" class='form-control' type="number"
+                            onchange='view_percent("R_a01","R_b01","R_c01","R_PR_HH")' value="0.001650"></td>
+                    <td> <input id="R_c01" class='form-control' type="number"
+                            onchange='view_percent("R_a01","R_b01","R_c01","R_PR_HH")' value="0.001651"></td>
+                    <td> <input id="R_PR_HH" class='form-control' type="number" value="0.66"></td>
+                </tr>               
+            </table><br>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(0, 255, 136)">
+                </colgroup>
+                <tr>
+                    <th>РПН</th>
+                    <th>K АB/ab</th>
+                    <th>K BC/bc</th>
+                    <th>K АC/ac</th>
+                    <th>%</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td> <input id="K_AB1" class='form-control' type="number"
+                            onchange='view_percent("K_AB1","K_BC1","K_AC1","K_PR1")' value="12.78"></td>
+                    <td> <input id="K_BC1" class='form-control' type="number"
+                            onchange='view_percent("K_AB1","K_BC1","K_AC1","K_PR1")' value="12.80"></td>
+                    <td> <input id="K_AC1" class='form-control' type="number"
+                            onchange='view_percent("K_AB1","K_BC1","K_AC1","K_PR1")' value="12.79"></td>
+                    <td> <input id="K_PR1" class='form-control' type="number" value="0.15"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td> <input id="K_AB2" class='form-control' type="number"
+                            onchange='view_percent("K_AB2","K_BC2","K_AC2","K_PR2")' value="12.61"></td>
+                    <td> <input id="K_BC2" class='form-control' type="number"
+                            onchange='view_percent("K_AB2","K_BC2","K_AC2","K_PR2")' value="12.63"></td>
+                    <td> <input id="K_AC2" class='form-control' type="number"
+                            onchange='view_percent("K_AB2","K_BC2","K_AC2","K_PR2")' value="12.60"></td>
+                    <td> <input id="K_PR2" class='form-control' type="number" value="0.23"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td> <input id="K_AB3" class='form-control' type="number"
+                            onchange='view_percent("K_AB3","K_BC3","K_AC3","K_PR3")' value="12.38"></td>
+                    <td> <input id="K_BC3" class='form-control' type="number"
+                            onchange='view_percent("K_AB3","K_BC3","K_AC3","K_PR3")' value="12.40"></td>
+                    <td> <input id="K_AC3" class='form-control' type="number"
+                            onchange='view_percent("K_AB3","K_BC3","K_AC3","K_PR3")' value="12.39"></td>
+                    <td> <input id="K_PR3" class='form-control' type="number" value="0.16"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td> <input id="K_AB4" class='form-control' type="number"
+                            onchange='view_percent("K_AB4","K_BC4","K_AC4","K_PR4")' value="12.17"></td>
+                    <td> <input id="K_BC4" class='form-control' type="number"
+                            onchange='view_percent("K_AB4","K_BC4","K_AC4","K_PR4")' value="12.19"></td>
+                    <td> <input id="K_AC4" class='form-control' type="number"
+                            onchange='view_percent("K_AB4","K_BC4","K_AC4","K_PR4")' value="12.18"></td>
+                    <td> <input id="K_PR4" class='form-control' type="number" value="0.08"></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td> <input id="K_AB5" class='form-control' type="number"
+                            onchange='view_percent("K_AB5","K_BC5","K_AC5","K_PR5")' value="11.99"></td>
+                    <td> <input id="K_BC5" class='form-control' type="number"
+                            onchange='view_percent("K_AB5","K_BC5","K_AC5","K_PR5")' value="12.00"></td>
+                    <td> <input id="K_AC5" class='form-control' type="number"
+                            onchange='view_percent("K_AB5","K_BC5","K_AC5","K_PR5")' value="11.99"></td>
+                    <td> <input id="K_PR5" class='form-control' type="number" value="0.08"></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td> <input id="K_AB6" class='form-control' type="number"
+                            onchange='view_percent("K_AB6","K_BC6","K_AC6","K_PR6")' value="11.86"></td>
+                    <td> <input id="K_BC6" class='form-control' type="number"
+                            onchange='view_percent("K_AB6","K_BC6","K_AC6","K_PR6")' value="11.88"></td>
+                    <td> <input id="K_AC6" class='form-control' type="number"
+                            onchange='view_percent("K_AB6","K_BC6","K_AC6","K_PR6")' value="11.87"></td>
+                    <td> <input id="K_PR6" class='form-control' type="number" value="0.16"></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td> <input id="K_AB7" class='form-control' type="number"
+                            onchange='view_percent("K_AB7","K_BC7","K_AC7","K_PR7")' value="11.68"></td>
+                    <td> <input id="K_BC7" class='form-control' type="number"
+                            onchange='view_percent("K_AB7","K_BC7","K_AC7","K_PR7")' value="11.70"></td>
+                    <td> <input id="K_AC7" class='form-control' type="number"
+                            onchange='view_percent("K_AB7","K_BC7","K_AC7","K_PR7")' value="11.69"></td>
+                    <td> <input id="K_PR7" class='form-control' type="number" value="0.17"></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td> <input id="K_AB8" class='form-control' type="number"
+                            onchange='view_percent("K_AB8","K_BC8","K_AC8","K_PR8")' value="11.43"></td>
+                    <td> <input id="K_BC8" class='form-control' type="number"
+                            onchange='view_percent("K_AB8","K_BC8","K_AC8","K_PR8")' value="11.45"></td>
+                    <td> <input id="K_AC8" class='form-control' type="number"
+                            onchange='view_percent("K_AB8","K_BC8","K_AC8","K_PR8")' value="11.44"></td>
+                    <td> <input id="K_PR8" class='form-control' type="number" value="0.17"></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td> <input id="K_AB9" class='form-control' type="number"
+                            onchange='view_percent("K_AB9","K_BC9","K_AC9","K_PR9")' value="11.16"></td>
+                    <td> <input id="K_BC9" class='form-control' type="number"
+                            onchange='view_percent("K_AB9","K_BC9","K_AC9","K_PR9")' value="11.18"></td>
+                    <td> <input id="K_AC9" class='form-control' type="number"
+                            onchange='view_percent("K_AB9","K_BC9","K_AC9","K_PR9")' value="11.17"></td>
+                    <td> <input id="K_PR9" class='form-control' type="number" value="0.17"></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td> <input id="K_AB10" class='form-control' type="number"
+                            onchange='view_percent("K_AB10","K_BC10","K_AC10","K_PR10")' value="10.96"></td>
+                    <td> <input id="K_BC10" class='form-control' type="number"
+                            onchange='view_percent("K_AB10","K_BC10","K_AC10","K_PR10")' value="10.98"></td>
+                    <td> <input id="K_AC10" class='form-control' type="number"
+                            onchange='view_percent("K_AB10","K_BC10","K_AC10","K_PR10")' value="10.97"></td>
+                    <td> <input id="K_PR10" class='form-control' type="number" value="0.18"></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td> <input id="K_AB11" class='form-control' type="number"
+                            onchange='view_percent("K_AB11","K_BC11","K_AC11","K_PR11")' value="10.78"></td>
+                    <td> <input id="K_BC11" class='form-control' type="number"
+                            onchange='view_percent("K_AB11","K_BC11","K_AC11","K_PR11")' value="10.80"></td>
+                    <td> <input id="K_AC11" class='form-control' type="number"
+                            onchange='view_percent("K_AB11","K_BC11","K_AC11","K_PR11")' value="10.79"></td>
+                    <td> <input id="K_PR11" class='form-control' type="number" value="0.18"></td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td> <input id="K_AB12" class='form-control' type="number"
+                            onchange='view_percent("K_AB12","K_BC12","K_AC12","K_PR12")' value="10.59"></td>
+                    <td> <input id="K_BC12" class='form-control' type="number"
+                            onchange='view_percent("K_AB12","K_BC12","K_AC12","K_PR12")' value="10.61"></td>
+                    <td> <input id="K_AC12" class='form-control' type="number"
+                            onchange='view_percent("K_AB12","K_BC12","K_AC12","K_PR12")' value="10.60"></td>
+                    <td> <input id="K_PR12" class='form-control' type="number" value="0.18"></td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td> <input id="K_AB13" class='form-control' type="number"
+                            onchange='view_percent("K_AB13","K_BC13","K_AC13","K_PR13")' value="10.37"></td>
+                    <td> <input id="K_BC13" class='form-control' type="number"
+                            onchange='view_percent("K_AB13","K_BC13","K_AC13","K_PR13")' value="10.39"></td>
+                    <td> <input id="K_AC13" class='form-control' type="number"
+                            onchange='view_percent("K_AB13","K_BC13","K_AC13","K_PR13")' value="10.38"></td>
+                    <td> <input id="K_PR13" class='form-control' type="number" value="0.19"></td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td> <input id="K_AB14" class='form-control' type="number"
+                            onchange='view_percent("K_AB14","K_BC14","K_AC14","K_PR14")' value="10.17"></td>
+                    <td> <input id="K_BC14" class='form-control' type="number"
+                            onchange='view_percent("K_AB14","K_BC14","K_AC14","K_PR14")' value="10.19"></td>
+                    <td> <input id="K_AC14" class='form-control' type="number"
+                            onchange='view_percent("K_AB14","K_BC14","K_AC14","K_PR14")' value="10.18"></td>
+                    <td> <input id="K_PR14" class='form-control' type="number" value="0.19"></td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td> <input id="K_AB15" class='form-control' type="number"
+                            onchange='view_percent("K_AB15","K_BC15","K_AC15","K_PR15")' value="9.97"></td>
+                    <td> <input id="K_BC15" class='form-control' type="number"
+                            onchange='view_percent("K_AB15","K_BC15","K_AC15","K_PR15")' value="9.99"></td>
+                    <td> <input id="K_AC15" class='form-control' type="number"
+                            onchange='view_percent("K_AB15","K_BC15","K_AC15","K_PR15")' value="9.98"></td>
+                    <td> <input id="K_PR15" class='form-control' type="number" value="0.20"></td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td> <input id="K_AB16" class='form-control' type="number"
+                            onchange='view_percent("K_AB16","K_BC16","K_AC16","K_PR16")' value="9.77"></td>
+                    <td> <input id="K_BC16" class='form-control' type="number"
+                            onchange='view_percent("K_AB16","K_BC16","K_AC16","K_PR16")' value="9.79"></td>
+                    <td> <input id="K_AC16" class='form-control' type="number"
+                            onchange='view_percent("K_AB16","K_BC16","K_AC16","K_PR16")' value="9.78"></td>
+                    <td> <input id="K_PR16" class='form-control' type="number" value="0.20"></td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td> <input id="K_AB17" class='form-control' type="number"
+                            onchange='view_percent("K_AB17","K_BC17","K_AC17","K_PR17")' value="9.57"></td>
+                    <td> <input id="K_BC17" class='form-control' type="number"
+                            onchange='view_percent("K_AB17","K_BC17","K_AC17","K_PR17")' value="9.59"></td>
+                    <td> <input id="K_AC17" class='form-control' type="number"
+                            onchange='view_percent("K_AB17","K_BC17","K_AC17","K_PR17")' value="9.58"></td>
+                    <td> <input id="K_PR17" class='form-control' type="number" value="0.20"></td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td> <input id="K_AB18" class='form-control' type="number"
+                            onchange='view_percent("K_AB18","K_BC18","K_AC18","K_PR18")' value="9.36"></td>
+                    <td> <input id="K_BC18" class='form-control' type="number"
+                            onchange='view_percent("K_AB18","K_BC18","K_AC18","K_PR18")' value="9.38"></td>
+                    <td> <input id="K_AC18" class='form-control' type="number"
+                            onchange='view_percent("K_AB18","K_BC18","K_AC18","K_PR18")' value="9.37"></td>
+                    <td> <input id="K_PR18" class='form-control' type="number" value="0.21"></td>
+                </tr>
+                <tr>
+                    <td>19</td>
+                    <td> <input id="K_AB19" class='form-control' type="number"
+                            onchange='view_percent("K_AB19","K_BC19","K_AC19","K_PR19")' value="9.16"></td>
+                    <td> <input id="K_BC19" class='form-control' type="number"
+                            onchange='view_percent("K_AB19","K_BC19","K_AC19","K_PR19")' value="9.18"></td>
+                    <td> <input id="K_AC19" class='form-control' type="number"
+                            onchange='view_percent("K_AB19","K_BC19","K_AC19","K_PR19")' value="9.17"></td>
+                    <td> <input id="K_PR19" class='form-control' type="number" value="0.21"></td>
+                </tr>
+            </table><br>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                    <col style="background-color: yellow">
+                </colgroup>
+                <tr>
+                    <th>схема</th>
+                    <th>U изм</th>
+                    <th>A изм</th>
+                    <th>P изм</th>
+                </tr>
+                <tr>
+                    <td>ab-bc</td>
+                    <td> <input id="U_A" class='form-control' type="number" value="220"></td>
+                    <td> <input id="A_A" class='form-control' type="number" value="0.0769"></td>
+                    <td> <input id="P_A" class='form-control' type="number" value="9.740"></td>
+                </tr>
+                <tr>
+                    <td>bc-ac</td>
+                    <td> <input id="U_B" class='form-control' type="number" value="220"></td>
+                    <td> <input id="A_B" class='form-control' type="number" value="0.0741"></td>
+                    <td> <input id="P_B" class='form-control' type="number" value="9.820"></td>
+                </tr>
+                <tr>
+                    <td>ac-ab</td>
+                    <td> <input id="U_C" class='form-control' type="number" value="220"></td>
+                    <td> <input id="A_C" class='form-control' type="number" value="0.1375"></td>
+                    <td> <input id="P_C" class='form-control' type="number" value="13.8"></td>
+                </tr>
+            </table><br>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                    <col style="background-color: yellow">
+                </colgroup>
+                <tr>
+                    <th>схема</th>
+                    <th>U зав</th>
+                    <th>A зав</th>
+                    <th>P зав</th>
+                </tr>
+                <tr>
+                    <td>ab-bc</td>
+                    <td> <input id="U_A_zav" class='form-control' type="number" value="220"></td>
+                    <td> <input id="A_A_zav" class='form-control' type="number" value="0.0770"></td>
+                    <td> <input id="P_A_zav" class='form-control' type="number" value="9.751"></td>
+                </tr>
+                <tr>
+                    <td>bc-ac</td>
+                    <td> <input id="U_B_zav" class='form-control' type="number" value="220"></td>
+                    <td> <input id="A_B_zav" class='form-control' type="number" value="0.0747"></td>
+                    <td> <input id="P_B_zav" class='form-control' type="number" value="9.855"></td>
+                </tr>
+                <tr>
+                    <td>ac-ab</td>
+                    <td> <input id="U_C_zav" class='form-control' type="number" value="220"></td>
+                    <td> <input id="A_C_zav" class='form-control' type="number" value="0.1126"></td>
+                    <td> <input id="P_C_zav" class='form-control' type="number" value="13.876"></td>
+                </tr>
+            </table><br>
+            <button class="btn btn-info  btn-block" onclick="calculate_XX()">расчет хх</button><br>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                    <col style="background-color: yellow">
+                </colgroup>
+                <tr>
+                    <th>соот. </th>
+                    <th>измеренные</th>
+                    <th>заводские</th>
+                    <th>норма<5%</th> </tr> <tr>
+                    <td>Рвс/аc</td>
+                    <td> <input id="Pbc_ac" class='form-control' type="number"
+                            onchange='view_percent_P_izm_zav("Pbc_ac","Pbc_ac_zav","Pbc_ac_pr")' value="0.711"></td>
+                    <td> <input id="Pbc_ac_zav" class='form-control' type="number"
+                            onchange='view_percent_P_izm_zav("Pbc_ac","Pbc_ac_zav","Pbc_ac_pr")' value="0.710"></td>
+                    <td> <input id="Pbc_ac_pr" class='form-control' type="number" value="0.14"></td>
+                </tr>
+                <tr>
+                    <td>Рaс/аb</td>
+                    <td> <input id="Pac_ab" class='form-control' type="number"
+                            onchange='view_percent_P_izm_zav("Pac_ab","Pac_ab_zav","Pac_ab_pr")' value="1.416"></td>
+                    <td> <input id="Pac_ab_zav" class='form-control' type="number"
+                            onchange='view_percent_P_izm_zav("Pac_ab","Pac_ab_zav","Pac_ab_pr")' value="1.423"></td>
+                    <td> <input id="Pac_ab_pr" class='form-control' type="number" value="0.49"></td>
+                </tr>
+                <tr>
+                    <td>Рab/bc</td>
+                    <td> <input id="Pab_bc" class='form-control' type="number"
+                            onchange='view_percent_P_izm_zav("Pab_bc","Pab_bc_zav","Pab_bc_pr")' value="0.991"></td>
+                    <td> <input id="Pab_bc_zav" class='form-control' type="number"
+                            onchange='view_percent_P_izm_zav("Pab_bc","Pab_bc_zav","Pab_bc_pr")' value="0.989"></td>
+                    <td> <input id="Pab_bc_pr" class='form-control' type="number" value="0.2"></td>
+                </tr>
+            </table><br>
+            <table>
+                <colgroup>
+                    <col style="background-color: yellow">
+                    <col style="background-color: rgb(187, 255, 0)">
+                    <col style="background-color: rgb(255, 94, 0)">
+                </colgroup>
+                <tr>
+                    <th>dP ab-bc</th>
+                    <th>dP bc-ac</th>
+                    <th>dP ас-ab</th>
+                </tr>
+                <tr>
+                    <td> <input id="P_A_delta" class='form-control' type="number" value="0.11"></td>
+                    <td> <input id="P_B_delta" class='form-control' type="number" value="0.35"></td>
+                    <td> <input id="P_C_delta" class='form-control' type="number" value="0.55"></td>
+                </tr>
+            </table><br>
+        </div>
+        <button class="btn btn-info btn-lg btn-block" onclick="generate()">создать протокол</button>
+    </div>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script>
+        function sel_vid() {
+            // профилакт, вновь ввод,
+            let selind = document.getElementById('vid').options.selectedIndex;
+            let vid = document.getElementById('vid').options[selind].value;
+            if (vid == 'периодические') {
+                document.getElementById('full_isp').hidden = true;
+            } else {
+                document.getElementById('full_isp').hidden = false;
+            }
+            return vid
+        }
+
+        function getDateNow(id_elemement) {
+            let elem_out = document.getElementById(id_elemement)
+            let todayDate = new Date();
+            let currYear = todayDate.getFullYear();
+            let currMonth = todayDate.getMonth() + 1;
+            let currDay = todayDate.getDate();
+            // document.write("Сегодняшняя дата: ");
+            // console.log( typeof currDay)
+            if (currMonth < 10) {
+                currMonth = "0" + currMonth
+            }
+            if (currDay < 10) {
+                currDay = "0" + currDay
+            }
+            elem_out.value = (currYear + "-" + currMonth + "-" + currDay)
+        }
+
+        function i_from_w(w, u) {
+            // ток из мощности для 110кВ u=115 и 10.5
+            let i = w / (u * 1.732)
+            return i.toFixed(1)
+        }
+
+        function i_from_w_HH1_HH2(w, u) {
+            // ток из мощности для 110кВ u=115 и 10.5
+            let i = w / (u * 1.732)
+            i = i / 2 //это для расщепленной обмотки ток делится
+            return i.toFixed(1)
+        }
+        // console.log(i_from_w(w_from_type(),115))
+
+        function w_from_type() {
+            // находим мощность из типа тр-ра
+            let type_tm = document.getElementById('type_tm').value
+            let w = '10000'
+            if (type_tm.length > 2) {
+                let w = type_tm.split('/')
+                if (w[0]) {
+                    return w[0].replace(/[^0-9]/g, '')
+                }
+            } else {
+                return w
+            }
+        }
+        // console.log(w_from_type())
+        // console.log(parseFloat('ТМГ- 63/6 У1'.replace(/[^0-9]/g, '')))
+
+        function percent(a, b, c) {
+            a = parseFloat(a.replace(',', '.'))
+            b = parseFloat(b.replace(',', '.'))
+            c = parseFloat(c.replace(',', '.'))
+            max_num = Math.max(a, b, c)
+            min_num = Math.min(a, b, c)
+            if (max_num && min_num) {
+                let percent_num = (max_num / min_num) * 100 - 100
+                return percent_num.toFixed(2)
+            } else {
+                return '0'
+            }
+        }
+        // console.log(percent('0.100','-','0,098'))
+
+        function view_percent(id1, id2, id3, id4) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let c = document.getElementById(id3).value
+            let d = document.getElementById(id4)
+            if (a && b && c) {
+                return d.value = percent(a, b, c)
+            }
+            else {
+                d.value = '0'
+            }
+        }
+
+        function view_k_abs(id1, id2, id3) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let c = document.getElementById(id3)
+            if (a && b) {
+                return c.value = (b / a).toFixed(3)
+            }
+            else {
+                c.value = '-'
+            }
+        }
+
+        function mesto_val() {
+            // получаем индекс выбранного элемента ОРУ, Камера1Т
+            let selind = document.getElementById('mesto').options.selectedIndex;
+            let mesto = document.getElementById('mesto').options[selind].value;
+            console.log(mesto)
+            return mesto
+        }
+
+        function temp_dif() {
+            // raznost temperature
+            let Tizm = document.getElementById('Tizm').value
+            let Tzav = document.getElementById('Tzav').value
+            let Traz = document.getElementById('Traz')
+            let raz = Tizm - Tzav
+            Traz.value = raz
+            if ((raz > 30) || (raz < -30)) {
+                Traz.style.backgroundColor = 'red'
+            } else {
+                Traz.style.backgroundColor = 'white'
+            }
+            return raz
+        }
+
+        function privTempR(Rinput, Rview) {
+            // приводим к температуре R
+            let raz = temp_dif()
+            Rinput = Number(document.getElementById(Rinput).value)
+            let Rout = 0
+            if ((raz >= -30) && (raz <= 30)) {
+                let index = Math.abs(raz)
+                if (raz >= 0) {
+                    Rout = Math.trunc(Rinput * k2[index])
+                } else {
+                    Rout = Math.trunc(Rinput / k2[index])
+                }
+            }
+            document.getElementById(Rview).value = Rout
+        }
+
+        function privTempTg(Tginput, Tgview) {
+            // приводим к температуре Tg
+            let raz = temp_dif()
+            Tginput = Number(document.getElementById(Tginput).value)
+            let Tgout = 0
+            if ((raz >= -30) && (raz <= 30)) {
+                let index = Math.abs(raz)
+                if (raz >= 0) {
+                    Tgout = (Tginput / k1[index]).toFixed(3)
+                } else {
+                    Tgout = (Tginput * k1[index]).toFixed(3)
+                }
+            }
+            document.getElementById(Tgview).value = Tgout
+        }
+
+        function priv_R_Tg() {
+            privTempR('R15BH', 'R15BHpr')
+            privTempR('R15HH', 'R15HHpr')
+            
+            privTempR('R15HH_BH', 'R15HH_BHpr')
+
+            privTempR('R60BH', 'R60BHpr')
+            privTempR('R60HH', 'R60HHpr')
+            
+            privTempR('R60HH_BH', 'R60HH_BHpr')
+
+            privTempTg('TgBH', 'TgBHpr')
+            privTempTg('TgHH', 'TgHHpr')
+            
+            privTempTg('TgHH_BH', 'TgHH_BHpr')
+
+            view_percent_izm_zav('R15BHpr', 'R15BHzav', 'R15BHproc')
+            view_percent_izm_zav('R60BHpr', 'R60BHzav', 'R60BHproc')
+            view_percent_izm_zav('TgBHpr', 'TgBHzav', 'TgBHproc')
+            view_percent_izm_zav('CxBH', 'CxBHzav', 'CxBHproc')
+
+            view_percent_izm_zav('R15HHpr', 'R15HHzav', 'R15HHproc')
+            view_percent_izm_zav('R60HHpr', 'R60HHzav', 'R60HHproc')
+            view_percent_izm_zav('TgHHpr', 'TgHHzav', 'TgHHproc')
+            view_percent_izm_zav('CxHH', 'CxHHzav', 'CxHHproc')
+
+           
+
+            view_percent_izm_zav('R15HH_BHpr', 'R15HH_BHzav', 'R15HH_BHproc')
+            view_percent_izm_zav('R60HH_BHpr', 'R60HH_BHzav', 'R60HH_BHproc')
+            view_percent_izm_zav('TgHH_BHpr', 'TgHH_BHzav', 'TgHH_BHproc')
+            view_percent_izm_zav('CxHH_BH', 'CxHH_BHzav', 'CxHH_BHproc')
+
+
+            view_color_izm_zavR('R15BHpr', 'R15BHzav', 'R15BHproc')
+            view_color_izm_zavR('R60BHpr', 'R60BHzav', 'R60BHproc')
+            view_color_izm_zavR('R15HHpr', 'R15HHzav', 'R15HHproc')
+            view_color_izm_zavR('R60HHpr', 'R60HHzav', 'R60HHproc')
+
+            view_color_izm_zavR('R15HH_BHpr', 'R15HH_BHzav', 'R15HH_BHproc')
+            view_color_izm_zavR('R60HH_BHpr', 'R60HH_BHzav', 'R60HH_BHproc')
+            view_color_izm_zavTg('TgBHpr', 'TgBHzav', 'TgBHproc')
+            view_color_izm_zavTg('TgHHpr', 'TgHHzav', 'TgHHproc')
+           
+            view_color_izm_zavTg('TgHH_BHpr', 'TgHH_BHzav', 'TgHH_BHproc')
+        }
+
+        function percent_izm_zav(a, b) {
+            // вычисляем изменение в % относительно заводских значений
+            a = parseFloat(a.replace(',', '.'))
+            b = parseFloat(b.replace(',', '.'))
+            // max_num = Math.max(a, b)
+            // min_num = Math.min(a, b)
+            max_num = a
+            min_num = b
+            if (max_num && min_num) {
+                let percent_num = (max_num / min_num) * 100 - 100
+                return percent_num.toFixed(2)
+            } else {
+                return 0
+            }
+        }
+
+        function view_percent_izm_zav(id1, id2, id3) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let d = document.getElementById(id3)
+            if (a && b) {
+                return d.value = percent_izm_zav(a, b)
+            }
+            else {
+                d.value = 0
+            }
+        }
+
+        function view_color_izm_zavR(id1, id2, id3) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let d = document.getElementById(id3)
+            if ((a && b) && (percent_izm_zav(a, b) <= -50)) {
+                d.style.backgroundColor = 'red'
+            } else if ((a && b) && (percent_izm_zav(a, b) <= -25) && (percent_izm_zav(a, b) > -50)) {
+                d.style.backgroundColor = 'yellow'
+            }
+            else {
+                d.style.backgroundColor = 'white'
+            }
+        }
+
+        function view_color_izm_zavTg(id1, id2, id3) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let d = document.getElementById(id3)
+            if ((a && b) && (percent_izm_zav(a, b) >= 50)) {
+                d.style.backgroundColor = 'red'
+            } else if ((a && b) && (percent_izm_zav(a, b) >= 25) && (percent_izm_zav(a, b) < 50)) {
+                d.style.backgroundColor = 'yellow'
+            }
+            else {
+                d.style.backgroundColor = 'white'
+            }
+        }
+
+        function percent_P_izm_zav(a, b) {
+            // вычисляем изменение в % относительно заводских значений
+            a = parseFloat(a.replace(',', '.'))
+            b = parseFloat(b.replace(',', '.'))
+            max_num = Math.max(a, b)
+            min_num = Math.min(a, b)
+            if (max_num && min_num) {
+                let percent_num = (max_num / min_num) * 100 - 100
+                return percent_num.toFixed(2)
+            } else {
+                return 0
+            }
+        }
+
+        function view_percent_P_izm_zav(id1, id2, id3) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let d = document.getElementById(id3)
+            d.value = percent_P_izm_zav(a, b)
+            if (d.value > 5) {
+                d.style.backgroundColor = 'red'
+            }
+            else {
+                d.style.backgroundColor = 'white'
+            }
+        }
+
+        function view_percent_P_delta(id1, id2, id3) {
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let d = document.getElementById(id3)
+            d.value = percent_P_izm_zav(a, b)
+            if (d.value > 30) {
+                d.style.backgroundColor = 'red'
+            }
+            else {
+                d.style.backgroundColor = 'white'
+            }
+        }
+
+        function calculate_XX() {
+            //  У трехфазных трансформаторов при вводе в эксплуатацию и при капитальном ремонте
+            // соотношение потерь на разных фазах не должно отличаться от соотношений, приведенных 
+            // в протоколе заводских испытаний (паспорте), более чем на 5 %.
+
+            // Измерения в процессе эксплуатации производятся по решению технического руководителя предприятия
+            // исходя из результатов хроматографического анализа растворенных в масле газов. 
+            // Отличие измеренных значений от исходных данных не должно превышать 30 %. 
+
+            view_k_abs("P_C", "P_B", "Pbc_ac")
+            view_k_abs("P_A", "P_C", "Pac_ab")
+            view_k_abs("P_B", "P_A", "Pab_bc")
+
+            view_k_abs("P_C_zav", "P_B_zav", "Pbc_ac_zav")
+            view_k_abs("P_A_zav", "P_C_zav", "Pac_ab_zav")
+            view_k_abs("P_B_zav", "P_A_zav", "Pab_bc_zav")
+
+            view_percent_P_izm_zav("Pbc_ac", "Pbc_ac_zav", "Pbc_ac_pr")
+            view_percent_P_izm_zav("Pac_ab", "Pac_ab_zav", "Pac_ab_pr")
+            view_percent_P_izm_zav("Pab_bc", "Pab_bc_zav", "Pab_bc_pr")
+
+            view_percent_P_delta("P_A", "P_A_zav", "P_A_delta")
+            view_percent_P_delta("P_B", "P_B_zav", "P_B_delta")
+            view_percent_P_delta("P_C", "P_C_zav", "P_C_delta")
+        }
+
+        function full_protocol(doc, temp) {
+            // включается если выбран полный протокол с омиками и коэф
+            let R_AB1 = document.getElementById('R_AB1').value
+            let R_BC1 = document.getElementById('R_BC1').value
+            let R_AC1 = document.getElementById('R_AC1').value
+            let R_PR1 = document.getElementById('R_PR1').value
+
+            let R_AB2 = document.getElementById('R_AB2').value
+            let R_BC2 = document.getElementById('R_BC2').value
+            let R_AC2 = document.getElementById('R_AC2').value
+            let R_PR2 = document.getElementById('R_PR2').value
+
+            let R_AB3 = document.getElementById('R_AB3').value
+            let R_BC3 = document.getElementById('R_BC3').value
+            let R_AC3 = document.getElementById('R_AC3').value
+            let R_PR3 = document.getElementById('R_PR3').value
+
+            let R_AB4 = document.getElementById('R_AB4').value
+            let R_BC4 = document.getElementById('R_BC4').value
+            let R_AC4 = document.getElementById('R_AC4').value
+            let R_PR4 = document.getElementById('R_PR4').value
+
+            let R_AB5 = document.getElementById('R_AB5').value
+            let R_BC5 = document.getElementById('R_BC5').value
+            let R_AC5 = document.getElementById('R_AC5').value
+            let R_PR5 = document.getElementById('R_PR5').value
+
+            let R_AB6 = document.getElementById('R_AB6').value
+            let R_BC6 = document.getElementById('R_BC6').value
+            let R_AC6 = document.getElementById('R_AC6').value
+            let R_PR6 = document.getElementById('R_PR6').value
+
+            let R_AB7 = document.getElementById('R_AB7').value
+            let R_BC7 = document.getElementById('R_BC7').value
+            let R_AC7 = document.getElementById('R_AC7').value
+            let R_PR7 = document.getElementById('R_PR7').value
+
+            let R_AB8 = document.getElementById('R_AB8').value
+            let R_BC8 = document.getElementById('R_BC8').value
+            let R_AC8 = document.getElementById('R_AC8').value
+            let R_PR8 = document.getElementById('R_PR8').value
+
+            let R_AB9 = document.getElementById('R_AB9').value
+            let R_BC9 = document.getElementById('R_BC9').value
+            let R_AC9 = document.getElementById('R_AC9').value
+            let R_PR9 = document.getElementById('R_PR9').value
+
+            let R_AB10 = document.getElementById('R_AB10').value
+            let R_BC10 = document.getElementById('R_BC10').value
+            let R_AC10 = document.getElementById('R_AC10').value
+            let R_PR10 = document.getElementById('R_PR10').value
+
+            let R_AB11 = document.getElementById('R_AB11').value
+            let R_BC11 = document.getElementById('R_BC11').value
+            let R_AC11 = document.getElementById('R_AC11').value
+            let R_PR11 = document.getElementById('R_PR11').value
+
+            let R_AB12 = document.getElementById('R_AB12').value
+            let R_BC12 = document.getElementById('R_BC12').value
+            let R_AC12 = document.getElementById('R_AC12').value
+            let R_PR12 = document.getElementById('R_PR12').value
+
+            let R_AB13 = document.getElementById('R_AB13').value
+            let R_BC13 = document.getElementById('R_BC13').value
+            let R_AC13 = document.getElementById('R_AC13').value
+            let R_PR13 = document.getElementById('R_PR13').value
+
+            let R_AB14 = document.getElementById('R_AB14').value
+            let R_BC14 = document.getElementById('R_BC14').value
+            let R_AC14 = document.getElementById('R_AC14').value
+            let R_PR14 = document.getElementById('R_PR14').value
+
+            let R_AB15 = document.getElementById('R_AB15').value
+            let R_BC15 = document.getElementById('R_BC15').value
+            let R_AC15 = document.getElementById('R_AC15').value
+            let R_PR15 = document.getElementById('R_PR15').value
+
+            let R_AB16 = document.getElementById('R_AB16').value
+            let R_BC16 = document.getElementById('R_BC16').value
+            let R_AC16 = document.getElementById('R_AC16').value
+            let R_PR16 = document.getElementById('R_PR16').value
+
+            let R_AB17 = document.getElementById('R_AB17').value
+            let R_BC17 = document.getElementById('R_BC17').value
+            let R_AC17 = document.getElementById('R_AC17').value
+            let R_PR17 = document.getElementById('R_PR17').value
+
+            let R_AB18 = document.getElementById('R_AB18').value
+            let R_BC18 = document.getElementById('R_BC18').value
+            let R_AC18 = document.getElementById('R_AC18').value
+            let R_PR18 = document.getElementById('R_PR18').value
+
+            let R_AB19 = document.getElementById('R_AB19').value
+            let R_BC19 = document.getElementById('R_BC19').value
+            let R_AC19 = document.getElementById('R_AC19').value
+            let R_PR19 = document.getElementById('R_PR19').value
+
+            let R_a01 = document.getElementById('R_a01').value
+            let R_b01 = document.getElementById('R_b01').value
+            let R_c01 = document.getElementById('R_c01').value
+            let R_PR_HH = document.getElementById('R_PR_HH').value
+
+           
+
+
+            let K_AB1 = document.getElementById('K_AB1').value
+            let K_BC1 = document.getElementById('K_BC1').value
+            let K_AC1 = document.getElementById('K_AC1').value
+            let K_PR1 = document.getElementById('K_PR1').value
+
+            let K_AB2 = document.getElementById('K_AB2').value
+            let K_BC2 = document.getElementById('K_BC2').value
+            let K_AC2 = document.getElementById('K_AC2').value
+            let K_PR2 = document.getElementById('K_PR2').value
+
+            let K_AB3 = document.getElementById('K_AB3').value
+            let K_BC3 = document.getElementById('K_BC3').value
+            let K_AC3 = document.getElementById('K_AC3').value
+            let K_PR3 = document.getElementById('K_PR3').value
+
+            let K_AB4 = document.getElementById('K_AB4').value
+            let K_BC4 = document.getElementById('K_BC4').value
+            let K_AC4 = document.getElementById('K_AC4').value
+            let K_PR4 = document.getElementById('K_PR4').value
+
+            let K_AB5 = document.getElementById('K_AB5').value
+            let K_BC5 = document.getElementById('K_BC5').value
+            let K_AC5 = document.getElementById('K_AC5').value
+            let K_PR5 = document.getElementById('K_PR5').value
+
+            let K_AB6 = document.getElementById('K_AB6').value
+            let K_BC6 = document.getElementById('K_BC6').value
+            let K_AC6 = document.getElementById('K_AC6').value
+            let K_PR6 = document.getElementById('K_PR6').value
+
+            let K_AB7 = document.getElementById('K_AB7').value
+            let K_BC7 = document.getElementById('K_BC7').value
+            let K_AC7 = document.getElementById('K_AC7').value
+            let K_PR7 = document.getElementById('K_PR7').value
+
+            let K_AB8 = document.getElementById('K_AB8').value
+            let K_BC8 = document.getElementById('K_BC8').value
+            let K_AC8 = document.getElementById('K_AC8').value
+            let K_PR8 = document.getElementById('K_PR8').value
+
+            let K_AB9 = document.getElementById('K_AB9').value
+            let K_BC9 = document.getElementById('K_BC9').value
+            let K_AC9 = document.getElementById('K_AC9').value
+            let K_PR9 = document.getElementById('K_PR9').value
+
+            let K_AB10 = document.getElementById('K_AB10').value
+            let K_BC10 = document.getElementById('K_BC10').value
+            let K_AC10 = document.getElementById('K_AC10').value
+            let K_PR10 = document.getElementById('K_PR10').value
+
+            let K_AB11 = document.getElementById('K_AB11').value
+            let K_BC11 = document.getElementById('K_BC11').value
+            let K_AC11 = document.getElementById('K_AC11').value
+            let K_PR11 = document.getElementById('K_PR11').value
+
+            let K_AB12 = document.getElementById('K_AB12').value
+            let K_BC12 = document.getElementById('K_BC12').value
+            let K_AC12 = document.getElementById('K_AC12').value
+            let K_PR12 = document.getElementById('K_PR12').value
+
+            let K_AB13 = document.getElementById('K_AB13').value
+            let K_BC13 = document.getElementById('K_BC13').value
+            let K_AC13 = document.getElementById('K_AC13').value
+            let K_PR13 = document.getElementById('K_PR13').value
+
+            let K_AB14 = document.getElementById('K_AB14').value
+            let K_BC14 = document.getElementById('K_BC14').value
+            let K_AC14 = document.getElementById('K_AC14').value
+            let K_PR14 = document.getElementById('K_PR14').value
+
+            let K_AB15 = document.getElementById('K_AB15').value
+            let K_BC15 = document.getElementById('K_BC15').value
+            let K_AC15 = document.getElementById('K_AC15').value
+            let K_PR15 = document.getElementById('K_PR15').value
+
+            let K_AB16 = document.getElementById('K_AB16').value
+            let K_BC16 = document.getElementById('K_BC16').value
+            let K_AC16 = document.getElementById('K_AC16').value
+            let K_PR16 = document.getElementById('K_PR16').value
+
+            let K_AB17 = document.getElementById('K_AB17').value
+            let K_BC17 = document.getElementById('K_BC17').value
+            let K_AC17 = document.getElementById('K_AC17').value
+            let K_PR17 = document.getElementById('K_PR17').value
+
+            let K_AB18 = document.getElementById('K_AB18').value
+            let K_BC18 = document.getElementById('K_BC18').value
+            let K_AC18 = document.getElementById('K_AC18').value
+            let K_PR18 = document.getElementById('K_PR18').value
+
+            let K_AB19 = document.getElementById('K_AB19').value
+            let K_BC19 = document.getElementById('K_BC19').value
+            let K_AC19 = document.getElementById('K_AC19').value
+            let K_PR19 = document.getElementById('K_PR19').value
+
+            
+
+            let U_A = document.getElementById('U_A').value
+            let U_B = document.getElementById('U_B').value
+            let U_C = document.getElementById('U_C').value
+
+            let A_A = document.getElementById('A_A').value
+            let A_B = document.getElementById('A_B').value
+            let A_C = document.getElementById('A_C').value
+
+            let P_A = document.getElementById('P_A').value
+            let P_B = document.getElementById('P_B').value
+            let P_C = document.getElementById('P_C').value
+
+            let U_A_zav = document.getElementById('U_A_zav').value
+            let U_B_zav = document.getElementById('U_B_zav').value
+            let U_C_zav = document.getElementById('U_C_zav').value
+
+            let A_A_zav = document.getElementById('A_A_zav').value
+            let A_B_zav = document.getElementById('A_B_zav').value
+            let A_C_zav = document.getElementById('A_C_zav').value
+
+            let P_A_zav = document.getElementById('P_A_zav').value
+            let P_B_zav = document.getElementById('P_B_zav').value
+            let P_C_zav = document.getElementById('P_C_zav').value
+
+
+            let Pbc_ac = document.getElementById('Pbc_ac').value
+            let Pac_ab = document.getElementById('Pac_ab').value
+            let Pab_bc = document.getElementById('Pab_bc').value
+
+            let Pbc_ac_zav = document.getElementById('Pbc_ac_zav').value
+            let Pac_ab_zav = document.getElementById('Pac_ab_zav').value
+            let Pab_bc_zav = document.getElementById('Pab_bc_zav').value
+
+            let Pbc_ac_pr = document.getElementById('Pbc_ac_pr').value
+            let Pac_ab_pr = document.getElementById('Pac_ab_pr').value
+            let Pab_bc_pr = document.getElementById('Pab_bc_pr').value
+
+            let P_A_delta = document.getElementById('P_A_delta').value
+            let P_B_delta = document.getElementById('P_B_delta').value
+            let P_C_delta = document.getElementById('P_C_delta').value
+
+            const paragraph0 = new Paragraph();
+            const paragraph15 = new Paragraph();
+            const institutionText15 = new TextRun(`9.2.1. Замеры сопротивления обмоток BH постоянному току  при Т=${temp}${'\u2103'}`).size(22)
+            paragraph15.addRun(institutionText15);
+            doc.addParagraph(paragraph15)
+
+            const tableRobm = doc.createTable(20, 5);
+            tableRobm.getCell(0, 0).addContent(new Paragraph('положение'));
+            tableRobm.getCell(0, 1).addContent(new Paragraph(' R А0, Ом '));
+            tableRobm.getCell(0, 2).addContent(new Paragraph(' R B0, Ом '));
+            tableRobm.getCell(0, 3).addContent(new Paragraph(' R C0, Ом '));
+            tableRobm.getCell(0, 4).addContent(new Paragraph(' % (не более 2%)'));
+
+            tableRobm.getCell(1, 0).addContent(new Paragraph(` 1 `));
+            tableRobm.getCell(1, 1).addContent(new Paragraph(` ${R_AB1} `));
+            tableRobm.getCell(1, 2).addContent(new Paragraph(` ${R_BC1} `));
+            tableRobm.getCell(1, 3).addContent(new Paragraph(` ${R_AC1} `));
+            tableRobm.getCell(1, 4).addContent(new Paragraph(` ${R_PR1} `));
+
+            tableRobm.getCell(2, 0).addContent(new Paragraph(` 2 `));
+            tableRobm.getCell(2, 1).addContent(new Paragraph(` ${R_AB2} `));
+            tableRobm.getCell(2, 2).addContent(new Paragraph(` ${R_BC2} `));
+            tableRobm.getCell(2, 3).addContent(new Paragraph(` ${R_AC2} `));
+            tableRobm.getCell(2, 4).addContent(new Paragraph(` ${R_PR2} `));
+
+            tableRobm.getCell(3, 0).addContent(new Paragraph(` 3 `));
+            tableRobm.getCell(3, 1).addContent(new Paragraph(` ${R_AB3} `));
+            tableRobm.getCell(3, 2).addContent(new Paragraph(` ${R_BC3} `));
+            tableRobm.getCell(3, 3).addContent(new Paragraph(` ${R_AC3} `));
+            tableRobm.getCell(3, 4).addContent(new Paragraph(` ${R_PR3} `));
+
+            tableRobm.getCell(4, 0).addContent(new Paragraph(` 4 `));
+            tableRobm.getCell(4, 1).addContent(new Paragraph(` ${R_AB4} `));
+            tableRobm.getCell(4, 2).addContent(new Paragraph(` ${R_BC4} `));
+            tableRobm.getCell(4, 3).addContent(new Paragraph(` ${R_AC4} `));
+            tableRobm.getCell(4, 4).addContent(new Paragraph(` ${R_PR4} `));
+
+            tableRobm.getCell(5, 0).addContent(new Paragraph(` 5 `));
+            tableRobm.getCell(5, 1).addContent(new Paragraph(` ${R_AB5} `));
+            tableRobm.getCell(5, 2).addContent(new Paragraph(` ${R_BC5} `));
+            tableRobm.getCell(5, 3).addContent(new Paragraph(` ${R_AC5} `));
+            tableRobm.getCell(5, 4).addContent(new Paragraph(` ${R_PR5} `));
+
+            tableRobm.getCell(6, 0).addContent(new Paragraph(` 6 `));
+            tableRobm.getCell(6, 1).addContent(new Paragraph(` ${R_AB6} `));
+            tableRobm.getCell(6, 2).addContent(new Paragraph(` ${R_BC6} `));
+            tableRobm.getCell(6, 3).addContent(new Paragraph(` ${R_AC6} `));
+            tableRobm.getCell(6, 4).addContent(new Paragraph(` ${R_PR6} `));
+
+            tableRobm.getCell(7, 0).addContent(new Paragraph(` 7 `));
+            tableRobm.getCell(7, 1).addContent(new Paragraph(` ${R_AB7} `));
+            tableRobm.getCell(7, 2).addContent(new Paragraph(` ${R_BC7} `));
+            tableRobm.getCell(7, 3).addContent(new Paragraph(` ${R_AC7} `));
+            tableRobm.getCell(7, 4).addContent(new Paragraph(` ${R_PR7} `));
+
+            tableRobm.getCell(8, 0).addContent(new Paragraph(` 8 `));
+            tableRobm.getCell(8, 1).addContent(new Paragraph(` ${R_AB8} `));
+            tableRobm.getCell(8, 2).addContent(new Paragraph(` ${R_BC8} `));
+            tableRobm.getCell(8, 3).addContent(new Paragraph(` ${R_AC8} `));
+            tableRobm.getCell(8, 4).addContent(new Paragraph(` ${R_PR8} `));
+
+            tableRobm.getCell(9, 0).addContent(new Paragraph(` 9 `));
+            tableRobm.getCell(9, 1).addContent(new Paragraph(` ${R_AB9} `));
+            tableRobm.getCell(9, 2).addContent(new Paragraph(` ${R_BC9} `));
+            tableRobm.getCell(9, 3).addContent(new Paragraph(` ${R_AC9} `));
+            tableRobm.getCell(9, 4).addContent(new Paragraph(` ${R_PR9} `));
+
+            tableRobm.getCell(10, 0).addContent(new Paragraph(` 10 `));
+            tableRobm.getCell(10, 1).addContent(new Paragraph(` ${R_AB10} `));
+            tableRobm.getCell(10, 2).addContent(new Paragraph(` ${R_BC10} `));
+            tableRobm.getCell(10, 3).addContent(new Paragraph(` ${R_AC10} `));
+            tableRobm.getCell(10, 4).addContent(new Paragraph(` ${R_PR10} `));
+
+            tableRobm.getCell(11, 0).addContent(new Paragraph(` 11 `));
+            tableRobm.getCell(11, 1).addContent(new Paragraph(` ${R_AB11} `));
+            tableRobm.getCell(11, 2).addContent(new Paragraph(` ${R_BC11} `));
+            tableRobm.getCell(11, 3).addContent(new Paragraph(` ${R_AC11} `));
+            tableRobm.getCell(11, 4).addContent(new Paragraph(` ${R_PR11} `));
+
+            tableRobm.getCell(12, 0).addContent(new Paragraph(` 12 `));
+            tableRobm.getCell(12, 1).addContent(new Paragraph(` ${R_AB12} `));
+            tableRobm.getCell(12, 2).addContent(new Paragraph(` ${R_BC12} `));
+            tableRobm.getCell(12, 3).addContent(new Paragraph(` ${R_AC12} `));
+            tableRobm.getCell(12, 4).addContent(new Paragraph(` ${R_PR12} `));
+
+            tableRobm.getCell(13, 0).addContent(new Paragraph(` 13 `));
+            tableRobm.getCell(13, 1).addContent(new Paragraph(` ${R_AB13} `));
+            tableRobm.getCell(13, 2).addContent(new Paragraph(` ${R_BC13} `));
+            tableRobm.getCell(13, 3).addContent(new Paragraph(` ${R_AC13} `));
+            tableRobm.getCell(13, 4).addContent(new Paragraph(` ${R_PR13} `));
+
+            tableRobm.getCell(14, 0).addContent(new Paragraph(` 14 `));
+            tableRobm.getCell(14, 1).addContent(new Paragraph(` ${R_AB14} `));
+            tableRobm.getCell(14, 2).addContent(new Paragraph(` ${R_BC14} `));
+            tableRobm.getCell(14, 3).addContent(new Paragraph(` ${R_AC14} `));
+            tableRobm.getCell(14, 4).addContent(new Paragraph(` ${R_PR14} `));
+
+            tableRobm.getCell(15, 0).addContent(new Paragraph(` 15 `));
+            tableRobm.getCell(15, 1).addContent(new Paragraph(` ${R_AB15} `));
+            tableRobm.getCell(15, 2).addContent(new Paragraph(` ${R_BC15} `));
+            tableRobm.getCell(15, 3).addContent(new Paragraph(` ${R_AC15} `));
+            tableRobm.getCell(15, 4).addContent(new Paragraph(` ${R_PR15} `));
+
+            tableRobm.getCell(16, 0).addContent(new Paragraph(` 16 `));
+            tableRobm.getCell(16, 1).addContent(new Paragraph(` ${R_AB16} `));
+            tableRobm.getCell(16, 2).addContent(new Paragraph(` ${R_BC16} `));
+            tableRobm.getCell(16, 3).addContent(new Paragraph(` ${R_AC16} `));
+            tableRobm.getCell(16, 4).addContent(new Paragraph(` ${R_PR16} `));
+
+            tableRobm.getCell(17, 0).addContent(new Paragraph(` 17 `));
+            tableRobm.getCell(17, 1).addContent(new Paragraph(` ${R_AB17} `));
+            tableRobm.getCell(17, 2).addContent(new Paragraph(` ${R_BC17} `));
+            tableRobm.getCell(17, 3).addContent(new Paragraph(` ${R_AC17} `));
+            tableRobm.getCell(17, 4).addContent(new Paragraph(` ${R_PR17} `));
+
+            tableRobm.getCell(18, 0).addContent(new Paragraph(` 18 `));
+            tableRobm.getCell(18, 1).addContent(new Paragraph(` ${R_AB18} `));
+            tableRobm.getCell(18, 2).addContent(new Paragraph(` ${R_BC18} `));
+            tableRobm.getCell(18, 3).addContent(new Paragraph(` ${R_AC18} `));
+            tableRobm.getCell(18, 4).addContent(new Paragraph(` ${R_PR18} `));
+
+            tableRobm.getCell(19, 0).addContent(new Paragraph(` 19 `));
+            tableRobm.getCell(19, 1).addContent(new Paragraph(` ${R_AB19} `));
+            tableRobm.getCell(19, 2).addContent(new Paragraph(` ${R_BC19} `));
+            tableRobm.getCell(19, 3).addContent(new Paragraph(` ${R_AC19} `));
+            tableRobm.getCell(19, 4).addContent(new Paragraph(` ${R_PR19} `));
+            doc.addParagraph(paragraph0);
+
+            const paragraph16 = new Paragraph();
+            const institutionText16 = new TextRun(`9.2.2 Замеры сопротивления обмоток HH постоянному току  при Т=${temp}${'\u2103'}`).size(22)
+            paragraph16.addRun(institutionText16);
+            doc.addParagraph(paragraph16)
+
+            const tableRobmHH = doc.createTable(2, 4);
+            tableRobmHH.getCell(0, 0).addContent(new Paragraph(' Rab, Ом '));
+            tableRobmHH.getCell(0, 1).addContent(new Paragraph(' Rbc, Ом '));
+            tableRobmHH.getCell(0, 2).addContent(new Paragraph(' Rac, Ом '));
+            tableRobmHH.getCell(0, 3).addContent(new Paragraph(' % (не более 2%)'));
+
+            tableRobmHH.getCell(1, 0).addContent(new Paragraph(` ${R_a01} `));
+            tableRobmHH.getCell(1, 1).addContent(new Paragraph(` ${R_b01} `));
+            tableRobmHH.getCell(1, 2).addContent(new Paragraph(` ${R_c01} `));
+            tableRobmHH.getCell(1, 3).addContent(new Paragraph(` ${R_PR_HH} `));
+            doc.addParagraph(paragraph0);
+
+            
+
+            const paragraphGR = new Paragraph();
+            const institutionTextGR = new TextRun(`9.3. Проверка группы соединения: соответствует паспортной Ун/Δ-11.`).size(22)
+            paragraphGR.addRun(institutionTextGR);
+            doc.addParagraph(paragraphGR)
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            const paragraphKtr = new Paragraph();
+            const institutionTextKtr = new TextRun(`9.4.1. Замеры коэффициента трансформации BH-HH.`).size(22)
+            paragraphKtr.addRun(institutionTextKtr);
+            doc.addParagraph(paragraphKtr)
+
+            const tableKtr = doc.createTable(20, 5);
+            tableKtr.getCell(0, 0).addContent(new Paragraph('положение'));
+            tableKtr.getCell(0, 1).addContent(new Paragraph(' K АB/ab, Ом '));
+            tableKtr.getCell(0, 2).addContent(new Paragraph(' K BC/bc, Ом '));
+            tableKtr.getCell(0, 3).addContent(new Paragraph(' K АC/ac, Ом '));
+            tableKtr.getCell(0, 4).addContent(new Paragraph(' % (не более 2%)'));
+
+            tableKtr.getCell(1, 0).addContent(new Paragraph(` 1 `));
+            tableKtr.getCell(1, 1).addContent(new Paragraph(` ${K_AB1} `));
+            tableKtr.getCell(1, 2).addContent(new Paragraph(` ${K_BC1} `));
+            tableKtr.getCell(1, 3).addContent(new Paragraph(` ${K_AC1} `));
+            tableKtr.getCell(1, 4).addContent(new Paragraph(` ${K_PR1} `));
+
+            tableKtr.getCell(2, 0).addContent(new Paragraph(` 2 `));
+            tableKtr.getCell(2, 1).addContent(new Paragraph(` ${K_AB2} `));
+            tableKtr.getCell(2, 2).addContent(new Paragraph(` ${K_BC2} `));
+            tableKtr.getCell(2, 3).addContent(new Paragraph(` ${K_AC2} `));
+            tableKtr.getCell(2, 4).addContent(new Paragraph(` ${K_PR2} `));
+
+            tableKtr.getCell(3, 0).addContent(new Paragraph(` 3 `));
+            tableKtr.getCell(3, 1).addContent(new Paragraph(` ${K_AB3} `));
+            tableKtr.getCell(3, 2).addContent(new Paragraph(` ${K_BC3} `));
+            tableKtr.getCell(3, 3).addContent(new Paragraph(` ${K_AC3} `));
+            tableKtr.getCell(3, 4).addContent(new Paragraph(` ${K_PR3} `));
+
+            tableKtr.getCell(4, 0).addContent(new Paragraph(` 4 `));
+            tableKtr.getCell(4, 1).addContent(new Paragraph(` ${K_AB4} `));
+            tableKtr.getCell(4, 2).addContent(new Paragraph(` ${K_BC4} `));
+            tableKtr.getCell(4, 3).addContent(new Paragraph(` ${K_AC4} `));
+            tableKtr.getCell(4, 4).addContent(new Paragraph(` ${K_PR4} `));
+
+            tableKtr.getCell(5, 0).addContent(new Paragraph(` 5 `));
+            tableKtr.getCell(5, 1).addContent(new Paragraph(` ${K_AB5} `));
+            tableKtr.getCell(5, 2).addContent(new Paragraph(` ${K_BC5} `));
+            tableKtr.getCell(5, 3).addContent(new Paragraph(` ${K_AC5} `));
+            tableKtr.getCell(5, 4).addContent(new Paragraph(` ${K_PR5} `));
+
+            tableKtr.getCell(6, 0).addContent(new Paragraph(` 6 `));
+            tableKtr.getCell(6, 1).addContent(new Paragraph(` ${K_AB6} `));
+            tableKtr.getCell(6, 2).addContent(new Paragraph(` ${K_BC6} `));
+            tableKtr.getCell(6, 3).addContent(new Paragraph(` ${K_AC6} `));
+            tableKtr.getCell(6, 4).addContent(new Paragraph(` ${K_PR6} `));
+
+            tableKtr.getCell(7, 0).addContent(new Paragraph(` 7 `));
+            tableKtr.getCell(7, 1).addContent(new Paragraph(` ${K_AB7} `));
+            tableKtr.getCell(7, 2).addContent(new Paragraph(` ${K_BC7} `));
+            tableKtr.getCell(7, 3).addContent(new Paragraph(` ${K_AC7} `));
+            tableKtr.getCell(7, 4).addContent(new Paragraph(` ${K_PR7} `));
+
+            tableKtr.getCell(8, 0).addContent(new Paragraph(` 8 `));
+            tableKtr.getCell(8, 1).addContent(new Paragraph(` ${K_AB8} `));
+            tableKtr.getCell(8, 2).addContent(new Paragraph(` ${K_BC8} `));
+            tableKtr.getCell(8, 3).addContent(new Paragraph(` ${K_AC8} `));
+            tableKtr.getCell(8, 4).addContent(new Paragraph(` ${K_PR8} `));
+
+            tableKtr.getCell(9, 0).addContent(new Paragraph(` 9 `));
+            tableKtr.getCell(9, 1).addContent(new Paragraph(` ${K_AB9} `));
+            tableKtr.getCell(9, 2).addContent(new Paragraph(` ${K_BC9} `));
+            tableKtr.getCell(9, 3).addContent(new Paragraph(` ${K_AC9} `));
+            tableKtr.getCell(9, 4).addContent(new Paragraph(` ${K_PR9} `));
+
+            tableKtr.getCell(10, 0).addContent(new Paragraph(` 10 `));
+            tableKtr.getCell(10, 1).addContent(new Paragraph(` ${K_AB10} `));
+            tableKtr.getCell(10, 2).addContent(new Paragraph(` ${K_BC10} `));
+            tableKtr.getCell(10, 3).addContent(new Paragraph(` ${K_AC10} `));
+            tableKtr.getCell(10, 4).addContent(new Paragraph(` ${K_PR10} `));
+
+            tableKtr.getCell(11, 0).addContent(new Paragraph(` 11 `));
+            tableKtr.getCell(11, 1).addContent(new Paragraph(` ${K_AB11} `));
+            tableKtr.getCell(11, 2).addContent(new Paragraph(` ${K_BC11} `));
+            tableKtr.getCell(11, 3).addContent(new Paragraph(` ${K_AC11} `));
+            tableKtr.getCell(11, 4).addContent(new Paragraph(` ${K_PR11} `));
+
+            tableKtr.getCell(12, 0).addContent(new Paragraph(` 12 `));
+            tableKtr.getCell(12, 1).addContent(new Paragraph(` ${K_AB12} `));
+            tableKtr.getCell(12, 2).addContent(new Paragraph(` ${K_BC12} `));
+            tableKtr.getCell(12, 3).addContent(new Paragraph(` ${K_AC12} `));
+            tableKtr.getCell(12, 4).addContent(new Paragraph(` ${K_PR12} `));
+
+            tableKtr.getCell(13, 0).addContent(new Paragraph(` 13 `));
+            tableKtr.getCell(13, 1).addContent(new Paragraph(` ${K_AB13} `));
+            tableKtr.getCell(13, 2).addContent(new Paragraph(` ${K_BC13} `));
+            tableKtr.getCell(13, 3).addContent(new Paragraph(` ${K_AC13} `));
+            tableKtr.getCell(13, 4).addContent(new Paragraph(` ${K_PR13} `));
+
+            tableKtr.getCell(14, 0).addContent(new Paragraph(` 14 `));
+            tableKtr.getCell(14, 1).addContent(new Paragraph(` ${K_AB14} `));
+            tableKtr.getCell(14, 2).addContent(new Paragraph(` ${K_BC14} `));
+            tableKtr.getCell(14, 3).addContent(new Paragraph(` ${K_AC14} `));
+            tableKtr.getCell(14, 4).addContent(new Paragraph(` ${K_PR14} `));
+
+            tableKtr.getCell(15, 0).addContent(new Paragraph(` 15 `));
+            tableKtr.getCell(15, 1).addContent(new Paragraph(` ${K_AB15} `));
+            tableKtr.getCell(15, 2).addContent(new Paragraph(` ${K_BC15} `));
+            tableKtr.getCell(15, 3).addContent(new Paragraph(` ${K_AC15} `));
+            tableKtr.getCell(15, 4).addContent(new Paragraph(` ${K_PR15} `));
+
+            tableKtr.getCell(16, 0).addContent(new Paragraph(` 16 `));
+            tableKtr.getCell(16, 1).addContent(new Paragraph(` ${K_AB16} `));
+            tableKtr.getCell(16, 2).addContent(new Paragraph(` ${K_BC16} `));
+            tableKtr.getCell(16, 3).addContent(new Paragraph(` ${K_AC16} `));
+            tableKtr.getCell(16, 4).addContent(new Paragraph(` ${K_PR16} `));
+
+            tableKtr.getCell(17, 0).addContent(new Paragraph(` 17 `));
+            tableKtr.getCell(17, 1).addContent(new Paragraph(` ${K_AB17} `));
+            tableKtr.getCell(17, 2).addContent(new Paragraph(` ${K_BC17} `));
+            tableKtr.getCell(17, 3).addContent(new Paragraph(` ${K_AC17} `));
+            tableKtr.getCell(17, 4).addContent(new Paragraph(` ${K_PR17} `));
+
+            tableKtr.getCell(18, 0).addContent(new Paragraph(` 18 `));
+            tableKtr.getCell(18, 1).addContent(new Paragraph(` ${K_AB18} `));
+            tableKtr.getCell(18, 2).addContent(new Paragraph(` ${K_BC18} `));
+            tableKtr.getCell(18, 3).addContent(new Paragraph(` ${K_AC18} `));
+            tableKtr.getCell(18, 4).addContent(new Paragraph(` ${K_PR18} `));
+
+            tableKtr.getCell(19, 0).addContent(new Paragraph(` 19 `));
+            tableKtr.getCell(19, 1).addContent(new Paragraph(` ${K_AB19} `));
+            tableKtr.getCell(19, 2).addContent(new Paragraph(` ${K_BC19} `));
+            tableKtr.getCell(19, 3).addContent(new Paragraph(` ${K_AC19} `));
+            tableKtr.getCell(19, 4).addContent(new Paragraph(` ${K_PR19} `));
+            doc.addParagraph(paragraph0);
+
+          
+
+            const paragraphXX = new Paragraph();
+            const institutionTextXX = new TextRun(`9.5.1. Измерение потерь холостого хода обмотки НН.`).size(22)
+            paragraphXX.addRun(institutionTextXX);
+            doc.addParagraph(paragraphXX)
+
+            const tableXX = doc.createTable(4, 8);
+            tableXX.getCell(0, 0).addContent(new Paragraph('Схема'));
+            tableXX.getCell(0, 1).addContent(new Paragraph(' Uизм., В '));
+            tableXX.getCell(0, 2).addContent(new Paragraph(' Iизм., A '));
+            tableXX.getCell(0, 3).addContent(new Paragraph(' Pизм., Вт '));
+            tableXX.getCell(0, 4).addContent(new Paragraph(' Uзав., В '));
+            tableXX.getCell(0, 5).addContent(new Paragraph(' Iзав., A '));
+            tableXX.getCell(0, 6).addContent(new Paragraph(' Pзав., Вт '));
+            tableXX.getCell(0, 7).addContent(new Paragraph(' ΔР % (не более 30%)'));
+
+            tableXX.getCell(1, 0).addContent(new Paragraph(` ав-вс `));
+            tableXX.getCell(1, 1).addContent(new Paragraph(` ${U_A} `));
+            tableXX.getCell(1, 2).addContent(new Paragraph(` ${A_A} `));
+            tableXX.getCell(1, 3).addContent(new Paragraph(` ${P_A} `));
+            tableXX.getCell(1, 4).addContent(new Paragraph(` ${U_A_zav} `));
+            tableXX.getCell(1, 5).addContent(new Paragraph(` ${A_A_zav} `));
+            tableXX.getCell(1, 6).addContent(new Paragraph(` ${P_A_zav} `));
+            tableXX.getCell(1, 7).addContent(new Paragraph(` ${P_A_delta} `));
+
+            tableXX.getCell(2, 0).addContent(new Paragraph(` вc-aс `));
+            tableXX.getCell(2, 1).addContent(new Paragraph(` ${U_B} `));
+            tableXX.getCell(2, 2).addContent(new Paragraph(` ${A_B} `));
+            tableXX.getCell(2, 3).addContent(new Paragraph(` ${P_B} `));
+            tableXX.getCell(2, 4).addContent(new Paragraph(` ${U_B_zav} `));
+            tableXX.getCell(2, 5).addContent(new Paragraph(` ${A_B_zav} `));
+            tableXX.getCell(2, 6).addContent(new Paragraph(` ${P_B_zav} `));
+            tableXX.getCell(2, 7).addContent(new Paragraph(` ${P_B_delta} `));
+
+            tableXX.getCell(3, 0).addContent(new Paragraph(` ac-bс `));
+            tableXX.getCell(3, 1).addContent(new Paragraph(` ${U_C} `));
+            tableXX.getCell(3, 2).addContent(new Paragraph(` ${A_C} `));
+            tableXX.getCell(3, 3).addContent(new Paragraph(` ${P_C} `));
+            tableXX.getCell(3, 4).addContent(new Paragraph(` ${U_C_zav} `));
+            tableXX.getCell(3, 5).addContent(new Paragraph(` ${A_C_zav} `));
+            tableXX.getCell(3, 6).addContent(new Paragraph(` ${P_C_zav} `));
+            tableXX.getCell(3, 7).addContent(new Paragraph(` ${P_C_delta} `));
+            doc.addParagraph(paragraph0);
+
+            const paragraphXX_div = new Paragraph();
+            const institutionTextXX_div = new TextRun(`9.5.2. Соотношение потерь холостого хода между обмотк НН.`).size(22)
+            paragraphXX_div.addRun(institutionTextXX_div);
+            doc.addParagraph(paragraphXX_div)
+
+            const tableXX_div = doc.createTable(4, 4);
+            tableXX_div.getCell(0, 0).addContent(new Paragraph('Соотношение'));
+            tableXX_div.getCell(0, 1).addContent(new Paragraph(' измеренные '));
+            tableXX_div.getCell(0, 2).addContent(new Paragraph(' заводские '));
+            tableXX_div.getCell(0, 3).addContent(new Paragraph(' % (не более 5%) '));
+
+            tableXX_div.getCell(1, 0).addContent(new Paragraph('Рвс/аc'));
+            tableXX_div.getCell(1, 1).addContent(new Paragraph(` ${Pbc_ac} `));
+            tableXX_div.getCell(1, 2).addContent(new Paragraph(` ${Pbc_ac_zav} `));
+            tableXX_div.getCell(1, 3).addContent(new Paragraph(` ${Pbc_ac_pr} `));
+
+            tableXX_div.getCell(2, 0).addContent(new Paragraph('Рaс/аb'));
+            tableXX_div.getCell(2, 1).addContent(new Paragraph(` ${Pac_ab} `));
+            tableXX_div.getCell(2, 2).addContent(new Paragraph(` ${Pac_ab_zav} `));
+            tableXX_div.getCell(2, 3).addContent(new Paragraph(` ${Pac_ab_pr} `));
+
+            tableXX_div.getCell(3, 0).addContent(new Paragraph('Рab/bc'));
+            tableXX_div.getCell(3, 1).addContent(new Paragraph(` ${Pab_bc} `));
+            tableXX_div.getCell(3, 2).addContent(new Paragraph(` ${Pab_bc_zav} `));
+            tableXX_div.getCell(3, 3).addContent(new Paragraph(` ${Pab_bc_pr} `));
+            doc.addParagraph(paragraph0);
+        }
+
+        function sel_u_kl() {
+            // получаем выбранное напряжение
+            let selind = document.getElementById('u_kl').options.selectedIndex;
+            let u_kl = document.getElementById('u_kl').options[selind].value;
+            console.log(u_kl)
+            return u_kl
+        }
+
+        function transformatorU() {
+            // изменение Ктр при выборе класса напряжения тр-ра
+            let u = sel_u_kl()
+            function koef_mut(a, b, c, d, kt) {
+                a = document.getElementById(a)
+                b = document.getElementById(b)
+                c = document.getElementById(c)
+                d = document.getElementById(d)
+                a.value = (a.value * 10.5 / kt).toFixed(2)
+                b.value = (b.value * 10.5 / kt).toFixed(2)
+                c.value = (c.value * 10.5 / kt).toFixed(2)
+                d.value = percent(a.value, b.value, c.value)
+            }
+            koef_mut('K_AB1', 'K_BC1', 'K_AC1', 'K_PR1', u)
+            koef_mut('K_AB2', 'K_BC2', 'K_AC2', 'K_PR2', u)
+            koef_mut('K_AB3', 'K_BC3', 'K_AC3', 'K_PR3', u)
+            koef_mut('K_AB4', 'K_BC4', 'K_AC4', 'K_PR4', u)
+            koef_mut('K_AB5', 'K_BC5', 'K_AC5', 'K_PR5', u)
+            koef_mut('K_AB6', 'K_BC6', 'K_AC6', 'K_PR6', u)
+            koef_mut('K_AB7', 'K_BC7', 'K_AC7', 'K_PR7', u)
+            koef_mut('K_AB8', 'K_BC8', 'K_AC8', 'K_PR8', u)
+            koef_mut('K_AB9', 'K_BC9', 'K_AC9', 'K_PR9', u)
+            koef_mut('K_AB10', 'K_BC10', 'K_AC10', 'K_PR10', u)
+            koef_mut('K_AB11', 'K_BC11', 'K_AC11', 'K_PR11', u)
+            koef_mut('K_AB12', 'K_BC12', 'K_AC12', 'K_PR12', u)
+            koef_mut('K_AB13', 'K_BC13', 'K_AC13', 'K_PR13', u)
+            koef_mut('K_AB14', 'K_BC14', 'K_AC14', 'K_PR14', u)
+            koef_mut('K_AB15', 'K_BC15', 'K_AC15', 'K_PR15', u)
+            koef_mut('K_AB16', 'K_BC16', 'K_AC16', 'K_PR16', u)
+            koef_mut('K_AB17', 'K_BC17', 'K_AC17', 'K_PR17', u)
+            koef_mut('K_AB18', 'K_BC18', 'K_AC18', 'K_PR18', u)
+            koef_mut('K_AB19', 'K_BC19', 'K_AC19', 'K_PR19', u)
+
+            
+            document.getElementById('u_kl').hidden = true;
+            document.getElementById('u_select').innerHTML = `${u}кВ`
+        }
+
+        function mirror(a, b, c, d, a1, b1, c1, d1) {
+            a = document.getElementById(a)
+            b = document.getElementById(b)
+            c = document.getElementById(c)
+            d = document.getElementById(d)
+            a1 = document.getElementById(a1)
+            b1 = document.getElementById(b1)
+            c1 = document.getElementById(c1)
+            d1 = document.getElementById(d1)
+            a.value = a1.value
+            b.value = b1.value
+            c.value = c1.value
+            d.value = d1.value
+        }
+
+        function mirror_view() {
+            mirror('R_AB11', 'R_BC11', 'R_AC11', 'R_PR11', 'R_AB9', 'R_BC9', 'R_AC9', 'R_PR9')
+            mirror('R_AB12', 'R_BC12', 'R_AC12', 'R_PR12', 'R_AB8', 'R_BC8', 'R_AC8', 'R_PR8')
+            mirror('R_AB13', 'R_BC13', 'R_AC13', 'R_PR13', 'R_AB7', 'R_BC7', 'R_AC7', 'R_PR7')
+            mirror('R_AB14', 'R_BC14', 'R_AC14', 'R_PR14', 'R_AB6', 'R_BC6', 'R_AC6', 'R_PR6')
+            mirror('R_AB15', 'R_BC15', 'R_AC15', 'R_PR15', 'R_AB5', 'R_BC5', 'R_AC5', 'R_PR5')
+            mirror('R_AB16', 'R_BC16', 'R_AC16', 'R_PR16', 'R_AB4', 'R_BC4', 'R_AC4', 'R_PR4')
+            mirror('R_AB17', 'R_BC17', 'R_AC17', 'R_PR17', 'R_AB3', 'R_BC3', 'R_AC3', 'R_PR3')
+            mirror('R_AB18', 'R_BC18', 'R_AC18', 'R_PR18', 'R_AB2', 'R_BC2', 'R_AC2', 'R_PR2')
+            mirror('R_AB19', 'R_BC19', 'R_AC19', 'R_PR19', 'R_AB1', 'R_BC1', 'R_AC1', 'R_PR1')
+        }
+
+        function generate() {
+            // generate protocol
+            // получить элемент
+            let num = document.getElementById('num').value
+            let date = document.getElementById('date').value.split("-").reverse().join(".")
+
+
+            let u_kl = sel_u_kl()
+
+            let vid = sel_vid()
+
+            function sel_proizv() {
+                let selind = document.getElementById('proizv').options.selectedIndex;
+                let proizv = document.getElementById('proizv').options[selind].value;
+                return proizv
+            }
+            let proizv = sel_proizv()
+
+            function sel_district() {
+                let selind = document.getElementById('district').options.selectedIndex;
+                let district = document.getElementById('district').options[selind].value;
+                return district
+            }
+            let district = sel_district()
+
+            let name = document.getElementById('name').value
+            let mesto = mesto_val()
+            let temp = document.getElementById('temp').value
+            let pres = document.getElementById('pres').value
+            let vlag = document.getElementById('vlag').value
+            let mark = document.getElementById('mark').value
+            let type_tm = document.getElementById('type_tm').value
+            let schema = document.getElementById('schema').value
+            let year = document.getElementById('year').value.split("-").reverse().join(".")
+            let U_K = document.getElementById('U_K').value
+
+            let R15BH = document.getElementById('R15BH').value
+            let R60BH = document.getElementById('R60BH').value
+
+            let R15HH = document.getElementById('R15HH').value
+            let R60HH = document.getElementById('R60HH').value
+
+            let R15HH_BH = document.getElementById('R15HH_BH').value
+            let R60HH_BH = document.getElementById('R60HH_BH').value
+
+            let KabcBH = document.getElementById('KabcBH').value
+            let KabcHH = document.getElementById('KabcHH').value
+            
+            let KabcHH_BH = document.getElementById('KabcHH_BH').value
+
+            let CxBH = document.getElementById('CxBH').value
+            let CxHH = document.getElementById('CxHH').value
+            
+            let CxHH_BH = document.getElementById('CxHH_BH').value
+
+            let TgBH = document.getElementById('TgBH').value
+            let TgHH = document.getElementById('TgHH').value
+        
+            let TgHH_BH = document.getElementById('TgHH_BH').value
+
+            let Tizm = document.getElementById('Tizm').value
+            let Tzav = document.getElementById('Tzav').value
+
+            let R15BHpr = document.getElementById('R15BHpr').value
+            let R60BHpr = document.getElementById('R60BHpr').value
+
+            let R15HHpr = document.getElementById('R15HHpr').value
+            let R60HHpr = document.getElementById('R60HHpr').value
+
+           
+
+            let R15HH_BHpr = document.getElementById('R15HH_BHpr').value
+            let R60HH_BHpr = document.getElementById('R60HH_BHpr').value
+
+            let TgBHpr = document.getElementById('TgBHpr').value
+            let TgHHpr = document.getElementById('TgHHpr').value
+            
+            let TgHH_BHpr = document.getElementById('TgHH_BHpr').value
+
+
+            let R15BHzav = document.getElementById('R15BHzav').value
+            let R60BHzav = document.getElementById('R60BHzav').value
+
+            let R15HHzav = document.getElementById('R15HHzav').value
+            let R60HHzav = document.getElementById('R60HHzav').value
+
+          
+
+            let R15HH_BHzav = document.getElementById('R15HH_BHzav').value
+            let R60HH_BHzav = document.getElementById('R60HH_BHzav').value
+
+            let TgBHzav = document.getElementById('TgBHzav').value
+            let TgHHzav = document.getElementById('TgHHzav').value
+           
+            let TgHH_BHzav = document.getElementById('TgHH_BHzav').value
+
+            let CxBHzav = document.getElementById('CxBHzav').value
+            let CxHHzav = document.getElementById('CxHHzav').value
+            
+            let CxHH_BHzav = document.getElementById('CxHH_BHzav').value
+
+            const doc = new Document();
+            const paragraph0 = new Paragraph();
+            // чтоб вставить картинку ее надо перевести в басе64 формат +размер 620х140
+            doc.createImage(pic, 600, 140)
+
+            const table4 = doc.createTable(1, 2);
+            table4.getCell(0, 0).addContent(new Paragraph('Свидетельство о регистрации электролаборатории №045-2018 от «22» июня 2018года.'))
+            table4.getCell(0, 0).addContent(new Paragraph("Срок действия Свидетельства установлен"))
+            table4.getCell(0, 0).addContent(new Paragraph("до «22» июня 2021 года."))
+            table4.getCell(0, 1).addContent(new Paragraph('1.Перепечатка, размножение протокола без разрешения ЭЛ (или Заказчика) запрещена.'))
+            table4.getCell(0, 1).addContent(new Paragraph('2.Протокол испытаний распространяется только на данную электроустановку.'))
+            table4.getCell(0, 1).addContent(new Paragraph('3.Исправления, дополнения в протоколе не допускаются.'))
+            table4.getCell(0, 1).addContent(new Paragraph('4.Копии протоколов хранятся в ЭЛ.'))
+
+            doc.addParagraph(paragraph0);
+            const paragraph = new Paragraph();
+            const institutionText = new TextRun(`                                 ПРОТОКОЛ № ${num}`).bold().size(35);
+            paragraph.addRun(institutionText);
+            doc.addParagraph(paragraph);
+            doc.addParagraph(paragraph0);
+
+            const paragraph2 = new Paragraph();
+            const paragraph2_1 = new Paragraph();
+            const institutionText2 = new TextRun("                                           ")
+            const institutionText21 = new TextRun("испытание силового трансформатора").bold().size(28).underline();
+            // const institutionText23 = new TextRun("                ")
+            // const institutionText24 = new TextRun("напряжением переменного тока промышленной частоты").bold().size(28).underline();
+            paragraph2.addRun(institutionText2);
+            paragraph2.addRun(institutionText21);
+            // paragraph2_1.addRun(institutionText23);
+            // paragraph2_1.addRun(institutionText24);
+            doc.addParagraph(paragraph2);
+            // doc.addParagraph(paragraph2_1);
+            doc.addParagraph(paragraph0);
+
+            const paragraph3 = new Paragraph();
+            const institutionText3 = new TextRun("                                                                                ")
+            const institutionText31 = new TextRun(`от ${date}.`).size(22).underline();
+            paragraph3.addRun(institutionText3);
+            paragraph3.addRun(institutionText31);
+            doc.addParagraph(paragraph3);
+            doc.addParagraph(paragraph0);
+
+            const paragraph4 = new Paragraph();
+            const institutionText4 = new TextRun("1. Электроустановка: ").size(22)
+            const institutionText41 = new TextRun(`${name}                                                                              .`).size(22).underline();
+            paragraph4.addRun(institutionText4);
+            paragraph4.addRun(institutionText41);
+            doc.addParagraph(paragraph4);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph5 = new Paragraph();
+            const institutionText5 = new TextRun("                                                     ")
+            const institutionText51 = new TextRun(`(Наименование и адрес)`).size(18).underline();
+            paragraph5.addRun(institutionText5);
+            paragraph5.addRun(institutionText51);
+            doc.addParagraph(paragraph5);
+            doc.addParagraph(paragraph0);
+
+            const paragraph6 = new Paragraph();
+            const institutionText6 = new TextRun("2. Заказчик:").size(22)
+            const institutionText61 = new TextRun(` ${district}                                                                                                                         .`).size(22).underline();
+            paragraph6.addRun(institutionText6);
+            paragraph6.addRun(institutionText61);
+            doc.addParagraph(paragraph6);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph7 = new Paragraph();
+            const institutionText7 = new TextRun("                                                     ")
+            const institutionText71 = new TextRun(`(Организация)`).size(18).underline();
+            paragraph7.addRun(institutionText7);
+            paragraph7.addRun(institutionText71);
+            doc.addParagraph(paragraph7);
+            doc.addParagraph(paragraph0);
+
+            const paragraph8 = new Paragraph();
+            const institutionText8 = new TextRun("3. Вид и цель проведения испытания: ").size(22)
+            const institutionText81 = new TextRun(`${vid}`).size(22).underline();
+            paragraph8.addRun(institutionText8);
+            paragraph8.addRun(institutionText81);
+            doc.addParagraph(paragraph8);
+            doc.addParagraph(paragraph0);
+
+            const paragraph9 = new Paragraph();
+            const institutionText9 = new TextRun("4. Место проведения испытания: ").size(22)
+            const institutionText91 = new TextRun(`${mesto}`).size(22).underline();
+            paragraph9.addRun(institutionText9);
+            paragraph9.addRun(institutionText91);
+            doc.addParagraph(paragraph9);
+            doc.addParagraph(paragraph0);
+
+            const paragraph10 = new Paragraph();
+            const paragraph101 = new Paragraph();
+            const institutionText10 = new TextRun(`5. Климатические условия проведения испытаний: `).size(22)
+            const institutionText101 = new TextRun(`    Температура: ${temp}${'\u2103'} Давление: ${pres} мм рт. ст., влажность ${vlag} %`).size(22);
+            paragraph10.addRun(institutionText10);
+            paragraph101.addRun(institutionText101);
+            doc.addParagraph(paragraph10);
+            doc.addParagraph(paragraph101);
+            doc.addParagraph(paragraph0);
+
+            const paragraph11 = new Paragraph();
+            const institutionText11 = new TextRun("6. Паспортные данные трансформатора: ").size(22)
+            paragraph11.addRun(institutionText11);
+            doc.addParagraph(paragraph11)
+            // doc.addParagraph(paragraph0);
+
+            const tablePasport = doc.createTable(3, 4);
+            tablePasport.getCell(0, 0).addContent(new Paragraph(` Тип ${type_tm} `));
+            tablePasport.getCell(0, 1).addContent(new Paragraph(` Мощность ${w_from_type()}кВА `));
+            tablePasport.getCell(0, 2).addContent(new Paragraph(` Uвн  115кВ `));
+            tablePasport.getCell(0, 3).addContent(new Paragraph(` Iвн ${i_from_w(w_from_type(), 115)}А `));
+
+            tablePasport.getCell(1, 0).addContent(new Paragraph(` Зав. № ${mark}`));
+            tablePasport.getCell(1, 1).addContent(new Paragraph(`Дата изготовления: ${year}`))
+            tablePasport.getCell(1, 2).addContent(new Paragraph(`Uнн1 ${u_kl}кВ`));
+            tablePasport.getCell(1, 3).addContent(new Paragraph(` Iнн1 ${i_from_w(w_from_type(), u_kl)}А`));
+
+            tablePasport.getCell(2, 0).addContent(new Paragraph(`Схема и группа соединения  ${schema}`));
+            tablePasport.getCell(2, 1).addContent(new Paragraph(` Uк=${U_K}%`));
+            tablePasport.getCell(2, 2).addContent(new Paragraph(`Uнн2 --- кВ`));
+            tablePasport.getCell(2, 3).addContent(new Paragraph(` Iнн2 --- А`));
+            doc.addParagraph(paragraph0)
+
+
+            const paragraph12 = new Paragraph();
+            const institutionText12 = new TextRun("7. Нормативная документация (НД) и допуски показателей по НД: ").size(22)
+            paragraph12.addRun(institutionText12);
+            doc.addParagraph(paragraph12)
+            // doc.addParagraph(paragraph0);
+
+            const table = doc.createTable(6, 5);
+            table.getCell(0, 0).addContent(new Paragraph('Измеряемый параметр'));
+            table.getCell(0, 1).addContent(new Paragraph('Нормативная документация'));
+            table.getCell(0, 2).addContent(new Paragraph('Значение показателей'));
+            table.getCell(0, 3).addContent(new Paragraph('НД на метод испытания'));
+            table.getCell(0, 4).addContent(new Paragraph('Допуск показателя по НД'));
+
+            table.getCell(1, 0).addContent(new Paragraph('Измерение характеристик изоляции'));
+            table.getCell(1, 1).addContent(new Paragraph('Заводские или каталожные данные,ПУЭ 1.8.16. п.2'))
+            table.getCell(1, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(1, 3).addContent(new Paragraph('МВИ-2'));
+            table.getCell(1, 4).addContent(new Paragraph(`Не менее 450 МОм при Т=+10${'\u2103'}`));
+
+            table.getCell(2, 0).addContent(new Paragraph('Измерение сопротивления обмоток постоянному току'));
+            table.getCell(2, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п. 4'));
+            table.getCell(2, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(2, 3).addContent(new Paragraph('МВИ-18'));
+            table.getCell(2, 4).addContent(new Paragraph('Расхождение не более 2 % между разными фазами на одинаковых ответвлениях'));
+
+            table.getCell(3, 0).addContent(new Paragraph('Измерение коэффициента трансформации'));
+            table.getCell(3, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п.5'));
+            table.getCell(3, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(3, 3).addContent(new Paragraph('МВИ-12'));
+            table.getCell(3, 4).addContent(new Paragraph('Расхождение не более 2 % между разными фазами на одинаковых ответвлениях и от исходных данных'));
+
+            table.getCell(4, 0).addContent(new Paragraph('Проверка группы соединения'));
+            table.getCell(4, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п.6'));
+            table.getCell(4, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(4, 3).addContent(new Paragraph('МВИ-25'));
+            table.getCell(4, 4).addContent(new Paragraph('В соответствии с паспортом'));
+
+            table.getCell(5, 0).addContent(new Paragraph('Измерение потерь холостого хода'));
+            table.getCell(5, 1).addContent(new Paragraph('Заводские или каталожные данные, ПУЭ 1.8.16. п.7'));
+            table.getCell(5, 2).addContent(new Paragraph('Согласно данных завода-изготовителя'));
+            table.getCell(5, 3).addContent(new Paragraph('МВИ-13'));
+            table.getCell(5, 4).addContent(new Paragraph('В соответствии с паспортом'));
+            // doc.addParagraph(paragraph0);
+
+            const paragraph13 = new Paragraph();
+            const institutionText13 = new TextRun("8. Испытания проведены согласно требованиям ПУЭ и «Объёмов и норм испытаний», РД 34.45-51.300-97 в соответствии с ПВИ-21").size(22)
+            paragraph13.addRun(institutionText13);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph13)
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph14 = new Paragraph();
+            const institutionText14 = new TextRun("9. Результаты испытаний:").size(22)
+            paragraph14.addRun(institutionText14);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph14)
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+
+
+            const paragraphR = new Paragraph();
+            const institutionTextR = new TextRun(`9.1. Характеристика изоляции обмоток измеренная при температуре ${Tizm}${'\u2103'}`).size(22)
+            paragraphR.addRun(institutionTextR);
+            doc.addParagraph(paragraphR)
+            // doc.addParagraph(paragraph0);
+
+            const table1 = doc.createTable(4, 6);
+            table1.getCell(0, 0).addContent(new Paragraph(' Схема соединения '));
+            table1.getCell(0, 1).addContent(new Paragraph(' R15 (МОм) '));
+            table1.getCell(0, 2).addContent(new Paragraph(' R60 (МОм) '));
+            table1.getCell(0, 3).addContent(new Paragraph(' К абсорбции '));
+            table1.getCell(0, 4).addContent(new Paragraph(' Tg (%) '));
+            table1.getCell(0, 5).addContent(new Paragraph(' Cx (pF) '));
+
+            table1.getCell(1, 0).addContent(new Paragraph(` ВН-НН+к `));
+            table1.getCell(1, 1).addContent(new Paragraph(` ${R15BH} `));
+            table1.getCell(1, 2).addContent(new Paragraph(` ${R60BH} `));
+            table1.getCell(1, 3).addContent(new Paragraph(` ${KabcBH} `));
+            table1.getCell(1, 4).addContent(new Paragraph(` ${TgBH} `));
+            table1.getCell(1, 5).addContent(new Paragraph(` ${CxBH} `));
+
+            table1.getCell(2, 0).addContent(new Paragraph(` HН-BН+к `));
+            table1.getCell(2, 1).addContent(new Paragraph(` ${R15HH} `));
+            table1.getCell(2, 2).addContent(new Paragraph(` ${R60HH} `));
+            table1.getCell(2, 3).addContent(new Paragraph(` ${KabcHH} `));
+            table1.getCell(2, 4).addContent(new Paragraph(` ${TgHH} `));
+            table1.getCell(2, 5).addContent(new Paragraph(` ${CxHH} `));
+
+            table1.getCell(3, 0).addContent(new Paragraph(` BН+HH-k `));
+            table1.getCell(3, 1).addContent(new Paragraph(` ${R15HH_BH} `));
+            table1.getCell(3, 2).addContent(new Paragraph(` ${R60HH_BH} `));
+            table1.getCell(3, 3).addContent(new Paragraph(` ${KabcHH_BH} `));
+            table1.getCell(3, 4).addContent(new Paragraph(` ${TgHH_BH} `));
+            table1.getCell(3, 5).addContent(new Paragraph(` ${CxHH_BH} `));
+
+            doc.addParagraph(paragraph0);
+
+            const paragraphRpr = new Paragraph();
+            const institutionTextRpr = new TextRun(`9.2. Характеристика изоляции обмоток приведенная к заводской температуре ${Tzav}${'\u2103'}`).size(22)
+            paragraphRpr.addRun(institutionTextRpr);
+            doc.addParagraph(paragraphRpr)
+            // doc.addParagraph(paragraph0);
+
+            const tableRpr = doc.createTable(4, 8);
+
+            tableRpr.getCell(0, 0).addContent(new Paragraph(' Схема соединения '));
+            tableRpr.getCell(0, 1).addContent(new Paragraph(' R15 (МОм) '));
+            tableRpr.getCell(0, 2).addContent(new Paragraph(' R60 (МОм) '));
+            tableRpr.getCell(0, 3).addContent(new Paragraph(' Tg (%) '));
+            tableRpr.getCell(0, 4).addContent(new Paragraph(' R15 (МОм) завод.'));
+            tableRpr.getCell(0, 5).addContent(new Paragraph(' R60 (МОм) завод.'));
+            tableRpr.getCell(0, 6).addContent(new Paragraph(' Tg (%) завод.'));
+            tableRpr.getCell(0, 7).addContent(new Paragraph(' Cx (pF) завод.'));
+
+            tableRpr.getCell(1, 0).addContent(new Paragraph(` ВН-НН+к `));
+            tableRpr.getCell(1, 1).addContent(new Paragraph(` ${R15BHpr} `));
+            tableRpr.getCell(1, 2).addContent(new Paragraph(` ${R60BHpr} `));
+            tableRpr.getCell(1, 3).addContent(new Paragraph(` ${TgBHpr} `));
+            tableRpr.getCell(1, 4).addContent(new Paragraph(` ${R15BHzav} `));
+            tableRpr.getCell(1, 5).addContent(new Paragraph(` ${R60BHzav} `));
+            tableRpr.getCell(1, 6).addContent(new Paragraph(` ${TgBHzav} `));
+            tableRpr.getCell(1, 7).addContent(new Paragraph(` ${CxBHzav} `));
+
+            tableRpr.getCell(2, 0).addContent(new Paragraph(` HН-BН+к `));
+            tableRpr.getCell(2, 1).addContent(new Paragraph(` ${R15HHpr} `));
+            tableRpr.getCell(2, 2).addContent(new Paragraph(` ${R60HHpr} `));
+            tableRpr.getCell(2, 3).addContent(new Paragraph(` ${TgHHpr} `));
+            tableRpr.getCell(2, 4).addContent(new Paragraph(` ${R15HHzav} `));
+            tableRpr.getCell(2, 5).addContent(new Paragraph(` ${R60HHzav} `));
+            tableRpr.getCell(2, 6).addContent(new Paragraph(` ${TgHHzav} `));
+            tableRpr.getCell(2, 7).addContent(new Paragraph(` ${CxHHzav} `));
+
+            
+
+            tableRpr.getCell(3, 0).addContent(new Paragraph(` BН+HH-k `));
+            tableRpr.getCell(3, 1).addContent(new Paragraph(` ${R15HH_BHpr} `));
+            tableRpr.getCell(3, 2).addContent(new Paragraph(` ${R60HH_BHpr} `));
+            tableRpr.getCell(3, 3).addContent(new Paragraph(` ${TgHH_BHpr} `));
+            tableRpr.getCell(3, 4).addContent(new Paragraph(` ${R15HH_BHzav} `));
+            tableRpr.getCell(3, 5).addContent(new Paragraph(` ${R60HH_BHzav} `));
+            tableRpr.getCell(3, 6).addContent(new Paragraph(` ${TgHH_BHzav} `));
+            tableRpr.getCell(3, 7).addContent(new Paragraph(` ${CxHH_BHzav} `));
+
+            doc.addParagraph(paragraph0);
+
+            if (vid != 'периодические') {
+                full_protocol(doc, Tizm)
+            }
+
+            const paragraph17 = new Paragraph();
+            const institutionText17 = new TextRun("10. Перечень применяемого испытательного оборудования (ИО) и средств измерений (СИ)").size(22)
+            paragraph17.addRun(institutionText17);
+            doc.addParagraph(paragraph17)
+            // doc.addParagraph(paragraph0);
+
+            const table2 = doc.createTable(8, 7);
+            table2.getCell(0, 0).addContent(new Paragraph());
+            table2.getCell(0, 1).addContent(new Paragraph('Тип ИО и СИ'));
+            table2.getCell(0, 2).addContent(new Paragraph('Заводской номер'));
+            table2.getCell(0, 3).addContent(new Paragraph('Диапазон измерений'));
+            table2.getCell(0, 4).addContent(new Paragraph('Погрешность СИ'));
+            table2.getCell(0, 5).addContent(new Paragraph('№ аттестата или свидетельства о поверке'));
+            table2.getCell(0, 6).addContent(new Paragraph('Дата очередной поверки'));
+
+            table2.getCell(1, 0).addContent(new Paragraph('Измеритель сопротивлений'));
+            table2.getCell(1, 1).addContent(new Paragraph('ПФИ-24-10Р'));
+            table2.getCell(1, 2).addContent(new Paragraph('1111'));
+            table2.getCell(1, 3).addContent(new Paragraph('0,1-2000 Ом'));
+            table2.getCell(1, 4).addContent(new Paragraph('± 0,5%'));
+            table2.getCell(1, 5).addContent(new Paragraph(nomer_svid_pfi));
+            table2.getCell(1, 6).addContent(new Paragraph(data_svid_pfi));
+
+            table2.getCell(2, 0).addContent(new Paragraph('Измеритель коэффициента трансформации '));
+            table2.getCell(2, 1).addContent(new Paragraph('КОЭФФИЦИЕНТ-3'));
+            table2.getCell(2, 2).addContent(new Paragraph('6'));
+            table2.getCell(2, 3).addContent(new Paragraph('Кт 1-10, 10-100, 100-1000, 1000-10000'));
+            table2.getCell(2, 4).addContent(new Paragraph('± 0,5%'));
+            table2.getCell(2, 5).addContent(new Paragraph(nomer_svid_ktr));
+            table2.getCell(2, 6).addContent(new Paragraph(data_svid_ktr));
+
+            table2.getCell(3, 0).addContent(new Paragraph('Психрометр'));
+            table2.getCell(3, 1).addContent(new Paragraph('ВИТ-2'));
+            table2.getCell(3, 2).addContent(new Paragraph('23'));
+            table2.getCell(3, 3).addContent(new Paragraph(`15-40${'\u2103'}`));
+            table2.getCell(3, 4).addContent(new Paragraph(''));
+            table2.getCell(3, 5).addContent(new Paragraph(nomer_svid_psih));
+            table2.getCell(3, 6).addContent(new Paragraph(data_svid_psih));
+
+            table2.getCell(4, 0).addContent(new Paragraph('Барометр-анероид'));
+            table2.getCell(4, 1).addContent(new Paragraph('БАММ-1'));
+            table2.getCell(4, 2).addContent(new Paragraph('5809'));
+            table2.getCell(4, 3).addContent(new Paragraph('80 до 106 кПА,ц.д.0,1 кПа'));
+            table2.getCell(4, 4).addContent(new Paragraph(''));
+            table2.getCell(4, 5).addContent(new Paragraph(nomer_svid_bar));
+            table2.getCell(4, 6).addContent(new Paragraph(data_svid_bar));
+
+            table2.getCell(5, 0).addContent(new Paragraph('Термометр'));
+            table2.getCell(5, 1).addContent(new Paragraph('КШ14/23'));
+            table2.getCell(5, 2).addContent(new Paragraph('309'));
+            table2.getCell(5, 3).addContent(new Paragraph(`-30+40${'\u2103'}`));
+            table2.getCell(5, 4).addContent(new Paragraph(''));
+            table2.getCell(5, 5).addContent(new Paragraph(nomer_svid_term));
+            table2.getCell(5, 6).addContent(new Paragraph(data_svid_term));
+
+            table2.getCell(6, 0).addContent(new Paragraph('Мегаомметр'));
+            table2.getCell(6, 1).addContent(new Paragraph('ЭСО 210/3-Г'));
+            table2.getCell(6, 2).addContent(new Paragraph('18596'));
+            table2.getCell(6, 3).addContent(new Paragraph('0 – 10000 Мом'));
+            table2.getCell(6, 4).addContent(new Paragraph('± 5%'));
+            table2.getCell(6, 5).addContent(new Paragraph(nomer_svid_meg));
+            table2.getCell(6, 6).addContent(new Paragraph(data_svid_meg));
+
+            table2.getCell(7, 0).addContent(new Paragraph('Измеритель параметров изоляции'));
+            table2.getCell(7, 1).addContent(new Paragraph('Тангенс 2000'));
+            table2.getCell(7, 2).addContent(new Paragraph('08.10.507'));
+            table2.getCell(7, 3).addContent(new Paragraph('0.00001 – 100% Tg; 10-340000 pF'));
+            table2.getCell(7, 4).addContent(new Paragraph('± 5%'));
+            table2.getCell(7, 5).addContent(new Paragraph(nomer_svid_tg));
+            table2.getCell(7, 6).addContent(new Paragraph(data_svid_tg));
+
+            doc.addParagraph(paragraph0);
+
+            const paragraph18 = new Paragraph();
+            const institutionText18 = new TextRun("Замечание: Нет.").size(22)
+            paragraph18.addRun(institutionText18);
+            doc.addParagraph(paragraph18)
+            doc.addParagraph(paragraph0);
+
+            const paragraph19 = new Paragraph();
+            const institutionText19 = new TextRun("Заключение: Электрооборудование соответствует требованиям РД 34.45-51.300-97 п.6.4, п.6.5, п.6.8, п.6.9, п.6.10, п.6.11, ПУЭ 1.8.16 п.2, п.4, п.5, п.6, п.7, п.9 и пригодно к эксплуатации.").size(22)
+            paragraph19.addRun(institutionText19);
+            doc.addParagraph(paragraph19)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph20 = new Paragraph();
+            const institutionText20 = new TextRun(`    Испытание произвёл: ________________________/${proizv}/`).size(22)
+            paragraph20.addRun(institutionText20);
+            doc.addParagraph(paragraph20)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            const paragraph21 = new Paragraph();
+            const institutionText2_1 = new TextRun("    Начальник ОИЗП: ___________________________/Смирнов П. В./").size(22)
+            paragraph21.addRun(institutionText2_1);
+            doc.addParagraph(paragraph21)
+            // doc.addParagraph(paragraph0);
+
+            let page_of_doc = new TextRun("                     2")
+            if (vid != 'периодические') {
+                page_of_doc = new TextRun("                     3")
+            }
+
+            const doc1 = new Document();
+            const table3 = doc1.createTable(2, 4);
+            table3.getCell(0, 0).addContent(new Paragraph(' Свидетельство о регистрации .'))
+            table3.getCell(0, 1).addContent(new Paragraph('  Номер протокола .'))
+            table3.getCell(0, 2).addContent(new Paragraph('   Страница протокола .'))
+            table3.getCell(0, 3).addContent(new Paragraph(' Всего страниц в протоколе .'))
+
+            table3.getCell(1, 0).addContent(new Paragraph('         ЭЛ №045-2018  '))
+            table3.getCell(1, 1).addContent(new Paragraph(`         ${num}     `))
+            table3.getCell(1, 2).addContent(new Paragraph(new TextRun("                 ").pageNumber()))
+            table3.getCell(1, 3).addContent(new Paragraph(page_of_doc))
+
+            doc.Footer.createParagraph(table3)
+
+            const packer = new Packer();
+            packer.toBlob(doc).then(blob => {
+                console.log(blob);
+                saveAs(blob, `${num} ${name}.docx`);
+                console.log("Document created successfully");
+            });
+        }
+    </script>
+</body>
+
+</html>
