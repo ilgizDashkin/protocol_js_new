@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>создатель протоколов</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery-3.3.1.slim.min.js"></script>
+    <script src="index_docx.js"></script>
+    <script src="FileSaver.js"></script>
+    <!-- это картинка в басе64 формате -->
+    <script src="pic2.js"></script>
+    <script src="poverka.js"></script>
+</head>
+
+<body class="bg-success" onload="getDateNow('date')">
+    <div class="container text-center text-white p-3">
+        <input type="button" class="btn btn-danger btn-lg btn-block" value='назад'
+            onclick="javascript:window.location ='index.html'" />
+        <h2>протокол на сек шин ПС</h2>
+        <p class='bg-dark'>наименование</p>
+        <input id="name" class='form-control' type="search" onchange="mesto_isp()"
+            value='ПС "Промышленная" ЗРУ-6кВ 1 секция шин'><br>
+        <div class="row">
+            <div class="col-md-4">
+                <p class='bg-dark'>номер протокола</p>
+                <input id="num" class='form-control' type="search" onchange="distr_name()" value="123-ПС"><br>
+                <p class='bg-dark'>дата</p>
+                <input id="date" class='form-control' type="date"><br>
+                <p class='bg-dark'>напряжение</p>
+                <select id="u_kl" class="form-control bg-warning">
+                    <option VALUE="6">6кВ</option>
+                    <option VALUE="10">10кВ</option>
+                </select><br>
+                <p class='bg-dark'>район</p>
+                <select id="district" class="form-control bg-warning">
+                    <option VALUE="ОПС">ОПС</option>
+                </select><br>
+            </div>
+            <div class="col-md-4">
+                <p class='bg-dark'>вид испытания</p>
+                <select id="vid" class="form-control bg-warning">
+                    <option VALUE="периодические">периодические</option>
+                    <option VALUE="приемосдаточные">приемосдаточные</option>
+                    <option VALUE="эксплуатационные">эксплуатационные</option>
+                </select><br>
+                <p class='bg-dark'>место испытания</p>
+                <input id="mesto" class='form-control' type="search" value="ПС"><br>
+                <p class='bg-dark'>марка</p>
+                <input id="mark" class='form-control' type="search" value="---"><br>
+                <p class='bg-dark'>тип</p>
+                <input id="len_kl" class='form-control' type="search" value="---"><br>
+
+            </div>
+            <div class="col-md-4">
+                <p class='bg-dark'>кто произвёл</p>
+                <select id="proizv" class="form-control bg-warning">
+                    <option VALUE="Дашкин И.А.">Дашкин И.А.</option>
+                    <option VALUE="Габбасов А.Р.">Габбасов А.Р.</option>
+                    <option VALUE="Гафуров З.С.">Гафуров З.С.</option>
+                    <option VALUE="Михайлов Д.Е.">Михайлов Д.Е.</option>
+                    <option VALUE="Абдуллин Р.Р.">Абдуллин Р.Р.</option>
+                    <option VALUE="Карпов В.Г.">Карпов В.Г.</option>
+                    <option VALUE="Исянбаев Ф.Ф.">Исянбаев Ф.Ф.</option>
+                    <option VALUE="Фадеев И.Н.">Фадеев И.Н.</option>
+                </select><br>
+                <p class='bg-dark'>температура</p>
+                <input id="temp" class='form-control' type="search" value="+1"><br>
+                <p class='bg-dark'>давление</p>
+                <input id="pres" class='form-control' type="search" value="750"><br>
+                <p class='bg-dark'>влажность</p>
+                <input id="vlag" class='form-control' type="search" value="70"><br>
+            </div>
+        </div>
+        <p class='bg-dark'>класс изоляции (обычно 10кВ)</p>
+        <!-- <input id="sech_kl" class='form-control' type="search" value="10кВ"><br> -->
+        <select id="sech_kl" class="form-control bg-warning">
+            <option VALUE="10кВ">10кВ</option>
+            <option VALUE="6кВ">6кВ</option>
+        </select><br>
+    </div>
+    <div class='container p-2'>
+        <button class="btn btn-info btn-lg btn-block" onclick="generate()">создать протокол</button>
+    </div>
+    <script src="popper.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+
+    <script>
+        function getDateNow(id_elemement) {
+            let elem_out = document.getElementById(id_elemement)
+            let todayDate = new Date();
+            let currYear = todayDate.getFullYear();
+            let currMonth = todayDate.getMonth() + 1;
+            let currDay = todayDate.getDate();
+            // document.write("Сегодняшняя дата: ");
+            // console.log( typeof currDay)
+            if (currMonth < 10) {
+                currMonth = "0" + currMonth
+            }
+            if (currDay < 10) {
+                currDay = "0" + currDay
+            }
+            elem_out.value = (currYear + "-" + currMonth + "-" + currDay)
+        }
+        function randomInteger(min, max) {
+            // получить случайное число от (min-0.5) до (max+0.5)
+            let rand = min - 0.5 + Math.random() * (max - min + 1);
+            return Math.round(rand);
+        }
+        function mesto_isp() {
+            // вывод места испытания из наименования элек.уст
+            // console.log(text_in.length)
+            let text_in = document.getElementById('name').value
+            let mesto = document.getElementById('mesto')
+            if (text_in.length > 5) {
+                let text_out = text_in.split(' ')
+                if (text_out[0]) {
+                    // return text_out[0]
+                    mesto.value = text_out[0]
+                }
+            } else {
+                return mesto.value = text_in
+            }
+        }
+        function distr_name() {
+            // вывод места испытания из наименования элек.уст
+            // console.log(text_in.length)
+            let text_in = document.getElementById('num').value
+            let mesto = document.getElementById('district')
+            if (text_in.length > 2) {
+                let text_out = text_in.split('-')
+                if (text_out[1]) {
+                    // return text_out[0]
+                    mesto.value = text_out[1] + 'РЭС'
+                }
+            } else {
+                return mesto.value = 'РЭС'
+            }
+        }
+
+        function generate() {
+            // получить элемент
+            let num = document.getElementById('num').value
+            let date = document.getElementById('date').value.split("-").reverse().join(".")
+            // let u_kl= document.getElementById('u_kl').value
+            // получаем индекс выбранного элемента
+            function sel_val() {
+                let selind = document.getElementById('u_kl').options.selectedIndex;
+                let u_kl = document.getElementById('u_kl').options[selind].value;
+                console.log(u_kl)
+                return u_kl
+            }
+            let u_kl = sel_val()
+
+            function sel_vid() {
+                let selind = document.getElementById('vid').options.selectedIndex;
+                let vid = document.getElementById('vid').options[selind].value;
+                return vid
+            }
+            let vid = sel_vid()
+
+            function sel_proizv() {
+                let selind = document.getElementById('proizv').options.selectedIndex;
+                let proizv = document.getElementById('proizv').options[selind].value;
+                return proizv
+            }
+            let proizv = sel_proizv()
+
+            function sel_district() {
+                let selind = document.getElementById('district').options.selectedIndex;
+                let district = document.getElementById('district').options[selind].value;
+                return district
+            }
+            let district = sel_district()
+
+            function sel_sech_kl() {
+                let selind = document.getElementById('sech_kl').options.selectedIndex;
+                let sech_kl = document.getElementById('sech_kl').options[selind].value;
+                return sech_kl
+            }
+            let sech_kl = sel_sech_kl()//теперь это класс эу
+
+            let name = document.getElementById('name').value
+            let mesto = document.getElementById('mesto').value
+            let temp = document.getElementById('temp').value
+            let pres = document.getElementById('pres').value
+            let vlag = document.getElementById('vlag').value
+            let mark = document.getElementById('mark').value
+            let len_kl = document.getElementById('len_kl').value //теперь это тип
+
+
+            const doc = new Document();
+            const paragraph0 = new Paragraph();
+
+            // чтоб вставить картинку ее надо перевести в басе64 формат +размер 620х140
+            doc.createImage(pic, 600, 140)
+
+            const table4 = doc.createTable(1, 2);
+            table4.getCell(0, 0).addContent(new Paragraph('Свидетельство о регистрации электролаборатории №045-2018 от «22» июня 2018года.'))
+            table4.getCell(0, 0).addContent(new Paragraph("Срок действия Свидетельства установлен"))
+            table4.getCell(0, 0).addContent(new Paragraph("до «22» июня 2021 года."))
+            table4.getCell(0, 1).addContent(new Paragraph('1.Перепечатка, размножение протокола без разрешения ЭЛ (или Заказчика) запрещена.'))
+            table4.getCell(0, 1).addContent(new Paragraph('2.Протокол испытаний распространяется только на данную электроустановку.'))
+            table4.getCell(0, 1).addContent(new Paragraph('3.Исправления, дополнения в протоколе не допускаются.'))
+            table4.getCell(0, 1).addContent(new Paragraph('4.Копии протоколов хранятся в ЭЛ.'))
+
+            doc.addParagraph(paragraph0);
+            const paragraph = new Paragraph();
+            const institutionText = new TextRun(`                                 ПРОТОКОЛ № ${num}`).bold().size(35);
+            paragraph.addRun(institutionText);
+            doc.addParagraph(paragraph);
+            doc.addParagraph(paragraph0);
+
+            const paragraph2 = new Paragraph();
+            const paragraph2_1 = new Paragraph();
+            const institutionText2 = new TextRun("                ")
+            const institutionText21 = new TextRun("испытания изоляции электрооборудования повышенным ").bold().size(28).underline();
+            const institutionText23 = new TextRun("                ")
+            const institutionText24 = new TextRun("напряжением переменного тока промышленной частоты").bold().size(28).underline();
+            paragraph2.addRun(institutionText2);
+            paragraph2.addRun(institutionText21);
+            paragraph2_1.addRun(institutionText23);
+            paragraph2_1.addRun(institutionText24);
+            doc.addParagraph(paragraph2);
+            doc.addParagraph(paragraph2_1);
+            doc.addParagraph(paragraph0);
+
+            const paragraph3 = new Paragraph();
+            const institutionText3 = new TextRun("                                                                      ")
+            const institutionText31 = new TextRun(`от ${date}.`).size(22).underline();
+            paragraph3.addRun(institutionText3);
+            paragraph3.addRun(institutionText31);
+            doc.addParagraph(paragraph3);
+            doc.addParagraph(paragraph0);
+
+            const paragraph4 = new Paragraph();
+            const institutionText4 = new TextRun("1. Электроустановка: ").size(22)
+            const institutionText41 = new TextRun(`${name}                       .`).size(22).underline();
+            paragraph4.addRun(institutionText4);
+            paragraph4.addRun(institutionText41);
+            doc.addParagraph(paragraph4);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph5 = new Paragraph();
+            const institutionText5 = new TextRun("                                                     ")
+            const institutionText51 = new TextRun(`(Наименование и адрес)`).size(18).underline();
+            paragraph5.addRun(institutionText5);
+            paragraph5.addRun(institutionText51);
+            doc.addParagraph(paragraph5);
+            doc.addParagraph(paragraph0);
+
+            const paragraph6 = new Paragraph();
+            const institutionText6 = new TextRun("2. Заказчик:").size(22)
+            const institutionText61 = new TextRun(` ${district}                                                                                                               .`).size(22).underline();
+            paragraph6.addRun(institutionText6);
+            paragraph6.addRun(institutionText61);
+            doc.addParagraph(paragraph6);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph7 = new Paragraph();
+            const institutionText7 = new TextRun("                                                     ")
+            const institutionText71 = new TextRun(`(Организация)`).size(18).underline();
+            paragraph7.addRun(institutionText7);
+            paragraph7.addRun(institutionText71);
+            doc.addParagraph(paragraph7);
+            doc.addParagraph(paragraph0);
+
+            const paragraph8 = new Paragraph();
+            const institutionText8 = new TextRun("3. Вид и цель проведения испытания: ").size(22)
+            const institutionText81 = new TextRun(`${vid}`).size(22).underline();
+            paragraph8.addRun(institutionText8);
+            paragraph8.addRun(institutionText81);
+            doc.addParagraph(paragraph8);
+            doc.addParagraph(paragraph0);
+
+            const paragraph9 = new Paragraph();
+            const institutionText9 = new TextRun("4. Место проведения испытания: ").size(22)
+            const institutionText91 = new TextRun(`${mesto} ЗРУ-${u_kl}кВ`).size(22).underline();
+            paragraph9.addRun(institutionText9);
+            paragraph9.addRun(institutionText91);
+            doc.addParagraph(paragraph9);
+            doc.addParagraph(paragraph0);
+
+            const paragraph10 = new Paragraph();
+            const paragraph101 = new Paragraph();
+            const institutionText10 = new TextRun(`5. Климатические условия проведения испытаний: `).size(22)
+            const institutionText101 = new TextRun(`    Температура: ${temp}${'\u2103'} Давление: ${pres} мм рт. ст., влажность ${vlag} %`).size(22);
+            paragraph10.addRun(institutionText10);
+            paragraph101.addRun(institutionText101);
+            doc.addParagraph(paragraph10);
+            doc.addParagraph(paragraph101);
+            doc.addParagraph(paragraph0);
+
+            const paragraph11 = new Paragraph();
+            const paragraph111 = new Paragraph();
+            const institutionText11 = new TextRun("6. Характеристика электроустановки: ").size(22)
+            const institutionText111 = new TextRun(`    Марка: ${mark}, Тип: ${len_kl}, Класс изоляции электроустановки: ${sech_kl}`).size(22);
+            paragraph11.addRun(institutionText11);
+            paragraph111.addRun(institutionText111);
+            doc.addParagraph(paragraph11);
+            doc.addParagraph(paragraph111);
+            doc.addParagraph(paragraph0);
+
+            const paragraph12 = new Paragraph();
+            const institutionText12 = new TextRun("7. Нормативная документация (НД) и допуски показателей по НД: ").size(22)
+            // const institutionText111 = new TextRun(`Марка: АСБ-6, Длина: 300 м, Сечение: 3х150 мм2`).size(28).underline();
+            paragraph12.addRun(institutionText12);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph12)
+            doc.addParagraph(paragraph0);
+
+            const table = doc.createTable(3, 5);
+            table.getCell(0, 0).addContent(new Paragraph('Измеряемый параметр'));
+            table.getCell(0, 1).addContent(new Paragraph('Нормативная документация'));
+            table.getCell(0, 2).addContent(new Paragraph('Значение показателей'));
+            table.getCell(0, 3).addContent(new Paragraph('НД на метод испытания'));
+            table.getCell(0, 4).addContent(new Paragraph('Допуск показателя по НД'));
+
+            table.getCell(1, 0).addContent(new Paragraph('Сопротивление изоляции'));
+            table.getCell(1, 1).addContent(new Paragraph('ПУЭ 1.8.40, п.2'))
+            table.getCell(1, 2).addContent(new Paragraph('Не нормируется'));
+            table.getCell(1, 3).addContent(new Paragraph('МВИ-2'));
+            table.getCell(1, 4).addContent(new Paragraph('Не менее 1000Мом'));
+
+            table.getCell(2, 0).addContent(new Paragraph('Испытание повышенным напряжением выпрямленного тока'));
+            table.getCell(2, 1).addContent(new Paragraph('ПУЭ 1.8.40, п.3'));
+            table.getCell(2, 2).addContent(new Paragraph('Табл. 1.8.39'));
+            table.getCell(2, 3).addContent(new Paragraph('МВИ-11'));
+            table.getCell(2, 4).addContent(new Paragraph('Во время испытания не должно быть пробоя, скользящих разрядов, толчков тока утечки'));
+
+            doc.addParagraph(paragraph0);
+
+            const paragraph13 = new Paragraph();
+            const institutionText13 = new TextRun("8. Испытания проведены согласно требованиям ПУЭ и «Объёмов и норм испытаний», РД 34.45-51.300-97 в соответствии с ПВИ-11.").size(22)
+            // const institutionText111 = new TextRun(`Марка: АСБ-6, Длина: 300 м, Сечение: 3х150 мм2`).size(28).underline();
+            paragraph13.addRun(institutionText13);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph13)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            const paragraph14 = new Paragraph();
+            const institutionText14 = new TextRun("9. Результаты испытаний:").size(22)
+            // const institutionText111 = new TextRun(`Марка: АСБ-6, Длина: 300 м, Сечение: 3х150 мм2`).size(28).underline();
+            paragraph14.addRun(institutionText14);
+            // paragraph11.addRun(institutionText111);
+            doc.addParagraph(paragraph14)
+            doc.addParagraph(paragraph0);
+            // doc.addParagraph(paragraph0);
+
+            function prof(u_kl) {
+                if (vid === "приемосдаточные") {
+                    prol_kl = "вновь"
+                    return u_kl * 6
+                } else {
+                    return u_kl * 4
+                }
+            }
+
+            function norm_isp(u_kl) {
+                if (u_kl === "6") {
+                    return 32
+                } else {
+                    return 42
+                }
+            }
+
+
+            const table1 = doc.createTable(2, 7);
+            table1.getCell(0, 0).addContent(new Paragraph('Наименование объекта'));
+            // table1.getCell(0, 1).addContent(new Paragraph('Схема испытания'));
+            table1.getCell(0, 1).addContent(new Paragraph('Сопротивление изоляции (МОм) до испытания'));
+            table1.getCell(0, 2).addContent(new Paragraph('Сопротивление изоляции (МОм) после испытания'));
+            table1.getCell(0, 3).addContent(new Paragraph('Испыт. Напряж. ~ (кВ)'));
+            table1.getCell(0, 4).addContent(new Paragraph('Продол. испыт. (мин)'));
+            table1.getCell(0, 5).addContent(new Paragraph('Ток утечки (мкА)'));
+            table1.getCell(0, 6).addContent(new Paragraph('Вывод (соотв. не соотв.)'));
+
+            table1.getCell(1, 0).addContent(new Paragraph(`${name}`));
+            // table1.getCell(1, 1).addContent(new Paragraph('К – земля +Ж+З'));
+            table1.getCell(1, 1).addContent(new Paragraph('10000'));
+            table1.getCell(1, 2).addContent(new Paragraph('10000'));
+            table1.getCell(1, 3).addContent(new Paragraph(`${norm_isp(u_kl)}`));
+            table1.getCell(1, 4).addContent(new Paragraph(`1`));
+            let i_utechki = randomInteger(100, 250)
+            table1.getCell(1, 5).addContent(new Paragraph(`---`));
+            table1.getCell(1, 6).addContent(new Paragraph('соответствует'));
+
+            
+            doc.addParagraph(paragraph0);
+
+          
+
+            const paragraph17 = new Paragraph();
+            const institutionText17 = new TextRun("10. Перечень применяемого испытательного оборудования (ИО) и средств измерений (СИ)").size(22)
+            paragraph17.addRun(institutionText17);
+            doc.addParagraph(paragraph17)
+            doc.addParagraph(paragraph0);
+
+            const table2 = doc.createTable(6, 7);
+            table2.getCell(0, 0).addContent(new Paragraph());
+            table2.getCell(0, 1).addContent(new Paragraph('Тип ИО и СИ'));
+            table2.getCell(0, 2).addContent(new Paragraph('Заводской номер'));
+            table2.getCell(0, 3).addContent(new Paragraph('Диапазон измерений'));
+            table2.getCell(0, 4).addContent(new Paragraph('Погрешность СИ'));
+            table2.getCell(0, 5).addContent(new Paragraph('№ аттестата или свидетельства о поверке'));
+            table2.getCell(0, 6).addContent(new Paragraph('Дата очередной поверки'));
+
+            table2.getCell(1, 0).addContent(new Paragraph('Передвижная высоковольтная лаборатория'));
+            table2.getCell(1, 1).addContent(new Paragraph('ЛК-10 СПЭ'));
+            table2.getCell(1, 2).addContent(new Paragraph('213'));
+            table2.getCell(1, 3).addContent(new Paragraph('− 0 - 70 кВ,~ 0 - 100 кВ'));
+            table2.getCell(1, 4).addContent(new Paragraph('± 0,5%,±1,0%'));
+            table2.getCell(1, 5).addContent(new Paragraph(nomer_svid_lab));
+            table2.getCell(1, 6).addContent(new Paragraph(data_svid_lab));
+
+            table2.getCell(2, 0).addContent(new Paragraph('Мегаомметр'));
+            table2.getCell(2, 1).addContent(new Paragraph('ЭСО 210/3-Г'));
+            table2.getCell(2, 2).addContent(new Paragraph('18596'));
+            table2.getCell(2, 3).addContent(new Paragraph('0 – 10000 Мом'));
+            table2.getCell(2, 4).addContent(new Paragraph('± 5%'));
+            table2.getCell(2, 5).addContent(new Paragraph(nomer_svid_meg));
+            table2.getCell(2, 6).addContent(new Paragraph(data_svid_meg));
+
+            table2.getCell(3, 0).addContent(new Paragraph('Психрометр'));
+            table2.getCell(3, 1).addContent(new Paragraph('ВИТ-2'));
+            table2.getCell(3, 2).addContent(new Paragraph('23'));
+            table2.getCell(3, 3).addContent(new Paragraph(`15-40 ${'\u2103'}`));
+            table2.getCell(3, 4).addContent(new Paragraph(''));
+            table2.getCell(3, 5).addContent(new Paragraph(nomer_svid_psih));
+            table2.getCell(3, 6).addContent(new Paragraph(data_svid_psih));
+
+            table2.getCell(4, 0).addContent(new Paragraph('Барометр-анероид'));
+            table2.getCell(4, 1).addContent(new Paragraph('БАММ-1'));
+            table2.getCell(4, 2).addContent(new Paragraph('5809'));
+            table2.getCell(4, 3).addContent(new Paragraph('80 до 106 кПА,ц.д.0,1 кПа'));
+            table2.getCell(4, 4).addContent(new Paragraph(''));
+            table2.getCell(4, 5).addContent(new Paragraph(nomer_svid_bar));
+            table2.getCell(4, 6).addContent(new Paragraph(data_svid_bar));
+
+            table2.getCell(5, 0).addContent(new Paragraph('Термометр'));
+            table2.getCell(5, 1).addContent(new Paragraph('КШ14/23'));
+            table2.getCell(5, 2).addContent(new Paragraph('309'));
+            table2.getCell(5, 3).addContent(new Paragraph(`-30+40${'\u2103'}`));
+            table2.getCell(5, 4).addContent(new Paragraph(''));
+            table2.getCell(5, 5).addContent(new Paragraph(nomer_svid_term));
+            table2.getCell(5, 6).addContent(new Paragraph(data_svid_term));
+            doc.addParagraph(paragraph0);
+
+            const paragraph18 = new Paragraph();
+            const institutionText18 = new TextRun("11. Замечание: нет.").size(22)
+            paragraph18.addRun(institutionText18);
+            doc.addParagraph(paragraph18)
+            doc.addParagraph(paragraph0);
+
+            const paragraph19 = new Paragraph();
+            const institutionText19 = new TextRun("12. Заключение: электрооборудование соответствует требованиям РД 34.45-51.300-97 п.6.7, 7.3, 8.1.2, 9.3, 10.2, 11.2, 13.2, 14.2, 15.2, 16.2, 17.2, 18.2, 23.3, 26.2 и пригодно к эксплуатации.").size(22)
+            paragraph19.addRun(institutionText19);
+            doc.addParagraph(paragraph19)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            const paragraph20 = new Paragraph();
+            const institutionText20 = new TextRun(`    Испытание произвёл: ________________________/${proizv}/`).size(22)
+            paragraph20.addRun(institutionText20);
+            doc.addParagraph(paragraph20)
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+            doc.addParagraph(paragraph0);
+
+            const paragraph21 = new Paragraph();
+            const institutionText2_1 = new TextRun("    Начальник ОИЗП: ___________________________/Смирнов П. В./").size(22)
+            paragraph21.addRun(institutionText2_1);
+            doc.addParagraph(paragraph21)
+            doc.addParagraph(paragraph0);
+
+            let page_of_doc = new TextRun("                     2")
+
+            const doc1 = new Document();
+            const table3 = doc1.createTable(2, 4);
+            table3.getCell(0, 0).addContent(new Paragraph(' Свидетельство о регистрации .'))
+            table3.getCell(0, 1).addContent(new Paragraph('  Номер протокола .'))
+            table3.getCell(0, 2).addContent(new Paragraph('   Страница протокола .'))
+            table3.getCell(0, 3).addContent(new Paragraph(' Всего страниц в протоколе .'))
+
+            table3.getCell(1, 0).addContent(new Paragraph('         ЭЛ №045-2018  '))
+            table3.getCell(1, 1).addContent(new Paragraph(`         ${num}     `))
+            table3.getCell(1, 2).addContent(new Paragraph(new TextRun("                 ").pageNumber()))
+            table3.getCell(1, 3).addContent(new Paragraph(page_of_doc))
+
+            doc.Footer.createParagraph(table3)
+
+            const packer = new Packer();
+            packer.toBlob(doc).then(blob => {
+                console.log(blob);
+                saveAs(blob, `${num} ${name}.docx`);
+                console.log("Document created successfully");
+            });
+        }
+    </script>
+</body>
+
+</html>
