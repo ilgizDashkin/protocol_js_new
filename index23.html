@@ -29,7 +29,7 @@
         <div class="row">
             <div class="col-md-4">
                 <p class='bg-dark'>номер протокола</p>
-                <input id="num" class='form-control' type="search" onchange="distr_name()" value="123-ПС"><br>
+                <input id="num" class='form-control' type="search"  value="123-ПС"><br>
                 <p class='bg-dark'>дата</p>
                 <input id="date" class='form-control' type="date"><br>
                 <p class='bg-dark'>напряжение</p>
@@ -45,9 +45,9 @@
             <div class="col-md-4">
                 <p class='bg-dark'>вид испытания</p>
                 <select id="vid" class="form-control bg-warning">
-                    <option VALUE="периодические">периодические</option>
-                    <option VALUE="приемосдаточные">приемосдаточные</option>
                     <option VALUE="эксплуатационные">эксплуатационные</option>
+                    <option VALUE="периодические">периодические</option>
+                    <option VALUE="приемосдаточные">приемосдаточные</option>                   
                 </select><br>
                 <p class='bg-dark'>место испытания</p>
                 <input id="mesto" class='form-control' type="search" value="ПС"><br>
@@ -70,7 +70,7 @@
                     <option VALUE="Фадеев И.Н.">Фадеев И.Н.</option>
                 </select><br>
                 <p class='bg-dark'>температура</p>
-                <input id="temp" class='form-control' type="search" value="+1"><br>
+                <input id="temp" class='form-control' type="search" value="+10"><br>
                 <p class='bg-dark'>давление</p>
                 <input id="pres" class='form-control' type="search" value="750"><br>
                 <p class='bg-dark'>влажность</p>
@@ -119,27 +119,12 @@
             let mesto = document.getElementById('mesto')
             if (text_in.length > 5) {
                 let text_out = text_in.split(' ')
-                if (text_out[0]) {
+                if (text_out[2]) {
                     // return text_out[0]
-                    mesto.value = text_out[0]
+                    mesto.value = text_out[2]
                 }
             } else {
                 return mesto.value = text_in
-            }
-        }
-        function distr_name() {
-            // вывод места испытания из наименования элек.уст
-            // console.log(text_in.length)
-            let text_in = document.getElementById('num').value
-            let mesto = document.getElementById('district')
-            if (text_in.length > 2) {
-                let text_out = text_in.split('-')
-                if (text_out[1]) {
-                    // return text_out[0]
-                    mesto.value = text_out[1] + 'РЭС'
-                }
-            } else {
-                return mesto.value = 'РЭС'
             }
         }
 
@@ -280,7 +265,7 @@
 
             const paragraph9 = new Paragraph();
             const institutionText9 = new TextRun("4. Место проведения испытания: ").size(22)
-            const institutionText91 = new TextRun(`${mesto} ЗРУ-${u_kl}кВ`).size(22).underline();
+            const institutionText91 = new TextRun(`${mesto}`).size(22).underline();
             paragraph9.addRun(institutionText9);
             paragraph9.addRun(institutionText91);
             doc.addParagraph(paragraph9);
