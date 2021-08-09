@@ -150,6 +150,10 @@
                 if (text_out[0]) {
                     // return text_out[0]
                     mesto.value = text_out[0]
+                    if (text_out[0].toUpperCase() === 'ПС') {//для ПС место испытания
+                        // return text_out[0]
+                        mesto.value = text_out[0] + ' ' + text_out[1]
+                    }
                 }
             } else {
                 return mesto.value = text_in
@@ -303,7 +307,7 @@
 
             const paragraph9 = new Paragraph();
             const institutionText9 = new TextRun("4. Место проведения испытания: ").size(22)
-            const institutionText91 = new TextRun(`${mesto} РУ-${u_kl}кВ`).size(22).underline();
+            const institutionText91 = new TextRun(`${mesto} ${(mesto.split(' ')[0].toUpperCase() === 'ПС')?'ЗРУ-'+u_kl:'РУ-'+u_kl}кВ`).size(22).underline();
             paragraph9.addRun(institutionText9);
             paragraph9.addRun(institutionText91);
             doc.addParagraph(paragraph9);
@@ -379,8 +383,8 @@
             doc.addParagraph(paragraph0);
             doc.addParagraph(paragraph0);
 
-            function prof(u_kl) {
-                if (vid === "приемосдаточные") {
+            function prof(u_kl) {//если фидер или приемосдаточные то испытание по полной
+                if ((vid === "приемосдаточные") || (mesto.split(' ')[0].toUpperCase() === 'ПС')) {
                     return u_kl * 6
                 } else {
                     return u_kl * 4
