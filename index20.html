@@ -14,6 +14,7 @@
     <!-- это картинка в басе64 формате -->
     <script src="pic2.js"></script>
     <script src="poverka.js"></script>
+    <script src="help_function.js"></script>
 </head>
 <body class="bg-success" onload="getDateNow('date')">
     <div class="container text-center text-white p-3">
@@ -57,8 +58,8 @@
     <script src="bootstrap.min.js"></script>
 
     <script>
-        //    создаем разметку из poverka.js
-        gen_proizv_weather()
+       //    создаем разметку из help_function.js
+        gen_proizv_weather(proizvoditel)
         gen_tab(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска'])
         gen_tab(row_name = ["A", "B", "C"], col_massiv = ['R', 'U', 'I', 'zak'], col_name = ['фаза', 'R, МОм', 'Uисп, кВ', 'Iпров, мА', 'Заключение'], where = 'tab_result')
 
@@ -135,7 +136,7 @@
         elem_from_massiv(['ОПН-10/12-10/650(II)УХЛ1', 'ОПН-10/12-10/650(II)УХЛ1', 'ОПН-10/12-10/650(II)УХЛ1'], 'type_opn')
         elem_from_massiv(['---', '---', '---'], 'nomer_opn')
         elem_from_massiv(['---', '---', '---'], 'year_opn')
-        //    console.log( massiv_from_elem('type_opn',3))
+           console.log( massiv_from_elem('type_opn',3))
 
 
         function generate() {
@@ -143,7 +144,7 @@
             let num = document.getElementById('num').value
             let date = document.getElementById('date').value.split("-").reverse().join(".")
             let matrix_opn = matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска'])
-            //    console.log(matrix_opn) 
+               console.log(matrix_opn) 
             function sel_vid() {
                 let selind = document.getElementById('vid').options.selectedIndex;
                 let vid = document.getElementById('vid').options[selind].value;
@@ -181,12 +182,12 @@
             create_pargf(doc, 55, text = '', text_underline = `от ${date}.`)
             doc.addParagraph(paragraph0);
 
-            create_pargf(doc, 0, text = "1. Электроустановка: ", text_underline = `${name}`, space_after = 27)
+            create_pargf(doc, 0, text = "1. Электроустановка: ", text_underline = `${name}`, space_after = 2)
 
             create_pargf(doc, 55, text = "", text_underline = `(Наименование и адрес)`, space_after = 0, size_text = 18)
             doc.addParagraph(paragraph0);
 
-            create_pargf(doc, 0, text = "2. Заказчик: ", text_underline = `${district}`, space_after = 120)
+            create_pargf(doc, 0, text = "2. Заказчик: ", text_underline = `${district}`, space_after = 2)
 
             create_pargf(doc, 60, text = "", text_underline = `(Организация)`, space_after = 0, size_text = 18)
             doc.addParagraph(paragraph0);

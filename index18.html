@@ -16,6 +16,7 @@
     <!-- это картинка в басе64 формате -->
     <script src="pic2.js"></script>
     <script src="poverka.js"></script>
+    <script src="help_function.js"></script>
     <script>
         //температурные коэфициенты
         const k1 = {
@@ -106,6 +107,7 @@
                 <select id="u_kl" class="form-control bg-warning" onchange="transformatorU()">
                     <option VALUE="10">10кВ</option>
                     <option VALUE="6">6кВ</option>
+                    <option VALUE="35">35кВ</option>
                 </select><br>
                 <p class='bg-dark'>район</p>
                 <select id="district" class="form-control bg-warning">
@@ -215,8 +217,8 @@
     <script src="bootstrap.min.js"></script>
 
     <script>
-         //    создаем разметку из poverka.js
-         gen_proizv_weather()
+         //    создаем разметку из help_function.js
+         gen_proizv_weather(proizvoditel)
          
         function sel_vid() {
             // профилакт, вновь ввод,
@@ -229,22 +231,7 @@
             // }
             return vid
         }
-        function getDateNow(id_elemement) {
-            let elem_out = document.getElementById(id_elemement)
-            let todayDate = new Date();
-            let currYear = todayDate.getFullYear();
-            let currMonth = todayDate.getMonth() + 1;
-            let currDay = todayDate.getDate();
-            // document.write("Сегодняшняя дата: ");
-            // console.log( typeof currDay)
-            if (currMonth < 10) {
-                currMonth = "0" + currMonth
-            }
-            if (currDay < 10) {
-                currDay = "0" + currDay
-            }
-            elem_out.value = (currYear + "-" + currMonth + "-" + currDay)
-        }
+        
         function randomInteger(min, max) {
             // получить случайное число от (min-0.5) до (max+0.5)
             let rand = min - 0.5 + Math.random() * (max - min + 1);
