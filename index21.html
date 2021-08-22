@@ -55,9 +55,10 @@
     </div>
     <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
+    <script src="help_function.js"></script>
     <script>
         //    создаем разметку из poverka.js
-        gen_proizv_weather()
+        gen_proizv_weather(proizvoditel)
         gen_tab(row_name = ["A", "B", "C"], col_massiv = ['type_tt', 'nomer_tt', 'u_tt', 'i_tt', 'year_tt'], col_name = ['фаза', 'тип', 'заводской номер', 'напряжение, кВ', 'ток, А', 'дата выпуска'])
         gen_tab(row_name = ["A ВН-НН1+НН2", "A НН1-ВН+НН2", "A НН2-НН1+ВН", "B ВН-НН1+НН2", "B НН1-ВН+НН2", "B НН2-НН1+ВН", "C ВН-НН1+НН2", "C НН1-ВН+НН2", "C НН2-НН1+ВН",], col_massiv = ['R', 'U', 'Cx', 'Tg', 'zak'], col_name = ['фаза и схема испытания', 'R, МОм', 'Uисп, кВ', 'Cx, pF', 'Тангенс δ, %', 'Заключение'], where = 'tab_result')
 
@@ -191,15 +192,15 @@
             doc.addParagraph(paragraph0);
 
             // функция из poverka.js
-            create_pargf(doc, 55, text = '', text_underline = `от ${date}.`)
+            create_pargf(doc, 75, text = '', text_underline = `от ${date}.`)
             doc.addParagraph(paragraph0);
 
-            create_pargf(doc, 0, text = "1. Электроустановка: ", text_underline = `${name}`, space_after = 27)
+            create_pargf(doc, 0, text = "1. Электроустановка: ", text_underline = `${name}`, space_after = 2)
 
             create_pargf(doc, 55, text = "", text_underline = `(Наименование и адрес)`, space_after = 0, size_text = 18)
             doc.addParagraph(paragraph0);
 
-            create_pargf(doc, 0, text = "2. Заказчик: ", text_underline = `${district}`, space_after = 120)
+            create_pargf(doc, 0, text = "2. Заказчик: ", text_underline = `${district}`, space_after = 2)
 
             create_pargf(doc, 60, text = "", text_underline = `(Организация)`, space_after = 0, size_text = 18)
             doc.addParagraph(paragraph0);

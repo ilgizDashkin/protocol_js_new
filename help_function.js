@@ -102,7 +102,7 @@ function randomInteger(min, max) {
 
 function matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска']) {
     const tab_arr = []
-    row_name.forEach((row,index) => {
+    row_name.forEach((row, index) => {
         col_arr = []
         col_massiv.forEach((value) => {
             let tab_content = document.getElementById(`${value + (index + 1)}`)
@@ -110,61 +110,71 @@ function matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_opn',
         })
         tab_arr.push(col_arr)
     })
-    tab_arr.forEach((value,index)=>{
-      value.unshift(row_name[index])  
+    tab_arr.forEach((value, index) => {
+        value.unshift(row_name[index])
     })
     tab_arr.unshift(col_name)
     console.log(tab_arr)
+    return tab_arr
 }
 
-function doc_head(doc, paragraph0, num){
-     // чтоб вставить картинку ее надо перевести в басе64 формат +размер 620х140
-     doc.createImage(pic, 600, 140)
+function doc_head(doc, paragraph0, num) {
+    // чтоб вставить картинку ее надо перевести в басе64 формат +размер 620х140
+    doc.createImage(pic, 600, 140)
 
-     const table = doc.createTable(1, 2);
-     table.getCell(0, 0).addContent(new Paragraph('Свидетельство о регистрации электролаборатории №045-2018 от «22» июня 2018года.'))
-     table.getCell(0, 0).addContent(new Paragraph("Срок действия Свидетельства установлен"))
-     table.getCell(0, 0).addContent(new Paragraph("до «22» июня 2021 года."))
-     table.getCell(0, 1).addContent(new Paragraph('1.Перепечатка, размножение протокола без разрешения ЭЛ (или Заказчика) запрещена.'))
-     table.getCell(0, 1).addContent(new Paragraph('2.Протокол испытаний распространяется только на данную электроустановку.'))
-     table.getCell(0, 1).addContent(new Paragraph('3.Исправления, дополнения в протоколе не допускаются.'))
-     table.getCell(0, 1).addContent(new Paragraph('4.Копии протоколов хранятся в ЭЛ.'))
+    const table = doc.createTable(1, 2);
+    table.getCell(0, 0).addContent(new Paragraph('Свидетельство о регистрации электролаборатории №045-2018 от «22» июня 2018года.'))
+    table.getCell(0, 0).addContent(new Paragraph("Срок действия Свидетельства установлен"))
+    table.getCell(0, 0).addContent(new Paragraph("до «22» июня 2021 года."))
+    table.getCell(0, 1).addContent(new Paragraph('1.Перепечатка, размножение протокола без разрешения ЭЛ (или Заказчика) запрещена.'))
+    table.getCell(0, 1).addContent(new Paragraph('2.Протокол испытаний распространяется только на данную электроустановку.'))
+    table.getCell(0, 1).addContent(new Paragraph('3.Исправления, дополнения в протоколе не допускаются.'))
+    table.getCell(0, 1).addContent(new Paragraph('4.Копии протоколов хранятся в ЭЛ.'))
 
-     doc.addParagraph(paragraph0);
-     const paragraph = new Paragraph();
-     const institutionText = new TextRun(`                                 ПРОТОКОЛ № ${num}`).bold().size(35);
-     paragraph.addRun(institutionText);
-     doc.addParagraph(paragraph);
-     doc.addParagraph(paragraph0);
+    doc.addParagraph(paragraph0);
+    const paragraph = new Paragraph();
+    const institutionText = new TextRun(`                                 ПРОТОКОЛ № ${num}`).bold().size(35);
+    paragraph.addRun(institutionText);
+    doc.addParagraph(paragraph);
+    doc.addParagraph(paragraph0);
 }
 
-function create_pargf(doc, space=0, text = "", text_underline = ``, space_after = 0, size_text = 18){
+function create_pargf(doc, space = 0, text = "", text_underline = ``, space_after = 0, size_text = 18) {
     const paragraph5 = new Paragraph();
-    let space_add=''
-    i=0
-    while (i < space) { 
-        space_add+=' '
+    let space_add = ''
+    i = 0
+    while (i < space) {
+        space_add += ' '
         i++;
-      }
-    let space_after_add=''
-    j=0
-    while (j < space_after) { 
-        space_add+=' '
+    }
+    let space_after_add = ''
+    j = 0
+    while (j < space_after) {
+        space_after_add += ' '
         j++;
-      }
-    const institutionText5 = new TextRun(space_add+text+space_after_add)
+    }
+    const institutionText5 = new TextRun(space_add + text + space_after_add)
     const institutionText51 = new TextRun(text_underline).size(size_text).underline();
     paragraph5.addRun(institutionText5);
     paragraph5.addRun(institutionText51);
-    doc.addParagraph(paragraph5); 
+    doc.addParagraph(paragraph5);
 
 }
 
-function table_from_matrix(doc, matrix_opn){
+function table_from_matrix(doc, matrix) {
+    const table = doc.createTable(matrix.length, matrix[0].length);
+
+    matrix.forEach((value, index_row) => {
+        value.forEach((val_row, index_col) => {
+            table.getCell(index_row, index_col).addContent(new Paragraph(val_row));
+        })
+
+    })
+
 
 }
 
-function doc_footer(doc, num, all_page = '2'){
+function doc_footer(doc, num, all_page = '2') {
     let page_of_doc = new TextRun(`                     ${all_page}`)
 
     const doc1 = new Document();
@@ -179,5 +189,5 @@ function doc_footer(doc, num, all_page = '2'){
     table3.getCell(1, 2).addContent(new Paragraph(new TextRun("                 ").pageNumber()))
     table3.getCell(1, 3).addContent(new Paragraph(page_of_doc))
 
-    doc.Footer.createParagraph(table3) 
+    doc.Footer.createParagraph(table3)
 }
