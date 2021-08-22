@@ -118,6 +118,7 @@ function matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_opn',
     return tab_arr
 }
 
+// заголовок документа
 function doc_head(doc, paragraph0, num) {
     // чтоб вставить картинку ее надо перевести в басе64 формат +размер 620х140
     doc.createImage(pic, 600, 140)
@@ -139,6 +140,16 @@ function doc_head(doc, paragraph0, num) {
     doc.addParagraph(paragraph0);
 }
 
+/**
+ * вставляет в документ ворд параграф
+ *
+ * @param {doc} doc документ обьект
+ * @param {number} space пробелы до текста
+ * @param {string} text сам текст
+ * @param {string} text_underline текст под линией
+ * @param {number} space_after пробелы после текста
+ * @param {number} size_text размер шрифта
+ */
 function create_pargf(doc, space = 0, text = "", text_underline = ``, space_after = 0, size_text = 18) {
     const paragraph5 = new Paragraph();
     let space_add = ''
@@ -161,7 +172,13 @@ function create_pargf(doc, space = 0, text = "", text_underline = ``, space_afte
 
 }
 
-function table_from_matrix(doc, matrix) {
+/**
+ * вставляет в документ ворд таблицу из матрицы(массива)
+ *
+ * @param {doc} doc документ обьект
+ * @param {string} matrix массив двухмерный, элементы станут таблицей
+ */
+function table_from_matrix(doc, matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]) {
     const table = doc.createTable(matrix.length, matrix[0].length);
 
     matrix.forEach((value, index_row) => {
@@ -174,6 +191,7 @@ function table_from_matrix(doc, matrix) {
 
 }
 
+// создает колонтитул
 function doc_footer(doc, num, all_page = '2') {
     let page_of_doc = new TextRun(`                     ${all_page}`)
 
