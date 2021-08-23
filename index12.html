@@ -16,6 +16,7 @@
     <!-- это картинка в басе64 формате -->
     <script src="pic2.js"></script>
     <script src="poverka.js"></script>
+    <script src="help_function.js"></script>
     <script>
         //температурные коэфициенты
         const k1 = {
@@ -335,6 +336,11 @@
             </tr>
         </table><br>
         <div id='full_isp' hidden>
+            <button id="copy_paste" class="btn btn-info  btn-block" onclick="copy_paste()">копировать/вставить</button><br>
+            <div id='copy_paste_div' hidden>
+                <p><textarea rows="19" cols="10" name="text"></textarea></p> <button>копировать</button><button>вставить</button>
+            </div><br>
+            
             <table>
                 <colgroup>
                     <col style="background-color: yellow">

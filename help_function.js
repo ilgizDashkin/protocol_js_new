@@ -209,3 +209,7 @@ function doc_footer(doc, num, all_page = '2') {
 
     doc.Footer.createParagraph(table3)
 }
+
+function copy_paste(){
+    document.getElementById('copy_paste_div').hidden = false;
+}
