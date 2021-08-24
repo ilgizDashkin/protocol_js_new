@@ -336,10 +336,21 @@
             </tr>
         </table><br>
         <div id='full_isp' hidden>
-            <button id="copy_paste" class="btn btn-info  btn-block" onclick="copy_paste()">копировать/вставить</button><br>
-            <div id='copy_paste_div' hidden>
-                <p><textarea rows="19" cols="10" name="text"></textarea></p> <button>копировать</button><button>вставить</button>
+            <button id="copy_paste" class="btn btn-info  btn-block" onclick="element_hidden('copy_paste_div')">копировать/вставить</button>
+                
+            <div id='copy_paste_div' class="container text-center text-white p-3" hidden>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><textarea rows="19" cols="10" name="text"></textarea></p>
+                    </div>
+                    <div id='copy_pasteR'   class="col-md-4">
+                        <button class="btn btn-info  btn-block" onclick="select_generation()">что копировать?</button> 
+                <button class="btn btn-info  btn-block">копировать</button>
+                <button class="btn btn-info  btn-block">вставить</button><br>
+                    </div>
+                </div>
             </div><br>
+            
             
             <table>
                 <colgroup>

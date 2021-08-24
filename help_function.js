@@ -38,6 +38,36 @@ function gen_proizv_weather(proizvoditel) {
 <input id="vlag" class='form-control' type="search" value="70"><br>`)
 }
 
+function select_generation(where_id = 'copy_pasteR', elem_id = "copy_select", name_el = 'выбор',
+    list = ['R_AB',
+        'R_BC',
+        'R_AC',
+        'K_AB',
+        'K_BC',
+        'K_AC'
+    ]) {
+
+    // находим элемент создаем и добавляем
+    let el_created = document.getElementById(where_id)
+    let p_name = document.createElement("p");
+    p_name.className = "bg-dark"
+    p_name.textContent = name_el
+    el_created.appendChild(p_name);
+
+    let proizv = document.createElement("select");
+    proizv.id = elem_id;
+    proizv.className = "form-control bg-warning"
+    el_created.appendChild(proizv);
+
+    list.forEach(value => {
+        let option = document.createElement("option");
+        option.value = value;
+        option.text = value;
+        proizv.appendChild(option);
+    })
+}
+
+
 // преобразует дату для протокола
 function getDateNow(id_elemement) {
     let elem_out = document.getElementById(id_elemement)
@@ -210,6 +240,7 @@ function doc_footer(doc, num, all_page = '2') {
     doc.Footer.createParagraph(table3)
 }
 
-function copy_paste(){
-    document.getElementById('copy_paste_div').hidden = false;
+function element_hidden(elem_id) {
+    element = document.getElementById(elem_id)
+    element.hidden === false ? element.hidden = true : element.hidden = false;
 }
