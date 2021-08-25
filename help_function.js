@@ -42,9 +42,9 @@ function select_generation(where_id = 'copy_pasteR', elem_id = "copy_select", na
     list = ['R_AB',
         'R_BC',
         'R_AC',
-        'K_AB',
-        'K_BC',
-        'K_AC'
+        // 'K_AB',
+        // 'K_BC',
+        // 'K_AC'
     ]) {
 
     // находим элемент создаем и добавляем
@@ -244,3 +244,4 @@ function element_hidden(elem_id) {
     element = document.getElementById(elem_id)
     element.hidden === false ? element.hidden = true : element.hidden = false;
 }
+
