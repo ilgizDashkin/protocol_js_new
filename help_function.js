@@ -38,7 +38,7 @@ function gen_proizv_weather(proizvoditel) {
 <input id="vlag" class='form-control' type="search" value="70"><br>`)
 }
 
-function select_generation(where_id = 'copy_pasteR', elem_id = "copy_select", name_el = 'выбор',
+function select_generation(where_id = 'copy_pasteR', elem_id = "copy_selectR", name_el = 'выбор',
     list = ['R_AB',
         'R_BC',
         'R_AC',
@@ -240,8 +240,37 @@ function doc_footer(doc, num, all_page = '2') {
     doc.Footer.createParagraph(table3)
 }
 
+// скрыть элемент
 function element_hidden(elem_id) {
     element = document.getElementById(elem_id)
     element.hidden === false ? element.hidden = true : element.hidden = false;
 }
+
+
+function read_to_array(id='R_AB',num=19){
+    const val_array=[]
+    for (let i = 1; i <= num; i++){
+        let r = document.getElementById(id+i).value
+        val_array.push(r)
+    }
+    return val_array
+}
+
+function sel_val(id='copy_selectR') {
+    let selind = document.getElementById(id).options.selectedIndex;
+    let val_el = document.getElementById(id).options[selind].value;
+    return val_el
+}
+
+function to_textarea(id_area,sel_id,num){
+    let id_el=sel_val(sel_id).toString()
+    const arr=read_to_array(id=id_el,num=num)
+    let text=''
+    arr.forEach(val=>{
+text+=val.toString()+'\n'
+    })
+    document.getElementById(id_area).value=text
+}
+
+
 
