@@ -253,6 +253,7 @@ function read_to_array(id='R_AB',num=19){
         let r = document.getElementById(id+i).value
         val_array.push(r)
     }
+    console.log(`read arr ${val_array}`)
     return val_array
 }
 
@@ -272,5 +273,39 @@ text+=val.toString()+'\n'
     document.getElementById(id_area).value=text
 }
 
+function view_percent(id1, id2, id3, id4) {
+    let a = document.getElementById(id1).value
+    let b = document.getElementById(id2).value
+    let c = document.getElementById(id3).value
+    let d = document.getElementById(id4)
+    if (a && b && c) {
+        return d.value = percent(a, b, c)
+    }
+    else {
+        d.value = '0'
+    }
+}
 
+function view_percent_all(el='R',num=19){
+    for (let i = 1; i <= num; i++){
+       let id1=el+'_AB'+i
+       let id2=el+'_BC'+i
+       let id3=el+'_AC'+i
+       let id4=el+'_PR'+i
+        view_percent(id1, id2, id3, id4)
+    }
+}
+
+function textarea_to_element(id_area,sel_id,elem){
+    let textarea = document.getElementById(id_area).value
+    const arr=textarea.split('\n')
+    console.log(`textarea_to_el ${arr}`)
+    let id_el=sel_val(sel_id).toString()
+    arr.forEach((val,index)=>{
+        if ((document.getElementById(id_el+(index+1)))&&(val)){
+            document.getElementById(id_el+(index+1)).value=val
+        }else{console.log(`no element by id`)}    
+    })
+    view_percent_all(el=elem,num=19)
+}
 

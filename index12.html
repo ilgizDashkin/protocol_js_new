@@ -341,13 +341,13 @@
             <div id='copy_paste_div' class="container text-center text-white p-3" hidden>
                 <div class="row">
                     <div class="col-md-4">
-                        <p><textarea rows="19" cols="10" id="textareaR"></textarea></p>
+                        <p><textarea rows="20" cols="10" id="textareaR"></textarea></p>
                     </div>
                     <div id='copy_pasteR'   class="col-md-4">
                         <button class="btn btn-info  btn-block" onclick="select_generation()">что копировать?</button> 
                 <button class="btn btn-info  btn-block" onclick="to_textarea(id_area='textareaR',sel_id='copy_selectR',num=19)">копировать
                 </button>
-                <button class="btn btn-info  btn-block">вставить</button><br>
+                <button class="btn btn-info  btn-block" onclick="textarea_to_element(id_area='textareaR',sel_id='copy_selectR',elem='R')">вставить</button><br>
                     </div>
                 </div>
             </div><br>
