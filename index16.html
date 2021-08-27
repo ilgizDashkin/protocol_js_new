@@ -194,11 +194,12 @@
                 <th>разность</th>
             </tr>
             <tr>
-                <td> <input id="Tizm" class='form-control' type="number" onchange="temp_dif()" value="1"></td>
+                <td> <input id="Tizm" class='form-control' type="number" onchange="temp_dif()" value="15"></td>
                 <td> <input id="Tzav" class='form-control' type="number" onchange="temp_dif()" value="20"></td>
                 <td> <input id="Traz" class='form-control' type="number" value="0"></td>
             </tr>
         </table><br>
+        <button class="btn btn-info btn-lg btn-block" onclick="auto_inputR()">автозаполнение</button>
         <table>
             <colgroup>
                 <col style="background-color: yellow">
@@ -695,6 +696,45 @@
                 }
             }
             document.getElementById(Rview).value = Rout
+        }
+
+        function random_input_elem(id_el, from = 10000, to = 250000, div = 1, num_comma = 0) {
+                document.getElementById(id_el).value = (randomInteger(from, to) / div).toFixed(num_comma)
+        }
+
+        function revers_k_abs(id1, id2, id3){
+            let a = document.getElementById(id1).value
+            let b = document.getElementById(id2).value
+            let c = document.getElementById(id3)
+            if (a && b) {
+                return c.value = (b / a).toFixed(0)
+            }
+            else {
+                c.value = '0'
+            }   
+        }
+
+        function auto_inputR() {
+            random_input_elem('R60BH', 1000,10000)
+            random_input_elem('R60HH', 1000,10000)
+            random_input_elem('R60HH_BH', 1000,10000)
+
+            random_input_elem(id_el='KabcBH',from=110, to=190, div = 100, num_comma=2)
+            random_input_elem('KabcHH',from=110, to=190, div = 100, num_comma=2)
+            random_input_elem('KabcHH_BH',from=110, to=190, div = 100, num_comma=2)
+
+            revers_k_abs('KabcBH', 'R60BH', 'R15BH')
+            revers_k_abs('KabcHH', 'R60HH', 'R15HH')
+            revers_k_abs('KabcHH_BH', 'R60HH_BH', 'R15HH_BH')
+
+            privTempR('R15BH','R15BHpr')
+            privTempR('R60BH','R60BHpr')
+
+            privTempR('R15HH','R15HHpr')
+            privTempR('R60HH','R60HHpr')
+
+            privTempR('R15HH_BH','R15HH_BHpr')
+            privTempR('R60HH_BH','R60HH_BHpr')
         }
 
         function generate() {
