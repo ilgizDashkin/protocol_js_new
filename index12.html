@@ -222,7 +222,8 @@
                 <td>BH+HН</td>
                 <td> <input id="R15HH_BH" class='form-control' type="number"
                         onchange='view_k_abs("R15HH_BH","R60HH_BH","KabcHH_BH")' value="4000"></td>
-                <td> <input id="R60HH_BH" class='form-control' type="number" onchange='view_k_abs("R15HH_BH","R60HH_BH","KabcHH_BH")' value="6000"></td>
+                <td> <input id="R60HH_BH" class='form-control' type="number"
+                        onchange='view_k_abs("R15HH_BH","R60HH_BH","KabcHH_BH")' value="6000"></td>
                 <td> <input id="KabcHH_BH" class='form-control' type="number" value="1.5"></td>
                 <td> <input id="CxHH_BH" class='form-control' type="number" value="12578"></td>
                 <td> <input id="TgHH_BH" class='form-control' type="number" value="0.260"></td>
@@ -326,7 +327,7 @@
                 <td> <input id="R60HHproc" class='form-control' type="number" value="0"></td>
                 <td> <input id="TgHHproc" class='form-control' type="number" value="0"></td>
                 <td> <input id="CxHHproc" class='form-control' type="number" value="0"></td>
-            </tr>           
+            </tr>
             <tr>
                 <td>BH+HН</td>
                 <td> <input id="R15HH_BHproc" class='form-control' type="number" value="0"></td>
@@ -336,23 +337,26 @@
             </tr>
         </table><br>
         <div id='full_isp' hidden>
-            <button id="copy_paste" class="btn btn-info  btn-block" onclick="element_hidden('copy_paste_div')">копировать/вставить</button>
-                
+            <button id="copy_paste" class="btn btn-info  btn-block"
+                onclick="element_hidden('copy_paste_div')">копировать/вставить</button>
+
             <div id='copy_paste_div' class="container text-center text-white p-3" hidden>
                 <div class="row">
                     <div class="col-md-4">
                         <p><textarea rows="20" cols="10" id="textareaR"></textarea></p>
                     </div>
-                    <div id='copy_pasteR'   class="col-md-4">
-                        <button class="btn btn-info  btn-block" onclick="select_generation()">что копировать?</button> 
-                <button class="btn btn-info  btn-block" onclick="to_textarea(id_area='textareaR',sel_id='copy_selectR',num=19)">копировать
-                </button>
-                <button class="btn btn-info  btn-block" onclick="textarea_to_element(id_area='textareaR',sel_id='copy_selectR',elem='R')">вставить</button><br>
+                    <div id='copy_pasteR' class="col-md-4">
+                        <button class="btn btn-info  btn-block" onclick="select_generation()">что копировать?</button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="to_textarea(id_area='textareaR',sel_id='copy_selectR',num=19)">копировать
+                        </button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="textarea_to_element(id_area='textareaR',sel_id='copy_selectR',elem='R')">вставить</button><br>
                     </div>
                 </div>
             </div><br>
-            
-            
+
+
             <table>
                 <colgroup>
                     <col style="background-color: yellow">
@@ -585,8 +589,28 @@
                     <td> <input id="R_c01" class='form-control' type="number"
                             onchange='view_percent("R_a01","R_b01","R_c01","R_PR_HH")' value="0.001651"></td>
                     <td> <input id="R_PR_HH" class='form-control' type="number" value="0.66"></td>
-                </tr>               
+                </tr>
             </table><br>
+
+            <button id="copy_paste" class="btn btn-info  btn-block"
+                onclick="element_hidden('copy_paste_divK')">копировать/вставить</button>
+
+            <div id='copy_paste_divK' class="container text-center text-white p-3" hidden>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><textarea rows="20" cols="10" id="textareaK"></textarea></p>
+                    </div>
+                    <div id='copy_pasteK' class="col-md-4">
+                        <button class="btn btn-info  btn-block" onclick="select_generation(where_id = 'copy_pasteK', elem_id = 'copy_selectK', name_el = 'выбор', list = ['K_AB','K_BC','K_AC'])">что копировать?</button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="to_textarea(id_area='textareaK',sel_id='copy_selectK',num=19)">копировать
+                        </button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="textarea_to_element(id_area='textareaK',sel_id='copy_selectK',elem='K')">вставить</button><br>
+                    </div>
+                </div>
+            </div><br>
+
             <table>
                 <colgroup>
                     <col style="background-color: yellow">
@@ -869,7 +893,9 @@
                     <th>соот. </th>
                     <th>измеренные</th>
                     <th>заводские</th>
-                    <th>норма<5%</th> </tr> <tr>
+                    <th>норма<5%< /th>
+                </tr>
+                <tr>
                     <td>Рвс/аc</td>
                     <td> <input id="Pbc_ac" class='form-control' type="number"
                             onchange='view_percent_P_izm_zav("Pbc_ac","Pbc_ac_zav","Pbc_ac_pr")' value="0.711"></td>
@@ -1074,17 +1100,17 @@
         function priv_R_Tg() {
             privTempR('R15BH', 'R15BHpr')
             privTempR('R15HH', 'R15HHpr')
-            
+
             privTempR('R15HH_BH', 'R15HH_BHpr')
 
             privTempR('R60BH', 'R60BHpr')
             privTempR('R60HH', 'R60HHpr')
-            
+
             privTempR('R60HH_BH', 'R60HH_BHpr')
 
             privTempTg('TgBH', 'TgBHpr')
             privTempTg('TgHH', 'TgHHpr')
-            
+
             privTempTg('TgHH_BH', 'TgHH_BHpr')
 
             view_percent_izm_zav('R15BHpr', 'R15BHzav', 'R15BHproc')
@@ -1097,7 +1123,7 @@
             view_percent_izm_zav('TgHHpr', 'TgHHzav', 'TgHHproc')
             view_percent_izm_zav('CxHH', 'CxHHzav', 'CxHHproc')
 
-           
+
 
             view_percent_izm_zav('R15HH_BHpr', 'R15HH_BHzav', 'R15HH_BHproc')
             view_percent_izm_zav('R60HH_BHpr', 'R60HH_BHzav', 'R60HH_BHproc')
@@ -1114,7 +1140,7 @@
             view_color_izm_zavR('R60HH_BHpr', 'R60HH_BHzav', 'R60HH_BHproc')
             view_color_izm_zavTg('TgBHpr', 'TgBHzav', 'TgBHproc')
             view_color_izm_zavTg('TgHHpr', 'TgHHzav', 'TgHHproc')
-           
+
             view_color_izm_zavTg('TgHH_BHpr', 'TgHH_BHzav', 'TgHH_BHproc')
         }
 
@@ -1342,7 +1368,7 @@
             let R_c01 = document.getElementById('R_c01').value
             let R_PR_HH = document.getElementById('R_PR_HH').value
 
-           
+
 
 
             let K_AB1 = document.getElementById('K_AB1').value
@@ -1440,7 +1466,7 @@
             let K_AC19 = document.getElementById('K_AC19').value
             let K_PR19 = document.getElementById('K_PR19').value
 
-            
+
 
             let U_A = document.getElementById('U_A').value
             let U_B = document.getElementById('U_B').value
@@ -1628,7 +1654,7 @@
             tableRobmHH.getCell(1, 3).addContent(new Paragraph(` ${R_PR_HH} `));
             doc.addParagraph(paragraph0);
 
-            
+
 
             const paragraphGR = new Paragraph();
             const institutionTextGR = new TextRun(`9.3. Проверка группы соединения: соответствует паспортной Ун/Δ-11.`).size(22)
@@ -1765,7 +1791,7 @@
             tableKtr.getCell(19, 4).addContent(new Paragraph(` ${K_PR19} `));
             doc.addParagraph(paragraph0);
 
-          
+
 
             const paragraphXX = new Paragraph();
             const institutionTextXX = new TextRun(`9.5.1. Измерение потерь холостого хода обмотки НН.`).size(22)
@@ -1879,7 +1905,7 @@
             koef_mut('K_AB18', 'K_BC18', 'K_AC18', 'K_PR18', u)
             koef_mut('K_AB19', 'K_BC19', 'K_AC19', 'K_PR19', u)
 
-            
+
             document.getElementById('u_kl').hidden = true;
             document.getElementById('u_select').innerHTML = `${u}кВ`
         }
@@ -1958,17 +1984,17 @@
 
             let KabcBH = document.getElementById('KabcBH').value
             let KabcHH = document.getElementById('KabcHH').value
-            
+
             let KabcHH_BH = document.getElementById('KabcHH_BH').value
 
             let CxBH = document.getElementById('CxBH').value
             let CxHH = document.getElementById('CxHH').value
-            
+
             let CxHH_BH = document.getElementById('CxHH_BH').value
 
             let TgBH = document.getElementById('TgBH').value
             let TgHH = document.getElementById('TgHH').value
-        
+
             let TgHH_BH = document.getElementById('TgHH_BH').value
 
             let Tizm = document.getElementById('Tizm').value
@@ -1980,14 +2006,14 @@
             let R15HHpr = document.getElementById('R15HHpr').value
             let R60HHpr = document.getElementById('R60HHpr').value
 
-           
+
 
             let R15HH_BHpr = document.getElementById('R15HH_BHpr').value
             let R60HH_BHpr = document.getElementById('R60HH_BHpr').value
 
             let TgBHpr = document.getElementById('TgBHpr').value
             let TgHHpr = document.getElementById('TgHHpr').value
-            
+
             let TgHH_BHpr = document.getElementById('TgHH_BHpr').value
 
 
@@ -1997,19 +2023,19 @@
             let R15HHzav = document.getElementById('R15HHzav').value
             let R60HHzav = document.getElementById('R60HHzav').value
 
-          
+
 
             let R15HH_BHzav = document.getElementById('R15HH_BHzav').value
             let R60HH_BHzav = document.getElementById('R60HH_BHzav').value
 
             let TgBHzav = document.getElementById('TgBHzav').value
             let TgHHzav = document.getElementById('TgHHzav').value
-           
+
             let TgHH_BHzav = document.getElementById('TgHH_BHzav').value
 
             let CxBHzav = document.getElementById('CxBHzav').value
             let CxHHzav = document.getElementById('CxHHzav').value
-            
+
             let CxHH_BHzav = document.getElementById('CxHH_BHzav').value
 
             const doc = new Document();
@@ -2275,7 +2301,7 @@
             tableRpr.getCell(2, 6).addContent(new Paragraph(` ${TgHHzav} `));
             tableRpr.getCell(2, 7).addContent(new Paragraph(` ${CxHHzav} `));
 
-            
+
 
             tableRpr.getCell(3, 0).addContent(new Paragraph(` BН+HH-k `));
             tableRpr.getCell(3, 1).addContent(new Paragraph(` ${R15HH_BHpr} `));
