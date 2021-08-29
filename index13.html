@@ -16,6 +16,7 @@
     <!-- это картинка в басе64 формате -->
     <script src="pic2.js"></script>
     <script src="poverka.js"></script>
+    <script src="help_function.js"></script>
     <script>
         //температурные коэфициенты
         const k1 = {
@@ -104,7 +105,7 @@
             <option VALUE="ВВ-1Т-35">ВВ-1Т-35</option>
             <option VALUE="СВВ">СВВ</option>
         </select><br>
-        <div id='isp' hidden >
+        <div id='isp' hidden>
             <p class='bg-dark'>наименование</p>
             <input id="name" class='form-control' type="search"
                 value='ПС «Шакша» ВМ-35кВ «Шакша Т.-1»                                 '><br>
@@ -179,7 +180,8 @@
                         <td> <input id="year_A" class='form-control' type="date" value="2013-06-01"></td>
                     </tr>
                 </table><br>
-                <input id="side1" class='form-control' onchange="view_side('side1','side3')" type="search" value="сторона ЛР">
+                <input id="side1" class='form-control' onchange="view_side('side1','side3')" type="search"
+                    value="сторона ЛР">
                 <table>
                     <colgroup>
                         <col style="background-color: yellow">
@@ -212,7 +214,8 @@
                         <td> <input id="Tg_C" class='form-control' type="number" value="1.933"></td>
                     </tr>
                 </table><br>
-                <input id="side2" class='form-control' type="search" onchange="view_side('side2','side4')" value="сторона секции">
+                <input id="side2" class='form-control' type="search" onchange="view_side('side2','side4')"
+                    value="сторона секции">
                 <table>
                     <colgroup>
                         <col style="background-color: yellow">
@@ -245,6 +248,7 @@
                         <td> <input id="Tg_C2" class='form-control' type="number" value="1.950"></td>
                     </tr>
                 </table><br>
+                <button class="btn btn-info btn-lg btn-block" onclick="auto_input_R_Cx_Tg()">автозаполнение</button><br>
                 <table>
                     <colgroup>
                         <col style="background-color: yellow">
@@ -271,7 +275,7 @@
                             <colgroup>
                                 <col style="background-color: yellow">
                                 <col style="background-color: rgb(187, 255, 0)">
-                                
+
                                 <col style="background-color: rgb(0, 153, 255)">
                             </colgroup>
                             <tr>
@@ -302,7 +306,7 @@
                             <colgroup>
                                 <col style="background-color: yellow">
                                 <col style="background-color: rgb(187, 255, 0)">
-                                
+
                                 <col style="background-color: rgb(0, 153, 255)">
                             </colgroup>
                             <tr>
@@ -574,45 +578,45 @@
                 switch (recogn) {
                     case "ВМ-1Т-35":
                         name.value = 'ПС «Шакша» ВМ-1Т-35'
-                        side1.value='сторона ТР'
-                        side2.value='сторона секции'
-                        side3.innerText='сторона ТР'
-                        side4.innerText='сторона секции'
+                        side1.value = 'сторона ТР'
+                        side2.value = 'сторона секции'
+                        side3.innerText = 'сторона ТР'
+                        side4.innerText = 'сторона секции'
                         break;
                     case "ВМ-35":
                         name.value = 'ПС «Шакша» ВМ-35кВ «Кумлекуль-1»'
-                        side1.value='сторона ЛР'
-                        side2.value='сторона секции'
-                        side3.innerText='сторона ЛР'
-                        side4.innerText='сторона секции'
+                        side1.value = 'сторона ЛР'
+                        side2.value = 'сторона секции'
+                        side3.innerText = 'сторона ЛР'
+                        side4.innerText = 'сторона секции'
                         break;
                     case "СВМ":
                         name.value = 'ПС «Шакша» СВМ-35кВ '
-                        side1.value='сторона 1 секции'
-                        side2.value='сторона 2 секции'
-                        side3.innerText='сторона 1 секции'
-                        side4.innerText='сторона 2 секции'
+                        side1.value = 'сторона 1 секции'
+                        side2.value = 'сторона 2 секции'
+                        side3.innerText = 'сторона 1 секции'
+                        side4.innerText = 'сторона 2 секции'
                         break;
                     case "ВВ-1Т-35":
                         name.value = 'ПС «Шакша» ВВ-1Т-35'
-                        side1.value='сторона ТР'
-                        side2.value='сторона секции'
-                        side3.innerText='сторона ТР'
-                        side4.innerText='сторона секции'
+                        side1.value = 'сторона ТР'
+                        side2.value = 'сторона секции'
+                        side3.innerText = 'сторона ТР'
+                        side4.innerText = 'сторона секции'
                         break;
                     case "ВВ-35":
                         name.value = 'ПС «Шакша» ВВ-35кВ «Кумлекуль-1»'
-                        side1.value='сторона ЛР'
-                        side2.value='сторона секции'
-                        side3.innerText='сторона ЛР'
-                        side4.innerText='сторона секции'
+                        side1.value = 'сторона ЛР'
+                        side2.value = 'сторона секции'
+                        side3.innerText = 'сторона ЛР'
+                        side4.innerText = 'сторона секции'
                         break;
                     case "СВВ":
                         name.value = 'ПС «Шакша» СВВ-35кВ '
-                        side1.value='сторона 1 секции'
-                        side2.value='сторона 2 секции'
-                        side3.innerText='сторона 1 секции'
-                        side4.innerText='сторона 2 секции'
+                        side1.value = 'сторона 1 секции'
+                        side2.value = 'сторона 2 секции'
+                        side3.innerText = 'сторона 1 секции'
+                        side4.innerText = 'сторона 2 секции'
                         break;
                 }
             }
@@ -620,7 +624,25 @@
             function view_side(id1, id2) {
                 let a = document.getElementById(id1)
                 let b = document.getElementById(id2)
-                b.innerText=a.value
+                b.innerText = a.value
+            }
+
+            function random_input_elem1(id_el, from = 10000, to = 250000, div = 1, num_comma = 0) {
+                document.getElementById(id_el).value = (randomInteger(from, to) / div).toFixed(num_comma)
+            }
+
+            function auto_input_R_Cx_Tg(Rpin = ["Rpin_A", "Rpin_B", "Rpin_C", "Rpin_A2", "Rpin_B2", "Rpin_C2"],
+                Cx = ['Cx_A', 'Cx_B', 'Cx_C', 'Cx_A2', 'Cx_B2', 'Cx_C2'],
+                Tg = ['Tg_A', 'Tg_B', 'Tg_C', 'Tg_A2', 'Tg_B2', 'Tg_C2']) {
+                Rpin.forEach(val => {
+                    random_input_elem1(id_el = val, from = 5000, to = 10000, div = 1, num_comma = 0)
+                })
+                Cx.forEach(val => {
+                    random_input_elem1(id_el = val, from = 110, to = 270, div = 1, num_comma = 0)
+                })
+                Tg.forEach(val => {
+                    random_input_elem1(id_el = val, from = 1500, to = 7000, div = 1000, num_comma = 3)
+                })
             }
 
             function generate() {
@@ -735,7 +757,7 @@
                 paragraph2.addRun(institutionText2);
                 paragraph2.addRun(institutionText21);
                 doc.addParagraph(paragraph2);
-                
+
                 doc.addParagraph(paragraph0);
 
                 const paragraph3 = new Paragraph();
@@ -810,7 +832,7 @@
                 doc.addParagraph(paragraph11)
                 // doc.addParagraph(paragraph0);
 
-                const tablePasport = doc.createTable(1, 3);               
+                const tablePasport = doc.createTable(1, 3);
                 tablePasport.getCell(0, 0).addContent(new Paragraph(` Тип ${type_A} `));
                 tablePasport.getCell(0, 1).addContent(new Paragraph(` Зав. № ${nomer_A}`));
                 tablePasport.getCell(0, 2).addContent(new Paragraph(` Дата изготовления ${year_A}`));
@@ -946,7 +968,7 @@
                 table_side2.getCell(3, 4).addContent(new Paragraph(` ${Tg_C2} `));
                 table_side2.getCell(3, 5).addContent(new Paragraph(` ${Rpin_C2_pr} `));
                 table_side2.getCell(3, 6).addContent(new Paragraph(` ${Tg_C2_pr} `));
-             
+
                 doc.addParagraph(paragraph0);
 
 

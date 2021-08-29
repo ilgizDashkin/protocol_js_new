@@ -38,6 +38,14 @@ function gen_proizv_weather(proizvoditel) {
 <input id="vlag" class='form-control' type="search" value="70"><br>`)
 }
 
+/**
+ * создает и вставляет элемент select список 
+ *
+ * @param {string} where_id id элемента после которого создается список
+ * @param {string} elem_id id создаваемого элемента 
+ * @param {string} name_el название списка
+ * @param {[string]} list элементы списка 
+ */
 function select_generation(where_id = 'copy_pasteR', elem_id = "copy_selectR", name_el = 'выбор',
     list = ['R_AB',
         'R_BC',
@@ -67,8 +75,11 @@ function select_generation(where_id = 'copy_pasteR', elem_id = "copy_selectR", n
     })
 }
 
-
-// преобразует дату для протокола
+/**
+ * преобразует сегодняшнюю дату и вставляет в элемент 
+ * 
+ * @param {string} id_elemement id элемента 
+ */
 function getDateNow(id_elemement) {
     let elem_out = document.getElementById(id_elemement)
     let todayDate = new Date();
@@ -129,7 +140,14 @@ function randomInteger(min, max) {
     return Math.round(rand);
 }
 
-
+/**
+ * из html таблицы создает 2-х мерный массив
+ *  
+ * @param {[string]} row_name массив названия строк.
+ * @param {[string]} col_massiv массив id элементов колонок которые перебираются 
+ * @param {[string]} col_name массив названия столбцов.
+ * @return {[string]} tab_arr 2-х мерный массив
+ */
 function matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска']) {
     const tab_arr = []
     row_name.forEach((row, index) => {
