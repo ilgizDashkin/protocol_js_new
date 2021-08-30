@@ -16,6 +16,7 @@
     <!-- это картинка в басе64 формате -->
     <script src="pic2.js"></script>
     <script src="poverka.js"></script>
+    <script src="help_function.js"></script>
     <script>
         //температурные коэфициенты
         const k1 = {
@@ -365,6 +366,25 @@
             </tr>
         </table><br>
         <div id='full_isp' hidden>
+            <button id="copy_paste" class="btn btn-info  btn-block"
+                onclick="element_hidden('copy_paste_div')">копировать/вставить</button>
+
+            <div id='copy_paste_div' class="container text-center text-white p-3" hidden>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><textarea rows="20" cols="10" id="textareaR"></textarea></p>
+                    </div>
+                    <div id='copy_pasteR' class="col-md-4">
+                        <button class="btn btn-info  btn-block" onclick="select_generation()">что копировать?</button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="to_textarea(id_area='textareaR',sel_id='copy_selectR',num=19)">копировать
+                        </button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="textarea_to_element(id_area='textareaR',sel_id='copy_selectR',elem='R')">вставить</button><br>
+                    </div>
+                </div>
+            </div><br>
+
             <table>
                 <colgroup>
                     <col style="background-color: yellow">
@@ -667,6 +687,28 @@
                     <td> <input id="R_PR_HH" class='form-control' type="number" value="0.66"></td>
                 </tr>
             </table><br>
+
+            <button id="copy_paste" class="btn btn-info  btn-block"
+                onclick="element_hidden('copy_paste_divK')">копировать/вставить</button>
+
+            <div id='copy_paste_divK' class="container text-center text-white p-3" hidden>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><textarea rows="20" cols="10" id="textareaK"></textarea></p>
+                    </div>
+                    <div id='copy_pasteK' class="col-md-4">
+                        <button class="btn btn-info  btn-block"
+                            onclick="select_generation(where_id = 'copy_pasteK', elem_id = 'copy_selectK', name_el = 'выбор', list = ['K_AB','K_BC','K_AC'])">что
+                            копировать?</button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="to_textarea(id_area='textareaK',sel_id='copy_selectK',num=19)">копировать
+                        </button>
+                        <button class="btn btn-info  btn-block"
+                            onclick="textarea_to_element(id_area='textareaK',sel_id='copy_selectK',elem='K')">вставить</button><br>
+                    </div>
+                </div>
+            </div><br>
+
             <table>
                 <colgroup>
                     <col style="background-color: yellow">
@@ -1015,7 +1057,9 @@
                     <th>соот. </th>
                     <th>измеренные</th>
                     <th>заводские</th>
-                    <th>норма<5%</th> </tr> <tr>
+                    <th>норма<5%< /th>
+                </tr>
+                <tr>
                     <td>Рвс/аc</td>
                     <td> <input id="Pbc_ac" class='form-control' type="number"
                             onchange='view_percent_P_izm_zav("Pbc_ac","Pbc_ac_zav","Pbc_ac_pr")' value="0.711"></td>

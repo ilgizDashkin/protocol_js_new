@@ -16,6 +16,7 @@
         <!-- это картинка в басе64 формате -->
         <script src="pic2.js"></script>
         <script src="poverka.js"></script>
+        <script src="help_function.js"></script>
         <script>
                 //температурные коэфициенты
                 const k1 = {
@@ -123,7 +124,7 @@
                                 <p class='bg-dark'>вид испытания</p>
                                 <select id="vid" onchange="sel_vid()" class="form-control bg-warning">
                                         <option VALUE="приемосдаточные">приемосдаточные</option>
-                                        <option VALUE="периодические">периодические</option>                                       
+                                        <option VALUE="периодические">периодические</option>
                                         <option VALUE="эксплуатационные">эксплуатационные</option>
                                 </select><br>
                                 <p class='bg-dark'>место испытания</p>
@@ -399,6 +400,26 @@
                 </table><br>
 
                 <div id='full_isp'>
+                        <button id="copy_paste" class="btn btn-info  btn-block"
+                                onclick="element_hidden('copy_paste_div')">копировать/вставить</button>
+
+                        <div id='copy_paste_div' class="container text-center text-white p-3" hidden>
+                                <div class="row">
+                                        <div class="col-md-4">
+                                                <p><textarea rows="20" cols="10" id="textareaR"></textarea></p>
+                                        </div>
+                                        <div id='copy_pasteR' class="col-md-4">
+                                                <button class="btn btn-info  btn-block"
+                                                        onclick="select_generation()">что копировать?</button>
+                                                <button class="btn btn-info  btn-block"
+                                                        onclick="to_textarea(id_area='textareaR',sel_id='copy_selectR',num=19)">копировать
+                                                </button>
+                                                <button class="btn btn-info  btn-block"
+                                                        onclick="textarea_to_element(id_area='textareaR',sel_id='copy_selectR',elem='R')">вставить</button><br>
+                                        </div>
+                                </div>
+                        </div><br>
+
                         <p>сопротивление обмоток постоянному току</p>
                         <table>
                                 <colgroup>
@@ -998,6 +1019,28 @@
                         </table><br>
                         <button class="btn btn-info  btn-block" onclick="percent_Robm_izm_zav()">расчет омических
                                 %</button><br>
+
+                        <button id="copy_paste" class="btn btn-info  btn-block"
+                                onclick="element_hidden('copy_paste_divK')">копировать/вставить</button>
+
+                        <div id='copy_paste_divK' class="container text-center text-white p-3" hidden>
+                                <div class="row">
+                                        <div class="col-md-4">
+                                                <p><textarea rows="20" cols="10" id="textareaK"></textarea></p>
+                                        </div>
+                                        <div id='copy_pasteK' class="col-md-4">
+                                                <button class="btn btn-info  btn-block"
+                                                        onclick="select_generation(where_id = 'copy_pasteK', elem_id = 'copy_selectK', name_el = 'выбор', list = ['K_AB','K_BC','K_AC'])">что
+                                                        копировать?</button>
+                                                <button class="btn btn-info  btn-block"
+                                                        onclick="to_textarea(id_area='textareaK',sel_id='copy_selectK',num=19)">копировать
+                                                </button>
+                                                <button class="btn btn-info  btn-block"
+                                                        onclick="textarea_to_element(id_area='textareaK',sel_id='copy_selectK',elem='K')">вставить</button><br>
+                                        </div>
+                                </div>
+                        </div><br>
+
                         <table>
                                 <colgroup>
                                         <col style="background-color: yellow">
@@ -1535,7 +1578,9 @@
                                         <th>соот. </th>
                                         <th>измеренные</th>
                                         <th>заводские</th>
-                                        <th>норма<5%</th> </tr> <tr>
+                                        <th>норма<5%< /th>
+                                </tr>
+                                <tr>
                                         <td>Рвс/аc</td>
                                         <td> <input id="Pbc_ac" class='form-control' type="number"
                                                         onchange='view_percent_P_izm_zav("Pbc_ac","Pbc_ac_zav","Pbc_ac_pr")'
@@ -2707,11 +2752,11 @@
                         doc.addParagraph(paragraph15)
 
                         const tableRobm = doc.createTable(20, 5);
-            tableRobm.getCell(0, 0).addContent(new Paragraph('положение'));
-            tableRobm.getCell(0, 1).addContent(new Paragraph(' R А0, Ом '));
-            tableRobm.getCell(0, 2).addContent(new Paragraph(' R B0, Ом '));
-            tableRobm.getCell(0, 3).addContent(new Paragraph(' R C0, Ом '));
-            tableRobm.getCell(0, 4).addContent(new Paragraph(' % (не более 2%)'));
+                        tableRobm.getCell(0, 0).addContent(new Paragraph('положение'));
+                        tableRobm.getCell(0, 1).addContent(new Paragraph(' R А0, Ом '));
+                        tableRobm.getCell(0, 2).addContent(new Paragraph(' R B0, Ом '));
+                        tableRobm.getCell(0, 3).addContent(new Paragraph(' R C0, Ом '));
+                        tableRobm.getCell(0, 4).addContent(new Paragraph(' % (не более 2%)'));
 
                         let i = 1
                         while (i <= 19) {
@@ -2993,9 +3038,9 @@
                                 tableZk.getCell(i, 1).addContent(new Paragraph(` ${U_A_zk[key]} `));
                                 tableZk.getCell(i, 2).addContent(new Paragraph(` ${U_B_zk[key]} `));
                                 tableZk.getCell(i, 3).addContent(new Paragraph(` ${U_C_zk[key]} `));
-                                tableZk.getCell(i, 4).addContent(new Paragraph(` ${0&&(U_A_zk[key]/Zk_A[key]).toFixed(3)} `));
-                                tableZk.getCell(i, 5).addContent(new Paragraph(` ${0&&(U_B_zk[key]/Zk_B[key]).toFixed(3)} `));
-                                tableZk.getCell(i, 6).addContent(new Paragraph(` ${0&&(U_C_zk[key]/Zk_C[key]).toFixed(3)} `));
+                                tableZk.getCell(i, 4).addContent(new Paragraph(` ${0 && (U_A_zk[key] / Zk_A[key]).toFixed(3)} `));
+                                tableZk.getCell(i, 5).addContent(new Paragraph(` ${0 && (U_B_zk[key] / Zk_B[key]).toFixed(3)} `));
+                                tableZk.getCell(i, 6).addContent(new Paragraph(` ${0 && (U_C_zk[key] / Zk_C[key]).toFixed(3)} `));
                                 tableZk.getCell(i, 7).addContent(new Paragraph(` ${Zk_A[key]} `));
                                 tableZk.getCell(i, 8).addContent(new Paragraph(` ${Zk_B[key]} `));
                                 tableZk.getCell(i, 9).addContent(new Paragraph(` ${Zk_C[key]} `));
@@ -3249,7 +3294,7 @@
                                         'НН2-ВН+НН1+к': document.getElementById(name + 'HH2proc').value,
                                         'ВН+НН2-НН1+к': document.getElementById(name + 'HH2_BHproc').value,
                                         'ВН+НН1+НН2-к': document.getElementById(name + 'HH_BHproc').value,
-                                        };
+                                };
                         }
 
                         let R15proc = make_Rproc_obj('R15');
@@ -3556,13 +3601,13 @@
                         tableRproc.getCell(0, 0).addContent(new Paragraph('схема'));
                         tableRproc.getCell(0, 1).addContent(new Paragraph('Δ R15, % (≥-50)'));
                         tableRproc.getCell(0, 2).addContent(new Paragraph('Δ R60, % (≥-50)'));
-                        tableRproc.getCell(0, 3).addContent(new Paragraph('Δ Tg δ, %(≤50)'));                                               
+                        tableRproc.getCell(0, 3).addContent(new Paragraph('Δ Tg δ, %(≤50)'));
                         i = 1
                         for (let key in R15proc) {
                                 tableRproc.getCell(i, 0).addContent(new Paragraph(` ${key} `));
-                                tableRproc.getCell(i, 1).addContent(new Paragraph(` ${R15proc[key]} `)); 
-                                tableRproc.getCell(i, 2).addContent(new Paragraph(` ${R60proc[key]} `)); 
-                                tableRproc.getCell(i, 3).addContent(new Paragraph(` ${Tgproc[key]} `));                               
+                                tableRproc.getCell(i, 1).addContent(new Paragraph(` ${R15proc[key]} `));
+                                tableRproc.getCell(i, 2).addContent(new Paragraph(` ${R60proc[key]} `));
+                                tableRproc.getCell(i, 3).addContent(new Paragraph(` ${Tgproc[key]} `));
                                 i++
                         }
                         doc.addParagraph(paragraph0);

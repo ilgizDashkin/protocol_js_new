@@ -265,30 +265,30 @@ function element_hidden(elem_id) {
 }
 
 
-function read_to_array(id='R_AB',num=19){
-    const val_array=[]
-    for (let i = 1; i <= num; i++){
-        let r = document.getElementById(id+i).value
+function read_to_array(id = 'R_AB', num = 19) {
+    const val_array = []
+    for (let i = 1; i <= num; i++) {
+        let r = document.getElementById(id + i).value
         val_array.push(r)
     }
     console.log(`read arr ${val_array}`)
     return val_array
 }
 
-function sel_val(id='copy_selectR') {
+function sel_val(id = 'copy_selectR') {
     let selind = document.getElementById(id).options.selectedIndex;
     let val_el = document.getElementById(id).options[selind].value;
     return val_el
 }
 
-function to_textarea(id_area,sel_id,num){
-    let id_el=sel_val(sel_id).toString()
-    const arr=read_to_array(id=id_el,num=num)
-    let text=''
-    arr.forEach(val=>{
-text+=val.toString()+'\n'
+function to_textarea(id_area, sel_id, num) {
+    let id_el = sel_val(sel_id).toString()
+    const arr = read_to_array(id = id_el, num = num)
+    let text = ''
+    arr.forEach(val => {
+        text += val.toString() + '\n'
     })
-    document.getElementById(id_area).value=text
+    document.getElementById(id_area).value = text
 }
 
 function view_percent(id1, id2, id3, id4) {
@@ -304,26 +304,26 @@ function view_percent(id1, id2, id3, id4) {
     }
 }
 
-function view_percent_all(el='R',num=19){
-    for (let i = 1; i <= num; i++){
-       let id1=el+'_AB'+i
-       let id2=el+'_BC'+i
-       let id3=el+'_AC'+i
-       let id4=el+'_PR'+i
+function view_percent_all(el = 'R', num = 19) {
+    for (let i = 1; i <= num; i++) {
+        let id1 = el + '_AB' + i
+        let id2 = el + '_BC' + i
+        let id3 = el + '_AC' + i
+        let id4 = el + '_PR' + i
         view_percent(id1, id2, id3, id4)
     }
 }
 
-function textarea_to_element(id_area,sel_id,elem){
+function textarea_to_element(id_area, sel_id, elem) {
     let textarea = document.getElementById(id_area).value
-    const arr=textarea.split('\n')
+    const arr = textarea.split('\n')
     console.log(`textarea_to_el ${arr}`)
-    let id_el=sel_val(sel_id).toString()
-    arr.forEach((val,index)=>{
-        if ((document.getElementById(id_el+(index+1)))&&(val)){
-            document.getElementById(id_el+(index+1)).value=val
-        }else{console.log(`no element by id`)}    
+    let id_el = sel_val(sel_id).toString()
+    arr.forEach((val, index) => {
+        if ((document.getElementById(id_el + (index + 1))) && (val)) {
+            document.getElementById(id_el + (index + 1)).value = val
+        } else { console.log(`no element by id`) }
     })
-    view_percent_all(el=elem,num=19)
+    view_percent_all(el = elem, num = 19)
 }
 
