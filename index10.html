@@ -16,6 +16,7 @@
     <!-- это картинка в басе64 формате -->
     <script src="pic2.js"></script>
     <script src="poverka.js"></script>
+    <script src="help_function.js"></script>
     <script>
         //температурные коэфициенты
         const k1 = {
@@ -129,8 +130,14 @@
                 <select id="mesto" class="form-control bg-warning">
                     <option VALUE="ЗРУ-6кВ">ЗРУ-6кВ</option>
                     <option VALUE="ЗРУ-10кВ">ЗРУ-10кВ</option>
+                    <option VALUE="ЗРУ-6/10кВ">ЗРУ-6/10кВ</option>
+                    <option VALUE="ОРУ-110кВ">ОРУ-110кВ</option>
+                    <option VALUE="ОРУ-35кВ">ОРУ-35кВ</option>
+                    <option VALUE="ЗРУ-35/110кВ">ЗРУ-35/110кВ</option>
+                    <option VALUE="ЗРУ-110кВ">ЗРУ-110кВ</option>
                     <option VALUE="КРУН-6кВ">КРУН-6кВ</option>
                     <option VALUE="КРУН-10кВ">КРУН-10кВ</option>
+                    <option VALUE="КРУН-6/10кВ">КРУН-6/10кВ</option>
                 </select><br>
                 <p class='bg-dark'>кто произвёл</p>
                 <select id="proizv" class="form-control bg-warning">
@@ -191,6 +198,9 @@
                 <td> <input id="year_C" class='form-control' type="date" value="2013-06-01"></td>
             </tr>
         </table><br>
+
+        <button class="btn btn-info btn-lg btn-block" onclick="auto_input_R_TH()">автозаполнение</button><br>
+
         <table>
             <colgroup>
                 <col style="background-color: yellow">
@@ -417,6 +427,17 @@
                 show_elem('fase', 'fase1', 'fase_R', 'fase_R1', 'fase_pr', 'fase_pr1', 'B', 'R_B', 'R_B_pr', 'C', 'R_C', 'R_C_pr')
             }
 
+        }
+
+        function random_input_elem(id_el, from = 10000, to = 250000, div = 1, num_comma = 0) {
+                document.getElementById(id_el).value = (randomInteger(from, to) / div).toFixed(num_comma)
+        }
+
+        function auto_input_R_TH() {
+            const R=['R_BH_A','R_HH_A',"R_HHd_A",'R_BH_B','R_HH_B',"R_HHd_B",'R_BH_C','R_HH_C',"R_HHd_C"]
+            R.forEach(val=>{
+                random_input_elem(val, 300,10000)
+            })    
         }
 
         function generate() {
