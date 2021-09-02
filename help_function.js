@@ -327,3 +327,10 @@ function textarea_to_element(id_area, sel_id, elem) {
     view_percent_all(el = elem, num = 19)
 }
 
+function copy_from_A(elem=['type_A','nomer_A','year_A']){
+elem.forEach(val=>{
+    let str=val.substring(0,val.length - 1)//вырезаем строку от 0 до -1 символа
+    document.getElementById(str+'B').value=document.getElementById(val).value
+    document.getElementById(str+'C').value=document.getElementById(val).value
+})
+}
