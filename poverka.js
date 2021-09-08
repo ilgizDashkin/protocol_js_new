@@ -31,4 +31,7 @@ let data_svid_ktr='12.11.22'
 // тангенс
 let nomer_svid_tg='8/4740'
 let data_svid_tg='27.11.22'
+// ретом 30К
+let nomer_svid_retom='8/6323'
+let data_svid_retom='27.11.22'
 
