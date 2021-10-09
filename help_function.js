@@ -172,9 +172,9 @@ function doc_head(doc, paragraph0, num) {
     doc.createImage(pic, 600, 140)
 
     const table = doc.createTable(1, 2);
-    table.getCell(0, 0).addContent(new Paragraph('Свидетельство о регистрации электролаборатории №045-2018 от «22» июня 2018года.'))
+    table.getCell(0, 0).addContent(new Paragraph(`Свидетельство о регистрации электролаборатории ${svid_rostech} от ${svid_rostech_ot}.`))
     table.getCell(0, 0).addContent(new Paragraph("Срок действия Свидетельства установлен"))
-    table.getCell(0, 0).addContent(new Paragraph("до «22» июня 2021 года."))
+    table.getCell(0, 0).addContent(new Paragraph(`до ${svid_rostech_do}.`))
     table.getCell(0, 1).addContent(new Paragraph('1.Перепечатка, размножение протокола без разрешения ЭЛ (или Заказчика) запрещена.'))
     table.getCell(0, 1).addContent(new Paragraph('2.Протокол испытаний распространяется только на данную электроустановку.'))
     table.getCell(0, 1).addContent(new Paragraph('3.Исправления, дополнения в протоколе не допускаются.'))
@@ -250,7 +250,7 @@ function doc_footer(doc, num, all_page = '2') {
     table3.getCell(0, 2).addContent(new Paragraph('   Страница протокола .'))
     table3.getCell(0, 3).addContent(new Paragraph(' Всего страниц в протоколе .'))
 
-    table3.getCell(1, 0).addContent(new Paragraph('         ЭЛ №045-2018  '))
+    table3.getCell(1, 0).addContent(new Paragraph(`         ЭЛ ${svid_rostech}  `))
     table3.getCell(1, 1).addContent(new Paragraph(`         ${num}     `))
     table3.getCell(1, 2).addContent(new Paragraph(new TextRun("                 ").pageNumber()))
     table3.getCell(1, 3).addContent(new Paragraph(page_of_doc))
