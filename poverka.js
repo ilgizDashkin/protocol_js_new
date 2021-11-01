@@ -35,7 +35,7 @@ const data_svid_tg='27.11.22'
 const nomer_svid_retom='8/6323'
 const data_svid_retom='27.11.22'
 // свидетельство ростехнадзор
-const svid_rostech='№045-2018'
-const svid_rostech_ot='«22» июня 2018года'
-const svid_rostech_do='«22» июня 2021 года'
+const svid_rostech='№107-2021'
+const svid_rostech_ot='«22» октября 2021 года'
+const svid_rostech_do='«22» октября 2024 года'
 
