@@ -34,6 +34,9 @@ const data_svid_tg='27.11.22'
 // ретом 30К
 const nomer_svid_retom='8/6323'
 const data_svid_retom='27.11.22'
+// Измеритель сопротивления заземления ИС-10/1
+const nomer_svid_is_10='8/11892'
+const data_svid_is_10='08.10.22'
 // свидетельство ростехнадзор
 const svid_rostech='№107-2021'
 const svid_rostech_ot='«22» октября 2021 года'

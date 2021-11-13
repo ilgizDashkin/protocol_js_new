@@ -34,8 +34,9 @@
                 <input id="date" class='form-control' type="date"><br>
                 <p class='bg-dark'>напряжение</p>
                 <select id="u_kl" class="form-control bg-warning">
-                    <option VALUE="6">6кВ</option>
                     <option VALUE="10">10кВ</option>
+                    <option VALUE="6">6кВ</option>
+                    <option VALUE="0.4">0.4кВ</option>
                 </select><br>
                 <p class='bg-dark'>район</p>
                 <select id="district" class="form-control bg-warning">
@@ -50,9 +51,9 @@
             <div class="col-md-4">
                 <p class='bg-dark'>вид испытания</p>
                 <select id="vid" class="form-control bg-warning">
-                    <option VALUE="периодические">периодические</option>
-                    <option VALUE="приемосдаточные">приемосдаточные</option>
                     <option VALUE="эксплуатационные">эксплуатационные</option>
+                    <option VALUE="приемосдаточные">приемосдаточные</option>
+                    <option VALUE="периодические">периодические</option>
                 </select><br>
                 <p class='bg-dark'>место испытания</p>
                 <input id="mesto" class='form-control' type="search" value="ТП"><br>
@@ -376,10 +377,17 @@
             }
 
             function norm_isp(u_kl) {
-                if (u_kl === "6") {
-                    return 32
-                } else {
-                    return 42
+                // if (u_kl === "6") {
+                //     return 32
+                // } else {
+                //     return 42
+                // }
+
+                switch (u_kl) {
+                    case "6": return 32
+                    case "10": return 42;
+                    case "0.4": return 1;
+                    default: return 42;
                 }
             }
 
@@ -404,10 +412,10 @@
             table1.getCell(1, 5).addContent(new Paragraph(`---`));
             table1.getCell(1, 6).addContent(new Paragraph('соответствует'));
 
-            
+
             doc.addParagraph(paragraph0);
 
-          
+
 
             const paragraph17 = new Paragraph();
             const institutionText17 = new TextRun("10. Перечень применяемого испытательного оборудования (ИО) и средств измерений (СИ)").size(22)

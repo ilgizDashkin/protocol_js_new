@@ -45,10 +45,10 @@
             </div>
             <div class="col-md-4">
                 <p class='bg-dark'>вид испытания</p>
-                <select id="vid" class="form-control bg-warning">
-                    <option VALUE="периодические">периодические</option>
+                <select id="vid" class="form-control bg-warning"> 
                     <option VALUE="приемосдаточные">приемосдаточные</option>
                     <option VALUE="эксплуатационные">эксплуатационные</option>
+                    <option VALUE="периодические">периодические</option>
                 </select><br>
                 <p class='bg-dark'>место испытания</p>
                 <input id="mesto" class='form-control' type="search" value="ТП"><br>
@@ -423,8 +423,8 @@
             table2.getCell(1, 2).addContent(new Paragraph('0397'));
             table2.getCell(1, 3).addContent(new Paragraph('0-2000 Ом'));
             table2.getCell(1, 4).addContent(new Paragraph('± (3% изм. величины ±3 ед.мл.р) для прибора '));
-            table2.getCell(1, 5).addContent(new Paragraph('8/11892'));
-            table2.getCell(1, 6).addContent(new Paragraph('08.10.' + date_year()));
+            table2.getCell(1, 5).addContent(new Paragraph(nomer_svid_is_10));
+            table2.getCell(1, 6).addContent(new Paragraph(data_svid_is_10));
 
             table2.getCell(2, 0).addContent(new Paragraph('Психрометр'));
             table2.getCell(2, 1).addContent(new Paragraph('ВИТ-2'));
