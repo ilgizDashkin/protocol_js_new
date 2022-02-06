@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>создатель протоколов</title>
@@ -16,6 +17,7 @@
     <script src="poverka.js"></script>
     <script src="help_function.js"></script>
 </head>
+
 <body class="bg-success" onload="getDateNow('date')">
     <div class="container text-center text-white p-3">
         <input type="button" class="btn btn-danger btn-lg btn-block" value='назад'
@@ -31,9 +33,9 @@
                 <p class='bg-dark'>дата</p>
                 <input id="date" class='form-control' type="date"><br>
                 <p class='bg-dark'>вид испытания</p>
-                <select id="vid" class="form-control bg-warning">
+                <select id="vid" onchange="sel_vid()" class="form-control bg-warning">
                     <option VALUE="эксплуатационные">эксплуатационные</option>
-                    <option VALUE="периодические">периодические</option>
+                    <option VALUE="периодические под рабочим напряжением">периодические под рабочим напряжением</option>
                     <option VALUE="приемосдаточные">приемосдаточные</option>
                 </select><br>
             </div>
@@ -51,17 +53,36 @@
         <div id='tab_result'>
             <!-- место для таблицы -->
         </div>
+        <div id='full_isp' hidden>
+            <!-- место для таблицы -->
+        </div>
         <button class="btn btn-info btn-lg btn-block" onclick="auto_input()">автозаполнение</button><br>
+        <button class="btn btn-info btn-lg btn-block" onclick="input_priv_R()">привести к 20℃</button><br>
         <button class="btn btn-info btn-lg btn-block" onclick="generate()">создать протокол</button>
     </div>
     <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
 
     <script>
-       //    создаем разметку из help_function.js
+        //    создаем разметку из help_function.js
         gen_proizv_weather(proizvoditel)
         gen_tab(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска'])
-        gen_tab(row_name = ["A", "B", "C"], col_massiv = ['R', 'U', 'I', 'zak'], col_name = ['фаза', 'R, МОм', 'Uисп, кВ', 'Iпров, мА', 'Заключение'], where = 'tab_result')
+        gen_tab(row_name = ["A", "B", "C"], col_massiv = ['R', 'U', 'I', 'Ipriv_', 'zak'], col_name = ['фаза', 'R, МОм', 'Uисп, кВ', 'Iпров, мА', 'Iпров при 20℃,мА', 'Заключение'], where = 'tab_result')
+        gen_tab(row_name = ["A", "B", "C"], col_massiv = ['Urab', 'Uisp', 'I50', 'I150', 'Ipriv', 'zak_'], col_name = ['фаза', 'Uопн,кВ', 'Uисп,кВ', 'I 50Гц,мА', 'I 150Гц,мА', 'I при 20℃,мА', 'Заключение'], where = 'full_isp')
+
+        function sel_vid() {
+            // профилакт, вновь ввод,
+            let selind = document.getElementById('vid').options.selectedIndex;
+            let vid = document.getElementById('vid').options[selind].value;
+            if (vid == 'периодические под рабочим напряжением') {
+                document.getElementById('full_isp').hidden = false;
+                document.getElementById('tab_result').hidden = true;
+            } else {
+                document.getElementById('full_isp').hidden = true;
+                document.getElementById('tab_result').hidden = false;
+            }
+            return vid
+        }
 
         function mesto_isp() {
             // вывод места испытания из наименования элек.уст           
@@ -101,12 +122,69 @@
             }
         }
 
-        function random_input_elem(id_el, num_el, from = 10000, to = 250000, div = 1, num_comma = 0) {
+        function random_input_elem(id_el, num_el, from = 25000, to = 50000, div = 1, num_comma = 0) {
             let i = 1
             while (i <= num_el) {
                 document.getElementById(id_el + i).value = (randomInteger(from, to) / div).toFixed(num_comma)
                 i++
             }
+        }
+
+        /**
+         * приведение тока проводимости ОПН к 20 град
+         *
+         * @param {string} Iizm измеренный ток проводимости
+         * @param {string} Temp температура ОПН
+         * @param {string} Urab наибольшое рабочее напряжение ОПН
+         * @param {string} Uisp напряжение при испытании ОПН 
+         * @return {number} Ipriv приведенный ток проводимости
+         */
+        function priv_I_OPN(Iizm = 250, Temp = 20, Urab = 115, Uisp = 115) {
+            Iizm = Number(Iizm)
+            Temp = Number(Temp)
+            Urab = Number(Urab)
+            Urab = Number(Urab)
+            let Ipriv = (Urab / Uisp) * (Iizm / (1 + 0.0018 * (Temp - 20)))
+            return Ipriv.toFixed(3)
+        }
+
+        //вставить результат привидения
+        function input_priv_R() {
+            let Temp = document.getElementById('temp').value
+            if (sel_vid() == 'периодические под рабочим напряжением') {
+                let Urab1 = document.getElementById('Urab1').value
+                let Urab2 = document.getElementById('Urab2').value
+                let Urab3 = document.getElementById('Urab3').value
+
+                let Uisp1 = document.getElementById('Uisp1').value
+                let Uisp2 = document.getElementById('Uisp2').value
+                let Uisp3 = document.getElementById('Uisp3').value
+
+                let I501 = document.getElementById('I501').value
+                let I502 = document.getElementById('I502').value
+                let I503 = document.getElementById('I503').value
+
+                let Ipriv1 = document.getElementById('Ipriv1')
+                let Ipriv2 = document.getElementById('Ipriv2')
+                let Ipriv3 = document.getElementById('Ipriv3')
+
+                Ipriv1.value = priv_I_OPN(Iizm = I501, Temp = Temp, Urab = Urab1, Uisp = Uisp1)
+                Ipriv2.value = priv_I_OPN(Iizm = I502, Temp = Temp, Urab = Urab2, Uisp = Uisp2)
+                Ipriv3.value = priv_I_OPN(Iizm = I503, Temp = Temp, Urab = Urab3, Uisp = Uisp3)
+            } else {
+                let I1 = document.getElementById('I1').value
+                let I2 = document.getElementById('I2').value
+                let I3 = document.getElementById('I3').value
+
+                let Ipriv_1 = document.getElementById('Ipriv_1')
+                let Ipriv_2 = document.getElementById('Ipriv_2')
+                let Ipriv_3 = document.getElementById('Ipriv_3')
+
+                Ipriv_1.value = priv_I_OPN(Iizm = I1, Temp = Temp)
+                Ipriv_2.value = priv_I_OPN(Iizm = I2, Temp = Temp)
+                Ipriv_3.value = priv_I_OPN(Iizm = I3, Temp = Temp)
+            }
+
         }
 
         function auto_input() {
@@ -116,13 +194,25 @@
             if (u_isp.toString().toLowerCase() === 'tel') { u_isp = type_opn.split('-')[2].split('/')[1] }
             if (u_isp) {
                 input_to_3_elem('U', u_isp)
+                input_to_3_elem('Urab', u_isp)// для профилактических
+                input_to_3_elem('Uisp', u_isp)// для профилактических
             } else {
                 input_to_3_elem('U', '---')
+                input_to_3_elem('Urab', '---')// для профилактических
+                input_to_3_elem('Uisp', '---')// для профилактических
             }
             input_to_3_elem('zak', 'соответствует')
 
             random_input_elem('R', 3)
-            random_input_elem('I', 3, 100, 400, 1000, 3)
+            random_input_elem('I', 3, 270, 295, 1000, 3)
+
+            // для профилактических
+            input_to_3_elem('zak_', 'соответствует')
+            random_input_elem('I50', 3, 270, 295, 1000, 3)
+            random_input_elem('I150', 3, 4, 7, 1000, 3)
+
+
+
         }
 
         function copy_from_one(id_name = [], num_to_copy = [2, 3]) {
@@ -136,7 +226,7 @@
         elem_from_massiv(['ОПН-10/12-10/650(II)УХЛ1', 'ОПН-10/12-10/650(II)УХЛ1', 'ОПН-10/12-10/650(II)УХЛ1'], 'type_opn')
         elem_from_massiv(['---', '---', '---'], 'nomer_opn')
         elem_from_massiv(['---', '---', '---'], 'year_opn')
-           console.log( massiv_from_elem('type_opn',3))
+        console.log(massiv_from_elem('type_opn', 3))
 
 
         function generate() {
@@ -144,7 +234,7 @@
             let num = document.getElementById('num').value
             let date = document.getElementById('date').value.split("-").reverse().join(".")
             let matrix_opn = matrix_from_table(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска'])
-               console.log(matrix_opn) 
+            console.log(matrix_opn)
             function sel_vid() {
                 let selind = document.getElementById('vid').options.selectedIndex;
                 let vid = document.getElementById('vid').options[selind].value;
@@ -232,9 +322,17 @@
             create_pargf(doc, 0, text = `9.1. Замеры сопротивления изоляции и тока проводимости при ${temp}${'\u2103'}`, text_underline = ``, space_after = 0)
             doc.addParagraph(paragraph0);
 
+
             let tab_isp = matrix_from_table(row_name = ["A", "B", "C"],
-                col_massiv = ['R', 'U', 'I', 'zak'],
-                col_name = ['фаза', 'сопротивление изоляции, МОм', 'испытательное напряжение, кВ', 'ток проводимости, мА', 'заключение'])
+                col_massiv = ['R', 'U', 'I', 'Ipriv_', 'zak'],
+                col_name = ['фаза', 'R, МОм', 'Uисп, кВ', 'Iпроводимости, мА', 'Iпроводимости при 20℃,мА', 'заключение'])
+
+            if (sel_vid() == 'периодические под рабочим напряжением') {
+                tab_isp = matrix_from_table(row_name = ["A", "B", "C"],
+                    col_massiv = ['Urab', 'Uisp', 'I50', 'I150', 'Ipriv', 'zak'],
+                    col_name = ['фаза', 'Uнаиб. раб., кВ', 'Uисп, кВ', 'Iпров. 50Гц, мА', 'Iпров. 150Гц, мА', 'Iпров. при 20℃,мА', 'заключение'])
+            }
+
             table_from_matrix(doc, tab_isp)
             doc.addParagraph(paragraph0);
 
@@ -256,35 +354,35 @@
                     '− 0 - 70 кВ,~ 0 - 100 кВ',
                     '± 0,5%,±1,0%',
                     nomer_svid_lab,
-                    data_svid_lab ],
+                    data_svid_lab],
                 ['Мегаомметр',
                     'ЭСО 210/3-Г',
                     '18596',
                     '0 – 10000 Мом',
                     '± 5%',
                     nomer_svid_meg,
-                    data_svid_meg ],
+                    data_svid_meg],
                 ['Психрометр',
                     'ВИТ-2',
                     '23',
                     `15-40 ${'\u2103'}`,
                     '',
                     nomer_svid_psih,
-                    data_svid_psih ],
+                    data_svid_psih],
                 ['Барометр-анероид',
                     'БАММ-1',
                     '5809',
                     '80 до 106 кПА,ц.д.0,1 кПа',
                     '',
                     nomer_svid_bar,
-                    data_svid_bar ],
+                    data_svid_bar],
                 ['Термометр',
                     'КШ14/23',
                     '309',
                     `-30+40${'\u2103'}`,
                     '',
                     nomer_svid_term,
-                    data_svid_term ]
+                    data_svid_term]
             ]
             table_from_matrix(doc, table_measurement)
             doc.addParagraph(paragraph0);

@@ -103,9 +103,10 @@ function getDateNow(id_elemement) {
  * @param {[string]} row_name массив названия строк.
  * @param {[string]} col_massiv массив 'элементов'.
  * @param {[string]} col_name массив названия столбцов.
+ * @param {[string]} where id див элемента куда вставлять таблицу
  */
-function gen_tab(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска']) {
-    let tab_cont = document.getElementById('tab_cont')
+function gen_tab(row_name = ["A", "B", "C"], col_massiv = ['type_opn', 'nomer_opn', 'year_opn'], col_name = ['фаза', 'тип', 'заводской номер', 'дата выпуска'],where = 'tab_cont') {
+    let tab_cont = document.getElementById(where)
     let tbl = document.createElement("table");
     // создаем название колонок
     col_name.forEach(value => {
